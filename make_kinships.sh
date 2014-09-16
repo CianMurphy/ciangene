@@ -27,8 +27,8 @@ maxTime=500			## Nb minutes calculation allowed run for.
 data=$bDir"Genotype_Matrix_out" 
 weights=$bDir"Genotype_weights"
 
-ln -s $bDir"read_depth/Depth_Matrix.bim" $data".bim"
-ln -s $bDir"read_depth/Depth_Matrix.fam" $data".fam"
+rm  $data".bim" ; ln -s $bDir"read_depth/Depth_Matrix.bim" $data".bim"
+rm  $data".fam" ; ln -s $bDir"read_depth/Depth_Matrix.fam" $data".fam"
 
 ## cut data into sections and calculate SNP weights for each. 
 $ldak --cut-weights  $weights  --bfile $data
@@ -73,8 +73,8 @@ $ldak --join-weights $weights --bfile $data --weights $weights/weightsALL
 data=$bDir"Matrix.calls.Missing.NonMissing" 
 weights=$bDir"TechKin_weights"
 
-ln -s $bDir"read_depth/Depth_Matrix.bim" $data".bim"
-ln -s $bDir"read_depth/Depth_Matrix.fam" $data".fam"
+rm  $data".bim" ; ln -s $bDir"read_depth/Depth_Matrix.bim" $data".bim"
+rm  $data".fam" ; ln -s $bDir"read_depth/Depth_Matrix.fam" $data".fam"
 
 
 ## cut data into sections and calculate SNP weights for each. 
