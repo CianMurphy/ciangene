@@ -16,3 +16,4 @@ make_kinships.sh
 make_phenotype_file.R
 
 run_gene_tests.sh
+
