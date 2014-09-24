@@ -13,8 +13,6 @@ convert_missingNonmissing_matrix_to_plink.sh
 
 make_kinships.sh
 
-LDAK.sh
-
-prepare_kinship_matrix_for_fastLMM.R
-
 make_phenotype_file.R
+
+run_gene_tests.sh
