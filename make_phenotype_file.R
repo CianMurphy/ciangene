@@ -8,15 +8,13 @@ for(i in 1:length(fix))
 	if(i==1) 
 	{ 
 	matchy <- fix[i] 
-	fixB2 <- grepl(matchy , names)  
-	names[fixB2] <- paste0(fix[i], "_",  names[fixB2] )
 	} 
 	else 
 	{ 
 	matchy <- paste0("^", fix[i]) 
+	}
 	fixB2 <- grepl(matchy , names)  
 	names[fixB2] <- paste0(fix[i], "_",  names[fixB2] )
-	}
 } 
 
 groups <- gsub(names, pattern = "_.*", replacement = "") 
