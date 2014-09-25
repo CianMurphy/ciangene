@@ -22,7 +22,9 @@ groups=$(wc -l Groups | awk '{print $1}' )
 for pheno in `seq 1 $groups`;
 	do   
 
-out=$(sed -n "$pheno"'p' Groups)
+out=$(sed -n "$pheno"'p' Groups) ## $groups defines how many tests im Running, but out isnt correct phenotype number for this line, so i compare the list of interest ("Groups") to the full list "../Groups" to get correct line
+hit=$(grep -n $out ../Groups)
+whichPheno=${hit%:*} # correct line
 
 oDir="perm_no_kin_maf_"$maf"_pheno_$out"_missingness_"$missing/" ; echo $oDir >> dirs 
 rm -fr $oDir ; mkdir $oDir
@@ -33,7 +35,7 @@ for partition in $(seq 1 $Partitions)
 do
 oFile='partition_'$partition'.sh'
 echo "
-$ldak  --calc-genes-reml "../"$oDir --bfile $data --pheno $phenotypes --mpheno $pheno --weights $weights --minmaf $maf --minvar $minVar --minobs $missing --partition $partition --permute YES
+$ldak  --calc-genes-reml "../"$oDir --bfile $data --pheno $phenotypes --mpheno $whichPheno --weights $weights --minmaf $maf --minvar $minVar --minobs $missing --partition $partition --permute YES
 " > $oDir$oFile
 cd $oDir ; runSh $oFile ; cd .. 
 done
@@ -49,7 +51,7 @@ for partition in $(seq 1 $Partitions)
 do
 oFile='partition_'$partition'.sh'
 echo "
-$ldak  --calc-genes-reml "../"$oDir --bfile $data --pheno $phenotypes --mpheno $pheno --weights $weights --minmaf $maf --minvar $minVar --minobs $missing --partition $partition 
+$ldak  --calc-genes-reml "../"$oDir --bfile $data --pheno $phenotypes --mpheno $whichPheno --weights $weights --minmaf $maf --minvar $minVar --minobs $missing --partition $partition 
 " > $oDir$oFile
 cd $oDir ; runSh $oFile ; cd .. 
 done
@@ -66,7 +68,7 @@ for partition in $(seq 1 $Partitions)
 do
 oFile='partition_'$partition'.sh'
 echo "
-$ldak  --calc-genes-reml "../"$oDir --bfile $data --pheno $phenotypes --mpheno $pheno --weights $weights --minmaf $maf --minvar $minVar --minobs $missing --partition $partition --grm $kinship --permute YES
+$ldak  --calc-genes-reml "../"$oDir --bfile $data --pheno $phenotypes --mpheno $whichPheno --weights $weights --minmaf $maf --minvar $minVar --minobs $missing --partition $partition --grm $kinship --permute YES
 " > $oDir$oFile
 cd $oDir ; runSh $oFile ; cd .. 
 done
@@ -82,7 +84,7 @@ for partition in $(seq 1 $Partitions)
 do
 oFile='partition_'$partition'.sh'
 echo "
-$ldak  --calc-genes-reml "../"$oDir --bfile $data --pheno $phenotypes --mpheno $pheno --weights $weights --minmaf $maf --minvar $minVar --minobs $missing --partition $partition --grm $kinship 
+$ldak  --calc-genes-reml "../"$oDir --bfile $data --pheno $phenotypes --mpheno $whichPheno --weights $weights --minmaf $maf --minvar $minVar --minobs $missing --partition $partition --grm $kinship 
 " > $oDir$oFile
 cd $oDir ; runSh $oFile ; cd .. 
 done 
@@ -100,7 +102,7 @@ for partition in $(seq 1 $Partitions)
 do
 oFile='partition_'$partition'.sh'
 echo "
-$ldak  --calc-genes-reml "../"$oDir --bfile $data --pheno $phenotypes --mpheno $pheno --weights $weights --minmaf $maf --minvar $minVar --minobs $missing --partition $partition --grm $kinship --permute YES
+$ldak  --calc-genes-reml "../"$oDir --bfile $data --pheno $phenotypes --mpheno $whichPheno --weights $weights --minmaf $maf --minvar $minVar --minobs $missing --partition $partition --grm $kinship --permute YES
 " > $oDir$oFile
 cd $oDir ; runSh $oFile ; cd .. 
 done
@@ -115,7 +117,7 @@ for partition in $(seq 1 $Partitions)
 do
 oFile='partition_'$partition'.sh'
 echo "
-$ldak  --calc-genes-reml "../"$oDir --bfile $data --pheno $phenotypes --mpheno $pheno --weights $weights --minmaf $maf --minvar $minVar --minobs $missing --partition $partition --grm $kinship 
+$ldak  --calc-genes-reml "../"$oDir --bfile $data --pheno $phenotypes --mpheno $whichPheno --weights $weights --minmaf $maf --minvar $minVar --minobs $missing --partition $partition --grm $kinship 
 " > $oDir$oFile
 cd $oDir ; runSh $oFile ; cd .. 
 done 
