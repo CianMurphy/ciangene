@@ -1,9 +1,11 @@
 ciangene
 ========
 Order of scripts: in progress
-Vincent edit
+
 
 first.step.R
+Takes the snpStats files from the data release and turn into a numeric matrix
+
 
 first_depth_kin.R
 
