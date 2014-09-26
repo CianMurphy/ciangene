@@ -21,11 +21,18 @@ turns NA/non NA into 0-1 for plink use
 
 * make_kinships.sh
 
-computes kinship matrix based on depth and missing/non-missing
+Computes variant weights, then computes kinship matrix based on depth and missing/non-missing
+Three sets of weights: two kinship matrices and genotypes.
+Why? Need to understand why we use weights from genotype matrix.
 
 * make_phenotype_file.R
 
+Creates a large matrix of phenotypes, grouped by names basically.
+
 * run_gene_tests.sh
+
+
+
 
 * merge_gene_tests.sh
 

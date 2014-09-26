@@ -2,16 +2,19 @@
 shopt -s expand_aliases
 source ~/.bashrc
 
+release=August2014
+
+
 ldak="/cluster/project8/vyp/cian/support/ldak/ldak4.7"
-data="/scratch2/vyp-scratch2/cian/UCLex_August2014/Genotype_Matrix"
+data="/scratch2/vyp-scratch2/cian/UCLex_${release}/Genotype_Matrix"
 genes="/SAN/biomed/biomed14/vyp-scratch/cian/LDAK/genesldak_ref.txt"
-weights="/scratch2/vyp-scratch2/cian/UCLex_August2014/Genotype_weights/re-weightsALL" 
+weights="/scratch2/vyp-scratch2/cian/UCLex_${release}/Genotype_weights/re-weightsALL" 
 
-kinship="/scratch2/vyp-scratch2/cian/UCLex_August2014/TechKin_weights/kinshipALL"  ; kin="Tech"
-#kinship="/scratch2/vyp-scratch2/cian/UCLex_August2014/Depth_weights/kinshipALL"   ; kin="Depth"
+kinship="/scratch2/vyp-scratch2/cian/UCLex_${release}/TechKin_weights/kinshipALL"  ; kin="Tech"
+#kinship="/scratch2/vyp-scratch2/cian/UCLex_${release}/Depth_weights/kinshipALL"   ; kin="Depth"
 
 
-phenotypes="/scratch2/vyp-scratch2/cian/UCLex_August2014/All_phenotypes"
+phenotypes="/scratch2/vyp-scratch2/cian/UCLex_${release}/All_phenotypes"
 maf=0.00001
 missing=0.9
 minVar=0.00001
@@ -26,7 +29,7 @@ out=$(sed -n "$pheno"'p' Groups) ## $groups defines how many tests im Running, b
 hit=$(grep -n $out ../Groups)
 whichPheno=${hit%:*} # correct line
 
-oDir="perm_no_kin_maf_"$maf"_pheno_$out"_missingness_"$missing/" ; echo $oDir >> dirs 
+oDir="/cluster/project8/vyp/cian/data/UCLex/UCLex_${release}/perm_no_kin_maf_"$maf"_pheno_$out"_missingness_"$missing/" ; echo $oDir >> dirs 
 rm -fr $oDir ; mkdir $oDir
 #echo "$ldak --cut-genes $oDir --genefile $genes --bfile $data  --gene-buffer 20000 --weights $weights --partition-length 50000 " > tmp.sh ; runSh tmp.sh
 $ldak --cut-genes $oDir --genefile $genes --bfile $data  --gene-buffer 20000 --weights $weights --partition-length 50000 
@@ -42,7 +45,7 @@ done
 
 
 
-oDir="no_kin_maf_"$maf"_pheno_$out"_missingness_"$missing/" ; echo $oDir >> dirs 
+oDir="/cluster/project8/vyp/cian/data/UCLex/UCLex_${release}/no_kin_maf_"$maf"_pheno_$out"_missingness_"$missing/" ; echo $oDir >> dirs 
 rm -fr $oDir ; mkdir $oDir
 #echo "$ldak --cut-genes $oDir --genefile $genes --bfile $data  --gene-buffer 20000 --weights $weights --partition-length 50000 " > tmp.sh ; runSh tmp.sh
 $ldak --cut-genes $oDir --genefile $genes --bfile $data  --gene-buffer 20000 --weights $weights --partition-length 50000 
@@ -57,9 +60,9 @@ cd $oDir ; runSh $oFile ; cd ..
 done
 
 ### First Kin 
-kinship="/scratch2/vyp-scratch2/cian/UCLex_August2014/TechKin_weights/kinshipALL"  ; kin="Tech"
+kinship="/scratch2/vyp-scratch2/cian/UCLex_${release}/TechKin_weights/kinshipALL"  ; kin="Tech"
 
-oDir=$kin"_perm_with_kin_maf_"$maf"_pheno_$out"_missingness_"$missing/" ; echo $oDir >> dirs 
+oDir="/cluster/project8/vyp/cian/data/UCLex/UCLex_${release}/${kin}_perm_with_kin_maf_"$maf"_pheno_$out"_missingness_"$missing/" ; echo $oDir >> dirs 
 rm -fr $oDir ; mkdir $oDir
 #echo "$ldak --cut-genes $oDir --genefile $genes --bfile $data  --gene-buffer 20000 --weights $weights --partition-length 50000 " > tmp.sh ; runSh tmp.sh
 $ldak --cut-genes $oDir --genefile $genes --bfile $data  --gene-buffer 20000 --weights $weights --partition-length 50000 
@@ -75,7 +78,7 @@ done
 
 
 
-oDir=$kin"_with_kin_maf_"$maf"_pheno_$out"_missingness_"$missing/" ; echo $oDir >> dirs 
+oDir="/cluster/project8/vyp/cian/data/UCLex/UCLex_${release}/${kin}_with_kin_maf_${maf}_pheno_${out}_missingness_${missing}/" ; echo $oDir >> dirs 
 rm -fr $oDir ; mkdir $oDir
 #echo "$ldak --cut-genes $oDir --genefile $genes --bfile $data  --gene-buffer 20000 --weights $weights --partition-length 50000 " > tmp.sh ; runSh tmp.sh
 $ldak --cut-genes $oDir --genefile $genes --bfile $data  --gene-buffer 20000 --weights $weights --partition-length 50000 
@@ -91,7 +94,7 @@ done
 
 
 ############ Repeat gene tests with other kinship matrix. 
-kinship="/scratch2/vyp-scratch2/cian/UCLex_August2014/Depth_weights/kinshipALL"   ; kin="Depth"
+kinship="/scratch2/vyp-scratch2/cian/UCLex_${release}/Depth_weights/kinshipALL"   ; kin="Depth"
 
 oDir=$kin"_perm_with_kin_maf_"$maf"_pheno_$out"_missingness_"$missing/" ; echo $oDir >> dirs 
 rm -fr $oDir ; mkdir $oDir
@@ -108,7 +111,7 @@ cd $oDir ; runSh $oFile ; cd ..
 done
 
 
-oDir=$kin"_with_kin_maf_"$maf"_pheno_$out"_missingness_"$missing/" ; echo $oDir >> dirs 
+oDir="/cluster/project8/vyp/cian/data/UCLex/UCLex_${release}/${kin}_with_kin_maf_${maf}_pheno_${out}_missingness_${missing}/" ; echo $oDir >> dirs 
 rm -fr $oDir ; mkdir $oDir
 #echo "$ldak --cut-genes $oDir --genefile $genes --bfile $data  --gene-buffer 20000 --weights $weights --partition-length 50000 " > tmp.sh ; runSh tmp.sh
 $ldak --cut-genes $oDir --genefile $genes --bfile $data  --gene-buffer 20000 --weights $weights --partition-length 50000 
@@ -134,14 +137,14 @@ exit
 ############################################################################################################
 
 
-oDir="how_much_variance_do_kinships_explain"
+oDir="/cluster/project8/vyp/cian/data/UCLex/UCLex_${release}/how_much_variance_do_kinships_explain"
 mkdir $oDir;cd $oDir
 
 echo "
 ldak="/cluster/project8/vyp/cian/support/ldak/ldak4.7"
-phenotypes="/scratch2/vyp-scratch2/cian/UCLex_August2014/All_phenotypes"
-aKinship="/scratch2/vyp-scratch2/cian/UCLex_August2014/TechKin_weights/kinshipALL"
-bKinship="/scratch2/vyp-scratch2/cian/UCLex_August2014/Depth_weights/kinshipALL"
+phenotypes="/scratch2/vyp-scratch2/cian/UCLex_${release}/All_phenotypes"
+aKinship="/scratch2/vyp-scratch2/cian/UCLex_${release}/TechKin_weights/kinshipALL"
+bKinship="/scratch2/vyp-scratch2/cian/UCLex_${release}/Depth_weights/kinshipALL"
 
 
 groups=$(wc -l ../Groups | awk '{print $1}' ) 
@@ -179,7 +182,7 @@ done
 
 
 
-Kinship="/scratch2/vyp-scratch2/cian/UCLex_August2014/TechKin_weights/kinshipALL"
+Kinship="/scratch2/vyp-scratch2/cian/UCLex_${release}/TechKin_weights/kinshipALL"
 
 
 groups=$(wc -l Groups | awk '{print $1}' ) 

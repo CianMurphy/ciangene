@@ -1,20 +1,21 @@
-fam <- data.frame(read.table("/scratch2/vyp-scratch2/cian/UCLex_August2014/Genotype_Matrix.fam", header=F, sep="\t")[,1]) 
+release <- 'August2014'
+fam <- data.frame(read.table(paste0("/scratch2/vyp-scratch2/cian/UCLex_", release, "/Genotype_Matrix.fam", header=F, sep="\t"))[,1]) 
 
 names <- as.character(unlist(fam[,1]) ) 
 
 fix <- c("fastq", "B2", "BC", "UCL", "gos", "gg") 
 for(i in 1:length(fix)) 
 { 
-	if(i==1) 
-	{ 
-	matchy <- fix[i] 
-	} 
-	else 
-	{ 
-	matchy <- paste0("^", fix[i]) 
-	}
-	fixB2 <- grepl(matchy , names)  
-	names[fixB2] <- paste0(fix[i], "_",  names[fixB2] )
+  if(i==1) 
+    { 
+      matchy <- fix[i] 
+    } 
+  else 
+    { 
+      matchy <- paste0("^", fix[i]) 
+    }
+  fixB2 <- grepl(matchy , names)  
+  names[fixB2] <- paste0(fix[i], "_",  names[fixB2] )
 } 
 
 groups <- gsub(names, pattern = "_.*", replacement = "") 
