@@ -1,46 +1,84 @@
 oDir <- "Results"
 if(!file.exists(oDir)) dir.create(oDir)
 
-techs <- list.files(, pattern = "Tech_with_kin", full.names=T)
-short <- gsub(techs, pattern = ".*_kin", replacement="")
+files <- list.files(, pattern = "_kin", full.names=T)
+short <- gsub(files, pattern = ".*_kin", replacement="")
 oFiles <- gsub(gsub(short, pattern = ".*pheno_", replacement = ""), pattern = "_.*", replacement = "") 
 
 
-for(i in 1:length(techs)){
-	target <- paste0(techs[i], "/regressALL")
-	if(file.exists(target)) { 
-	tech <- read.table(target, header=T, sep=" ")
-	base.dir <- paste0("no_kin", short[i])
-	base <- read.table(paste0(base.dir, "/regressALL"), header=T, sep=" ", stringsAsFactors=F)
-	base.small <- data.frame(cbind(base$Gene_name, base$LRT_P, base$Score_P)) 
-	names(base.small) <- c("Gene_name", "LRT_P.base", "Score_P.base")
-	merged <- merge(tech, base.small)
-	merged$ScorePvalue.diff <- as.numeric(as.character(merged$Score_P.base) ) - merged$Score_P 
-	merged <- merged[order(merged$Score_Pvalue.diff), ] 
-	write.table(merged, paste0(oDir, "/", oFiles[i]), col.names=T, row.names=F, quote=F, sep="\t")
-	} 
-}
-
-
-
-
-
-
-##### old
-python <- FALSE
-if(python) {
-
-library(rPython)
-
-python.assign("dict", tech) 
-python.assign("base", base) 
-
-python.exec('import pandas as pd') 
-
-python.exec('py_df = pd.DataFrame(dict)')
-python.exec('base_py_df = pd.DataFrame(base)') 
-
-python.exec('py_df.join(base_py_df') 
-
-
+summariseModels <- function(Val, by.cohort=TRUE) { 
+		for(i in 1:length(files)){
+			target <- paste0(files[i], "/regressALL")
+			if(file.exists(target)) { 
+				file <- read.table(target, header=T, sep=" ")
+				if(i==1) { 
+				dat <- data.frame(matrix(nrow=nrow(file), ncol = length(files) + 1) ) 
+				colnames(dat) <- c("Gene", unlist(basename(files))) 
+				dat[,1] <- file$Gene_name
+				}
+				dat[,i+1] <- file[,which(colnames(file) == Val)]
+			} 
+		}
+		
+		if(by.cohort) { 
+		cohort <- gsub(gsub(colnames(dat)[2:ncol(dat)], pattern = ".*pheno_", replacement = "") , pattern = "_.*", replacement ="") 
+		cohort.uniq <- unique(cohort)
+		listy <-  vector("list", length(cohort.uniq))
+			for(t in 1:length(cohort.uniq)) listy[[t]] <-  data.frame(dat[,1], dat[ , which(cohort %in% cohort.uniq[t])+1 ] )
+ 		} 
+	return(listy)	
 } 
+
+
+scoreP <- summariseModels("Score_P") ## feed this the name of the column you want. It will return a list, each item of the list a dataframe of this value by cohort per model.
+
+
+
+plotPvalues <- function(data, cohort) { 
+	for(i in 1:length(data)) { 
+	hit <- grepl(cohort, colnames(data[[i]]) ) 
+	if(length(which(hit)) > 0 ) break
+	} 
+	dat <- data[[i]]
+	dat$base_res_diff <- dat[, paste0( "no_kin_maf_0.00001_pheno_", cohort, "_missingness_0.9") ] - dat[, paste0( "Tech_with_kin_maf_0.00001_pheno_", cohort, "_missingness_0.9") ]
+	dat <- dat[order(dat$base_res_diff),]
+
+	oFile <- paste0(cohort, ".pdf") 
+	pdf(oFile)
+	par(mfrow=c(2,2)) 
+	hist(dat[, paste0( "no_kin_maf_0.00001_pheno_", cohort, "_missingness_0.9") ]   ,	
+		 main = paste(cohort, "No kinships") , ylim = c(0,5000) , xlab = "Score test pvalues" )
+	hist(dat[, paste0( "Depth_with_kin_maf_0.00001_pheno_", cohort, "_missingness_0.9") ]	,	
+		 main = paste(cohort,"DepthKin") , ylim = c(0,5000) , xlab = "Score test pvalues" )
+	hist(dat[, paste0( "Tech_with_kin_maf_0.00001_pheno_", cohort, "_missingness_0.9") ]	,	
+		 main = paste(cohort,"TechKin") , ylim = c(0,5000)  , xlab = "Score test pvalues" )
+	hist(dat[, paste0( "Tech_with_kin_maf_0.00001_pheno_" , cohort, "_missingness_0.9_res") ]	,
+		 main = paste(cohort, "TechKin and DepthKin") , ylim = c(0,5000)  , xlab = "Score test pvalues" )
+	dev.off()
+} 
+
+plotPvalues(scoreP, "Levine" ) ## simple histogram of some pvals
+plotPvalues(scoreP, "Hardcastle" ) 
+
+
+
+
+
+
+
+
+hard <- summariseModels("Score_P")[[1]]
+
+hard$base_res_diff <- hard$no_kin_maf_0.00001_pheno_Hardcastle_missingness_0.9 -  hard$Tech_with_kin_maf_0.00001_pheno_Hardcastle_missingness_0.9_res
+hard <- hard[order(hard$base_res_diff), ] 
+
+
+hard.small <- subset(hard, hard$no_kin_maf_0.00001_pheno_Hardcastle_missingness_0.9 <= 0.000001) 
+hard.small <- hard.small[which(hard.small$base_res_diff < 0.01 ) ,]
+hard.small <- hard.small[order(abs(hard.small$base_res_diff)) ,]
+
+
+
+
+
+

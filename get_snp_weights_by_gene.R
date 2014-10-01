@@ -4,9 +4,9 @@ gene.list <- read.table(gene.list, header=F, sep="\t" )
 release <- "August"
 
 dir <- paste0("/cluster/project8/vyp/cian/data/UCLex/UCLex_", release, "/Scripts/Gene_based_tests/") 
-dirs <- list.files(dir , pattern ="_kin_") 
+dirs <- list.files(dir , pattern ="_kin_m") 
 
-prep <- FALSE
+prep <- FALSE	
 if(prep){
 	for(i in 1:length(dirs)) { 
 		system( paste("rm",  paste0(dirs[i], "/effects_ALL") ) )
@@ -20,7 +20,7 @@ getWeights <- function(gene, cohort) {
 	dirs <- list.files(dir , pattern = paste0("_", cohort, "_")) 
 
 	files <- list.files(dirs, pattern = "effects_ALL", full.names=T) 
-	names <- gsub(files, pattern = "_miss.*", replacement ="")
+	names <- gsub(files, pattern = "_missingness_0.9", replacement ="")
 
 	for(i in 1:length(files)) { 
 	file <- read.table(files[i], header=T, sep=" ", stringsAsFactors=F) 
@@ -36,7 +36,7 @@ getWeights <- function(gene, cohort) {
 	dat[,i+2] <- file.small$Effect	
 	
 	} 
-names(dat) <- c("Gene", "Predictor", unlist(names)) 
+names(dat) <- c("Gene", "Predictor", unlist( gsub(names, pattern = "/.*", replacement = "")  ) )
 return(dat)
 } 
 
