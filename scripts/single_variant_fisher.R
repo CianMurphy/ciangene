@@ -1,3 +1,4 @@
+
 library(MultiPhen)
 
 bDir <- "/scratch2/vyp-scratch2/cian/UCLex_October2014/Lambiase_case_control"
@@ -6,9 +7,6 @@ files <- list.files(bDir, pattern = "bim", full.names=T)
 iFile <- gsub(files, pattern = "\\.bim", replacement = "")
 iFile <- iFile[grep("rol/UCL", iFile) ]
 
-
-oFile <- gsub(basename(pheno), pattern = "\\..*", replacement = "" )  
-# pheno <- "/cluster/project8/vyp/cian/data/UCLex/UCLex_October2014/Lambiase/IVF_vs_UCLex/Lambiase_SADS_vs_UCLex_pheno" 
 pheno <- read.table(pheno, header=F, sep="\t")
 pheno <- subset(pheno, pheno[,3] != '-9') 
 
@@ -28,9 +26,9 @@ library(snpStats) ## this is down here because its "read.plink" function works d
 
 for(i in 1:ncol(plink))
 {
-	case.calls <- t(data.frame(plink[ pheno[,3] == 1 , i])) 
+	case.calls <- t(data.frame(plink[ pheno[,phenoType+2 ] == 1 , i])) 
 	rownames(case.calls) <- colnames(plink)[i]
-	ctrl.calls <- t(data.frame(plink[ pheno[,3] == 0 , i]) )
+	ctrl.calls <- t(data.frame(plink[ pheno[,phenoType+2] == 0 , i]) )
 	rownames(ctrl.calls) <- colnames(plink)[i]
 
 	number_mutations_cases <- sum( case.calls , na.rm=T )
@@ -119,10 +117,9 @@ dat$case.call.rate <- case.call.rate
 dat$ctrl.call.rate <- ctrl.call.rate
 
 
-oDir <- "/cluster/project8/vyp/cian/data/UCLex/UCLex_October2014/Lambiase_case_control/single_variant/"
+oDir <- "/cluster/project8/vyp/cian/data/UCLex/UCLex_October2014/All_phenotypes/Fisher_single_variant/"
 
-dirs <- c("IVF/case_control_", "Lambiase_vs_UCL/case_control_")
-if( grepl("IVF", oFile )  ) CC.out <- paste0(oDir, dirs[1])
-if( grepl("ambiase", oFile )  ) CC.out <- paste0(oDir, dirs[2])
+chr <- as.numeric(gsub(rownames(case.calls)[1], pattern ="_.*", replacement = "") )
+CC.out <- paste0(oDir, oFile, "_Chr_", chr) 
 
-write.table(dat, paste0( CC.out , fil ) , col.names=T, row.names=F, quote= F, sep="\t", append =F)
+write.table(dat, CC.out , col.names=T, row.names=F, quote= F, sep="\t", append =F)
