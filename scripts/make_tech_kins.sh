@@ -2,12 +2,14 @@
 shopt -s expand_aliases
 source ~/.bashrc
 
+# The genotype data has already been converted to the missingNonMissing format. Here, I extract the samples and SNPs i want and then calculate both the Technical Kinship matrices and the Principal Components. 
+
 release=October2014
 datDir="/scratch2/vyp-scratch2/cian/UCLex_${release}"
 data=$datDir"/missingNonmissingPlink_out"
 bDir="/cluster/project8/vyp/cian/data/UCLex/UCLex_${release}/Gene_tests/Clean_Up"
-AllKeep='/cluster/project8/vyp/cian/data/UCLex/UCLex_October2014/Lambiase_case_control/whole_exome/support/Lambiase_joint_ivf_sad_keep'
-oDir='/scratch2/vyp-scratch2/cian/UCLex_October2014/Lambiase_case_control'
+AllKeep='/cluster/project8/vyp/cian/data/UCLex/UCLex_${release}/Lambiase_case_control/whole_exome/support/Lambiase_joint_ivf_sad_keep'
+oDir='/scratch2/vyp-scratch2/cian/UCLex_${release}/Lambiase_case_control'
 
 
 

@@ -18,7 +18,7 @@ missing=0.9
 minVar=1e-4
 maxmaf=0.5
 
-baseLDAK="/cluster/project8/vyp/cian/support/ldak/ldak.out"
+baseLDAK="/cluster/project8/vyp/cian/support/ldak/ldak.out" ## two versions of LDAK in use, this one older as it does not yet use permutations to calculate the pvalue when a kinship is included. 
 
 oDir=$bDir"/LDAK/overlap_min_weight5_perm_no_kin_maf_"$maf"_${role}_${pheno}/"
 rm -fr $oDir ; mkdir $oDir

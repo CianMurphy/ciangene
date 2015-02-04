@@ -2,6 +2,7 @@
 shopt -s expand_aliases
 source ~/.bashrc
 
+## sh this to run both the IVF and Lambiase(IVF + SADS) gene based analyses. Both are run on functional and lof variants respectively. 
 
 Out=IVF_lof_LDAK.sh
 echo "phenotypes='/cluster/project8/vyp/cian/data/UCLex/UCLex_October2014/Lambiase_case_control/support/IVF.pheno' ; pheno='IVFvsUCL'"  > $Out
