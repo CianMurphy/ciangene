@@ -2,7 +2,7 @@ shopt -s expand_aliases
 source ~/.bashrc
 
 ldak="/cluster/project8/vyp/cian/support/ldak/ldak.4.5"
-bDir="/scratch2/vyp-scratch2/cian/UCLex_August2014/" ## where all the output files will live. 
+bDir="/scratch2/vyp-scratch2/cian/UCLex_October2014/" ## where all the output files will live. 
 
 
 
