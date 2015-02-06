@@ -4,10 +4,10 @@ shopt -s expand_aliases
 source ~/.bashrc
 
 release=October2014
-bDir="/cluster/project8/vyp/cian/data/UCLex/UCLex_October2014/All_phenotypes/LDAK/LDAK_gene_tests_all_phenos/"
+bDir="/cluster/project8/vyp/cian/data/UCLex/UCLex_${release}/All_phenotypes/LDAK/LDAK_gene_tests_all_phenos/"
 
 ldak="/cluster/project8/vyp/cian/support/ldak/ldak"
-data='/scratch2/vyp-scratch2/cian/UCLex_October2014/Genotype_Matrix.sp_out'
+data='/scratch2/vyp-scratch2/cian/UCLex_${release}/Genotype_Matrix.sp_out'
 genes="/SAN/biomed/biomed14/vyp-scratch/cian/LDAK/genesldak_ref.txt"
 # extract=$bDir"/SNPs.func.ldak" ; role="Func"
 # kinship=$bDir"/SADSvsUCLex_plink_func_snps_kinship"; kin="func"
