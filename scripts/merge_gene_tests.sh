@@ -1,4 +1,4 @@
-ldak="/cluster/project8/vyp/cian/support/ldak/ldak.4.5"
+ldak="/cluster/project8/vyp/cian/support/ldak/ldak"
 for dir in */
 do
     echo $dir
