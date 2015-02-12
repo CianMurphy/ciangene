@@ -2,7 +2,7 @@ repo=/cluster/project8/vyp/exome_sequencing_multisamples/ciangene/
 
 export repo
 
-pipeline=${repo}/scripts/pipeline/cian_gene.sh
+pipeline=${repo}/scripts/pipeline/pipeline_cian_gene.sh
 
 
 script=cluster/submission/cian.sh

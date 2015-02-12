@@ -3,7 +3,9 @@
 Rbin=/cluster/project8/vyp/vincent/Software/R-3.1.2/bin/R
 
 
-firstStep=/cluster/project8/vyp/exome_sequencing_multisamples/ciangene/scripts/first.step.R
+firstStep=${repo}/scripts/first.step.R  ##step 1
+secondStep=${repo}/scripts/first_depth_kin.R  ## step2
+
 
 ##### default value of all arguments
 rootODir=/scratch2/vyp-scratch2/cian
@@ -46,16 +48,23 @@ done
 if [ -e $script ]; then rm $script; fi
 
 
-if [[ "$step" == "1" ]]; then
-    
+if [[ "$step" == "1" ]]; then    
+
     echo "
-
 $Rbin CMD BATCH --no-save --no-restore --release=${release} --rootODir=${rootODir} $firstStep cluster/R/step1.Rout
-
 " >> $script
 
-    
 fi
+
+if [[ "$step" == "2" ]]; then    
+
+    echo "
+$Rbin CMD BATCH --no-save --no-restore --release=${release} --rootODir=${rootODir} $secondStep cluster/R/step2.Rout
+" >> $script
+
+fi
+
+
 
 
 
