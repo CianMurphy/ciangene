@@ -1,13 +1,29 @@
+library(snpStats)
+
+
+getArgs <- function() {
+  myargs.list <- strsplit(grep("=",gsub("--","",commandArgs()),value=TRUE),"=")
+  myargs <- lapply(myargs.list,function(x) x[2] )
+  names(myargs) <- lapply(myargs.list,function(x) x[1])
+  return (myargs)
+}
+
 release <- 'August2014'
 
-library(snpStats)
+myArgs <- getArgs()
+
+if ('rootODir' %in% names(myArgs))  rootODir <- myArgs[[ "rootODir" ]]
+if ('release' %in% names(myArgs))  release <- myArgs[[ "release" ]]
+
+#######################
+
 
 
 dir <- paste0("/cluster/project8/vyp/exome_sequencing_multisamples/mainset/GATK/mainset_", release , "/mainset_", release, "_by_chr/")
 files <- list.files(dir, pattern ="_snpStats.RData", full.names=T) 
 files <- files[order(as.numeric(gsub(gsub(basename(files), pattern ="chr", replacement =""), pattern = "_.*", replacement = "") ) )]
 
-oDir <- paste0("/scratch2/vyp-scratch2/cian/UCLex_", release)
+oDir <- paste0(rootODir, "/UCLex_", release)
 if(!file.exists(oDir)) dir.create(oDir)
 
 full <- paste0(oDir, "allChr_snpStats") 
