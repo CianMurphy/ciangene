@@ -34,13 +34,13 @@ for(i in 1:length(files) ) {
   load(files[i]) ; message(files[i]) 
   
   short <- gsub(basename(files), pattern = "_.*", replacement ='')[i]
-  tmp <-  paste0(oDir, short)
+  tmp <-  paste0(oDir, "/", short)
   matrix.depth <- apply(matrix.depth, 2, as.numeric)
   pass <- which(annotations.snpStats$FILTER == "PASS")
   matrix.depth <- matrix.depth[pass,]
   
-  if(i==1) write.table(matrix.depth, file = paste0(oDir, oFile) , col.names=FALSE, row.names=FALSE, quote = FALSE, sep="\t" , append = FALSE)
-  if(i>1) write.table(matrix.depth,  file = paste0(oDir, oFile) , col.names=FALSE, row.names=FALSE, quote = FALSE, sep="\t" , append = TRUE)
+  if(i==1) write.table(matrix.depth, file = paste0(oDir, "/", oFile) , col.names=FALSE, row.names=FALSE, quote = FALSE, sep="\t" , append = FALSE)
+  if(i>1) write.table(matrix.depth,  file = paste0(oDir, "/", oFile) , col.names=FALSE, row.names=FALSE, quote = FALSE, sep="\t" , append = TRUE)
   
   rownames(matrix.depth) <- colnames(matrix.calls.snpStats)[pass]
   map <- data.frame(matrix(nrow=nrow(matrix.depth), ncol = 4) ) 
