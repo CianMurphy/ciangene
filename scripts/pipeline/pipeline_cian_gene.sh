@@ -9,7 +9,7 @@ secondStep=${repo}/scripts/first_depth_kin.R  ## step2
 
 ##### default value of all arguments
 rootODir=/scratch2/vyp-scratch2/cian
-release=August2014
+release=February2015
 
 
 

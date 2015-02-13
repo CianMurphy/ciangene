@@ -9,7 +9,7 @@ script=cluster/submission/cian.sh
 rootODir=/scratch2/vyp-scratch2/ciangene
 
 
-step1=no
+step1=yes
 step2=yes
 
 
