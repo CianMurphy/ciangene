@@ -20,6 +20,7 @@ done
 
 
 
+
 until [ -z "$1" ]; do
     # use a case statement to test vars. we always test $1 and shift at the end of the for block.
     case $1 in
@@ -32,9 +33,12 @@ until [ -z "$1" ]; do
 	--release)
 	    shift
 	    release=$1;;
-	--step)
+	--step1)
 	    shift
-	    step=$1;;
+	    step1=$1;;
+	--step2)
+	    shift
+	    step2=$1;;
 	-* )
 	    echo "Unrecognized option: $1"
 	    exit 1;;
@@ -45,22 +49,54 @@ until [ -z "$1" ]; do
 done
 
 
-if [ -e $script ]; then rm $script; fi
+hold=""
 
 
-if [[ "$step" == "1" ]]; then    
+##########
+if [[ "$step1" == "yes" ]]; then    
+
+    script=cluster/submission/step1.sh
 
     echo "
-$Rbin CMD BATCH --no-save --no-restore --release=${release} --rootODir=${rootODir} $firstStep cluster/R/step1.Rout
-" >> $script
+#$ -S /bin/bash
+#$ -o cluster/out
+#$ -e cluster/error
+#$ -l h_vmem=5.9G,tmem=5.9G
+#$ -pe smp 1
+#$ -N step1_cian
+#$ -l h_rt=24:00:00
+#$ -cwd
 
+$Rbin CMD BATCH --no-save --no-restore --release=${release} --rootODir=${rootODir} $firstStep cluster/R/step1.Rout
+
+" > $script
+
+    qsub $hold $script
+    if [[ "$hold" == "" ]]; then hold="-hold_jid step1_cian"; else hold="$hold,step1_cian"; fi
 fi
 
-if [[ "$step" == "2" ]]; then    
+
+#########
+if [[ "$step2" == "yes" ]]; then    
+
+    script=cluster/submission/step2.sh
 
     echo "
+#$ -S /bin/bash
+#$ -o cluster/out
+#$ -e cluster/error
+#$ -l h_vmem=5.9G,tmem=5.9G
+#$ -pe smp 1
+#$ -N step2_cian
+#$ -l h_rt=24:00:00
+#$ -cwd
+
 $Rbin CMD BATCH --no-save --no-restore --release=${release} --rootODir=${rootODir} $secondStep cluster/R/step2.Rout
-" >> $script
+
+" > $script
+
+    qsub $hold $script
+    if [[ "$hold" == "" ]]; then hold="-hold_jid step2_cian"; else hold="$hold,step2_cian"; fi
 
 fi
 
