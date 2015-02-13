@@ -19,15 +19,15 @@ if ('release' %in% names(myArgs))  release <- myArgs[[ "release" ]]
 
 files <- list.files(paste0("/cluster/project8/vyp/exome_sequencing_multisamples/mainset/GATK/mainset_", release, "/mainset_", release, "_by_chr/", pattern = "snpStats", full.names=TRUE))
 files <- files[order(as.numeric(gsub(gsub(basename(files), pattern ="chr", replacement =""), pattern = "_.*", replacement = "") ) )]
-oDir <- paste0(rootODir, "/cian/UCLex_", release, "/read_depth/")
+oDir <- paste0(rootODir, "/UCLex_", release, "/read_depth/")
 
 if(!file.exists(oDir) ) dir.create(oDir) 
 
 
 oFile <- "Depth_Matrix.sp"
 
-oMap <- paste0(oDir, "Depth_Matrix.map")
-oBim <- paste0(oDir, "Depth_Matrix.bim")
+oMap <- paste0(oDir, "/Depth_Matrix.map")
+oBim <- paste0(oDir, "/Depth_Matrix.bim")
 
 
 for(i in 1:length(files) ) { 
