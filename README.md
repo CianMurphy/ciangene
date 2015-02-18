@@ -39,7 +39,8 @@ Order of scripts: in progress
 
 
 * merge_gene_tests.sh
-
+	
+		Doesn't just merge. Also uses permuted pvalue in regress1..regressN to define null distribution (permuted pheno with kin) to calc final pvalue in regressALL. Script hangs when run on just one chunk/gene (eg as per power studies). 
 
 * summarise.results.R
 
