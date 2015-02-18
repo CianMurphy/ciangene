@@ -10,14 +10,16 @@ release=$2
 
 bDir=${rootODir}/UCLex_${release}
 
+if [ ! -e ${bDir}/read_depth ]; then mkdir ${bDir}/read_depth; fi
+
 ## genotype to missing non missing
 GenotypeMatrix=$bDir"/Genotype_Matrix.sp"
 tmp=$bDir"tmp"
 missingNonMissing=$bDir"/Matrix.calls.Missing.NonMissing.sp"
 
-sed 's/0/2/g' $GenotypeMatrix > $tmp
-sed 's/1/2/g' $tmp > $tmp"2" ; rm $tmp
-sed 's/NA/1/g' $tmp"2" > $missingNonMissing ; rm $tmp"2"
+sed 's/0/2/g' $GenotypeMatrix | sed 's/1/2/g' | sed 's/NA/1/g' > $missingNonMissing
+#sed 's/1/2/g' $tmp > $tmp"2" ; rm $tmp
+#sed 's/NA/1/g' $tmp"2" > $missingNonMissing ; rm $tmp"2"
 
 ln -s $bDir"/read_depth/Depth_Matrix.bim" $GenotypeMatrix".bim"
 ln -s $bDir"/read_depth/Depth_Matrix.fam" $GenotypeMatrix".fam"
