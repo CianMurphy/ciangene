@@ -28,7 +28,7 @@ print(files)
 oDir <- paste0(rootODir, "/UCLex_", release)
 if(!file.exists(oDir)) dir.create(oDir)
 
-full <- paste0(oDir, "/allChr_snpStats") 
+full <- paste0(oDir, "/allChr_snpStats.sp") ## added '.sp' suffix
 annotations.out <- paste0(oDir, "/annotations.snpStat")
 out <- paste0(full, ".RData") 
 a.out <- paste0(annotations.out, ".RData") 

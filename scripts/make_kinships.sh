@@ -3,11 +3,22 @@ ldak=/cluster/project8/vyp/cian/support/ldak/ldak
 rootODir=/scratch2/vyp-scratch2/ciangene
 release=February2015
 
+
+## got to update this
+	# DO i still want to bother calculating genotype weights if im not using them 
+	# no need for read depth kin
+	## use calc-kins-direct instead of cutting and joining. probably slower but more convenient. 
+
+
+
 rootODir=$1
 release=$2
 
 
 bDir=${rootODir}/UCLex_${release}
+
+missingNonMissing=$bDir"/Matrix.calls.Missing.NonMissing.sp"
+
 
 
 ###################################################################################################################################################
