@@ -27,7 +27,7 @@ Order of scripts: in progress
 
 * LDAK/run_ldak_on_all_phenos.sh
 
-		gene tests
+		gene tests - all UCLex phenos, with and without kinship
 
 * run_single_variant.sh
 
