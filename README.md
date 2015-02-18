@@ -13,7 +13,7 @@ Order of scripts: in progress
 
 * convert_missingNonmissing_matrix_to_plink.sh
 
-		turns NA/non NA into 0-1 for plink use
+		turns NA/non NA into 0-1 for LDAK/plink use
 
 * make_kinships.sh
 
