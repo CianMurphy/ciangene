@@ -17,9 +17,9 @@ Order of scripts: in progress
 
 * make_kinships.sh
 
-		Computes variant weights, then computes kinship matrix based on depth and missing/non-missing
-		Three sets of weights: two kinship matrices and genotypes.
-		Why? Need to understand why we use weights from genotype matrix.
+		#Computes variant weights, then computes kinship matrix based on depth and missing/non-missing
+		#Three sets of weights: two kinship matrices and genotypes.
+		#Why? Need to understand why we use weights from genotype matrix.
 
 * make_phenotype_file.R
 
