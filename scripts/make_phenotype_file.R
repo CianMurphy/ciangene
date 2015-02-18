@@ -1,5 +1,5 @@
 release <- 'August2014'
-fam <- data.frame(read.table(paste0("/scratch2/vyp-scratch2/cian/UCLex_", release, "/Genotype_Matrix.fam", header=F, sep="\t"))[,1]) 
+fam <- data.frame(read.table(paste0("/scratch2/vyp-scratch2/cian/UCLex_", release, "/allChr_snpStats.fam", header=F, sep="\t"))[,1]) 
 
 names <- as.character(unlist(fam[,1]) ) 
 

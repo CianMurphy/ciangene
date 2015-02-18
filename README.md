@@ -25,11 +25,16 @@ Why? Need to understand why we use weights from genotype matrix.
 
 Creates a large matrix of phenotypes, grouped by names basically.
 
-* run_gene_tests.sh
-
-
-
+* LDAK/run_ldak_on_all_phenos.sh
+	gene tests
+* run_single_variant.sh
+	single variant tests - Fisher
+* run_fastLMM_on_all_phenotypes.sh 
+	single variant tests - FastLMM - Linear Regression / Mixed model with and without techKin
 
 * merge_gene_tests.sh
 
+* summarise.results.R
+
 * plot_results.R
+	* gene tests
