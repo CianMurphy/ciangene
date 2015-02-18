@@ -70,7 +70,7 @@ if [[ "$step1" == "yes" ]]; then
 $Rbin CMD BATCH --no-save --no-restore --release=${release} --rootODir=${rootODir} $firstStep cluster/R/step1.Rout
 
 " > $script
-
+    
     qsub $hold $script
     if [[ "$hold" == "" ]]; then hold="-hold_jid step1_cian"; else hold="$hold,step1_cian"; fi
 fi
@@ -91,7 +91,12 @@ if [[ "$step2" == "yes" ]]; then
 #$ -l h_rt=24:00:00
 #$ -cwd
 
-$Rbin CMD BATCH --no-save --no-restore --release=${release} --rootODir=${rootODir} $secondStep cluster/R/step2.Rout
+sh scripts/convert_genotype_to_missingNonMissing.sh $rootODir $release 
+
+sh make_kinships.sh $rootODir $release ### make kinships matrix
+
+
+
 
 " > $script
 

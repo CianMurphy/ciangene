@@ -8,7 +8,7 @@ getArgs <- function() {
   return (myargs)
 }
 
-release <- 'August2014'
+release <- 'February2015'
 
 myArgs <- getArgs()
 
@@ -23,6 +23,8 @@ dir <- paste0("/cluster/project8/vyp/exome_sequencing_multisamples/mainset/GATK/
 files <- list.files(dir, pattern ="_snpStats.RData", full.names=T) 
 files <- files[order(as.numeric(gsub(gsub(basename(files), pattern ="chr", replacement =""), pattern = "_.*", replacement = "") ) )]
 
+print(files)
+
 oDir <- paste0(rootODir, "/UCLex_", release)
 if(!file.exists(oDir)) dir.create(oDir)
 
@@ -35,7 +37,8 @@ oMap <- paste0(oDir, "/UCLex_", release, ".map")
 oBim <- paste0(oDir, "/UCLex_", release, ".bim")
 
 
-for(i in 1:length(files)){ 
+for(i in 1:length(files)){
+  message("Now loading file ", files[i])
   load(files[i])
   message(files[i])
 

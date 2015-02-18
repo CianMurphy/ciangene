@@ -10,8 +10,8 @@ rootODir=/scratch2/vyp-scratch2/ciangene
 
 
 step1=yes
-step2=no
+step2=yes
 
 
-sh ${pipeline} --step1 ${step1} --step2 ${step2} --rootODir ${rootODir} 
+sh ${pipeline} --step1 ${step1} --step2 ${step2} --rootODir ${rootODir} --release February2015
 
