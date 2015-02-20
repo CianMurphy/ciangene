@@ -48,8 +48,8 @@ for(i in 1:length(files)){
 
   oFile <- paste0(oDir, "/", gsub(basename(files[i]), pattern = ".RData", replacement = ""))
   #write.table(rownames(matrix.depth),  paste0(oDir, "/variants") , col.names=FALSE, row.names=FALSE, quote=FALSE, sep="\t", append = TRUE) 
-  if(i==1) write.SnpMatrix(t(matrix.calls.snpStats), full, col.names=TRUE, row.names=TRUE, quote=FALSE, sep="\t", append=FALSE)   ##this is where it becomes numbers
-  if(i>1)  write.SnpMatrix(t(matrix.calls.snpStats), full, col.names=FALSE, row.names=TRUE, quote=FALSE, sep="\t", append=TRUE) 
+  if(i==1) write.SnpMatrix(t(matrix.calls.snpStats), full, col.names=FALSE, row.names=FALSE, quote=FALSE, sep="\t", append=FALSE)   ##this is where it becomes numbers
+  if(i>1)  write.SnpMatrix(t(matrix.calls.snpStats), full, col.names=FALSE, row.names=FALSE, quote=FALSE, sep="\t", append=TRUE) 
   
   if(i==1) write.table(annotations.snpStats, annotations.out, col.names=TRUE, row.names=TRUE, quote=FALSE, sep="\t", append=FALSE) 
   if(i>1)  write.table(annotations.snpStats, annotations.out, col.names=FALSE, row.names=TRUE, quote=FALSE, sep="\t", append=TRUE) 
