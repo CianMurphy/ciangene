@@ -67,18 +67,6 @@ plotPvalues(scoreP, "Hardcastle" )
 
 
 
-hard <- summariseModels("Score_P")[[1]]
-
-hard$base_res_diff <- hard$no_kin_maf_0.00001_pheno_Hardcastle_missingness_0.9 -  hard$Tech_with_kin_maf_0.00001_pheno_Hardcastle_missingness_0.9_res
-hard <- hard[order(hard$base_res_diff), ] 
-
-
-hard.small <- subset(hard, hard$no_kin_maf_0.00001_pheno_Hardcastle_missingness_0.9 <= 0.000001) 
-hard.small <- hard.small[which(hard.small$base_res_diff < 0.01 ) ,]
-hard.small <- hard.small[order(abs(hard.small$base_res_diff)) ,]
-
-
-
 
 
 
