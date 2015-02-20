@@ -57,7 +57,7 @@ for(i in 1:length(files)){
   #pass <- which(annotations.snpStats$FILTER == "PASS")
   #write.table(rownames(annotations.snpStats)[pass], paste0(oDir, "/clean_variants"), col.names=FALSE , row.names=FALSE, quote=FALSE, sep="\t", append = TRUE)
 
-
+  matrix.depth <- matrix.depth[which(annotations.snpStats$FILTER == "PASS"),]
   # Make map file 
   map <- data.frame(matrix(nrow=nrow(matrix.depth), ncol = 4) ) 
   map[,1] <-  gsub(rownames(matrix.depth) ,pattern =  "_.*",  replacement = "" )
