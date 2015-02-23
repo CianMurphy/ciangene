@@ -1,0 +1,22 @@
+Pipeline: 
+
+New UCLex Release
+	Select external controls(ExCtrl) - 1/4 randomly chosen UCLex samples. To be used for QC only
+
+	Filter variants: 
+		All variants:	GATK PASS
+		Missingness:	Initial work removed variants that had low call rate in ExCtrl. 
+				Now variants with low case or ctrl call rate also removed. Requires kinships etc to be calculated by cohort. Onerous. 
+		Gene tests:	Rare (MAF <= X%), as defined by ExCtrl, 1KG and ESP6500. 
+				Functional or LOF
+		
+
+	Make MissingNonMissing Matrix
+		Convert to bed and calculate technical Kinship. 
+
+	Make Phenotype file. 
+
+	Case Control tests. 	
+					
+
+

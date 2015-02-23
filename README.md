@@ -11,6 +11,10 @@ Order of scripts: in progress
 		Same thing but with depth, prepares the kinshpi matrix computation
 		Takes the list of clean variants and outputs the filtered result
 
+* variant_filtering
+		
+		Need to incorporate the variant filtering. ie. high call rate in cases and controls. functional variants for gene tests. 
+
 * convert_missingNonmissing_matrix_to_plink.sh
 
 		turns NA/non NA into 0-1 for LDAK/plink use
