@@ -15,7 +15,7 @@ if ('release' %in% names(myArgs))  release <- myArgs[[ "release" ]]
 #######################################
 
 
-oDir <- paste0(rootODir, "/UCLex_", release, "/")
+#oDir <- paste0(rootODir, "/UCLex_", release, "/")
 oDir <- "/scratch2/vyp-scratch2/cian/UCLex_February2015/" # temp, until integrated into pipeline
 
 extCtrl.var <- read.table( paste0(oDir, "Ext_ctrl_variant_summary") , header=T) 
@@ -30,7 +30,7 @@ percent.removed <- paste0("(", round(( nrow(extCtrl.var) - nrow(clean.variants))
 message(paste(nrow(extCtrl.var) - nrow(clean.variants) , percent.removed, "variants are removed because of call rate") ) 
 write.table(clean.variants[,1], file = paste0(oDir, "Clean_variants"), col.names=F, row.names=F, quote=F, sep="\t") 
 
-anno <- read.table(file = paste0(oDir, "annotations.snpStat"), header=T) 
+anno <- read.csv(file = paste0(oDir, "annotations.snpStat"), header=T, sep="\t") 
 func <-  c("nonsynonymous SNV", "stopgain SNV", "nonframeshift insertion", "nonframeshift deletion", "frameshift deletion", "frameshift substitution", "frameshift insertion",  "nonframeshift substitution", "stoploss SNV")
 lof <-  c("frameshift deletion", "frameshift substitution", "frameshift insertion",  "stoploss SNV")
 funky <- annotations$clean.signature[annotations$ExonicFunc %in% unlist(func)) ] 
