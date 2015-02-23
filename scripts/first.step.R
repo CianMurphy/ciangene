@@ -24,7 +24,7 @@ files <- files[order(as.numeric(gsub(gsub(basename(files), pattern ="chr", repla
 
 print(files)
 
-oDir <- paste0(rootODir, "/UCLex_", release)
+oDir <- paste0(rootODir, "/UCLex_", release, "/")
 if(!file.exists(oDir)) dir.create(oDir)
 
 full <- paste0(oDir, "/allChr_snpStats.sp") ## added '.sp' suffix
@@ -49,16 +49,17 @@ for(i in 1:length(files)){
 	{ 
 	samples <- rownames(matrix.calls.snpStats)
 	ext.ctrls <- sample(length(samples), length(samples) * percent.ext.ctrls) 
+	write.table(rownames(matrix.calls.snpStats[ext.ctrls,]) , file = paste0(oDir, "ext_ctrl_samples"), col.names=F, row.names=F, quote=F, sep="\t") 
 	}
 	ext.samples <- matrix.calls.snpStats[ext.ctrls ,]
 	ext.samples.sum <- col.summary(ext.samples) 
 	ext.samples.names <- data.frame(rownames(ext.samples) , row.summary(ext.samples) ) 
 
-	if(i==1) write.table(ext.samples.sum, file = paste0(oDir, "_ext_ctrl_variant_summamy") , col.names=T, row.names=F, quote=F, sep="\t", append=F) 
-	if(i==1) write.table(ext.samples.names, file = paste0(oDir, "_ext_ctrl_sample_summamy") , col.names=T, row.names=F, quote=F, sep="\t", append=F) 
+	if(i==1) write.table(ext.samples.sum, file = paste0(oDir, "_ext_ctrl_variant_summary") , col.names=T, row.names=F, quote=F, sep="\t", append=F) 
+	if(i==1) write.table(ext.samples.names, file = paste0(oDir, "_ext_ctrl_sample_summary") , col.names=T, row.names=F, quote=F, sep="\t", append=F) 
 	
-	if(i>1) write.table(ext.samples.sum, file = paste0(oDir, "_ext_ctrl_variant_summamy") , col.names=F, row.names=F, quote=F, sep="\t", append=T) 
-	if(i>1) write.table(ext.samples.names, file = paste0(oDir, "_ext_ctrl_sample_summamy") , col.names=F, row.names=F, quote=F, sep="\t", append=T) 
+	if(i>1) write.table(ext.samples.sum, file = paste0(oDir, "_ext_ctrl_variant_summary") , col.names=F, row.names=F, quote=F, sep="\t", append=T) 
+	if(i>1) write.table(ext.samples.names, file = paste0(oDir, "_ext_ctrl_sample_summary") , col.names=F, row.names=F, quote=F, sep="\t", append=T) 
 
 
   oFile <- paste0(oDir, "/", gsub(basename(files[i]), pattern = ".RData", replacement = ""))

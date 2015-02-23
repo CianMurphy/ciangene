@@ -1,4 +1,4 @@
 git add -u
-git commit -m "Updating step1, added extCtrl bit to firstStep"
+git commit -m "Updating makePheno"
 git push -u origin master
 

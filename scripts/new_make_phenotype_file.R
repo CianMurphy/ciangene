@@ -15,12 +15,11 @@ myArgs <- getArgs()
 if ('rootODir' %in% names(myArgs))  rootODir <- myArgs[[ "rootODir" ]]
 if ('release' %in% names(myArgs))  release <- myArgs[[ "release" ]]
 
-iFile <- paste0("/cluster/project8/vyp/exome_sequencing_multisamples/mainset/GATK/mainset_", 
-			release, "/mainset_", release, 
-			"_snpStats/chr21_snpStats.RData")
-
+iFile <- paste0("/cluster/project8/vyp/exome_sequencing_multisamples/mainset/GATK/mainset_", release, "/mainset_", release, "_snpStats/chr21_snpStats.RData")
 load(iFile)
 
+
+oDir <- "/scratch2/vyp-scratch2/cian/UCLex_February2015/"
 
 groups <- gsub(colnames(matrix.depth), pattern = "_.*",replacement = "")
 groups.unique <- unique(groups)
@@ -42,7 +41,6 @@ if(use.fixPhenoGroupings)
 		{
 			hit <- grep(cohorts.to.fix[i], inGroups)
 			inGroups[hit] <- cohorts.to.fix[i]
-
 		}
 
 		groups.unique <- unique(inGroups)
@@ -69,12 +67,21 @@ pheno[,1:2] <- colnames(matrix.depth)
 
 for(i in 1:nb.groups)
 {
-	pheno[, i + 2] <- 0 
+	pheno[, i + 2] <- 1 
 	hits <- grep(groups.unique[i], groups )
-
-
-
+	pheno[hits,i+2] <- 2
 }
 
+
+## remove pheno for extCtrls
+extCtrls <- read.table(paste0(oDir, "ext_ctrl_samples"), header=F) 
+ex.ctrl.pheno <- pheno[,1] %in% unlist(extCtrls) 
+pheno[ex.ctrl.pheno,3:ncol(pheno)] <- '-9'
+write.table(pheno, file = paste0(oDir, "Phenotypes"), col.names=F, row.names=F, quote=F, sep="\t") 
+## summarise case cohort breakdowns
+cohort.summary <- data.frame(do.call(rbind, lapply(pheno[,3:ncol(pheno)], table) )) 
+cohort.summary$Cohort <- rownames(cohort.summary) 
+colnames(cohort.summary) <- c("Nb.Ctrls", "Nb.cases", "Nb.ext.Ctrls", "Cohort") 
+write.table(cohort.summary, file = paste0(oDir, "cohort.summary"), col.names=T, row.names=F, quote=F, sep="\t") 
 
 
