@@ -74,7 +74,7 @@ for(i in 1:nb.groups)
 
 
 ## remove pheno for extCtrls
-extCtrls <- read.table(paste0(oDir, "ext_ctrl_samples"), header=F) 
+extCtrls <- read.table(paste0(oDir, "ext_ctrl_samples"), header=F) ## made in first.step.R
 ex.ctrl.pheno <- pheno[,1] %in% unlist(extCtrls) 
 pheno[ex.ctrl.pheno,3:ncol(pheno)] <- '-9'
 write.table(pheno, file = paste0(oDir, "Phenotypes"), col.names=F, row.names=F, quote=F, sep="\t") 
