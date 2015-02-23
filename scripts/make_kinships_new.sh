@@ -24,8 +24,9 @@ techOut=$bDir"/Technical_Kinship"
 minMaf=0.000001			## SNP with MAF >= this are retained
 minVar=0.001			## SNP with variance >= this are retained? 
 ## maxTime=500			## Nb minutes calculation allowed run for. 
+hwe=0.0001
 
-ldak --calc-kins-direct $techOut --bfile $missingNonMissing --ignore-weights YES --kinship-raw YES --minmaf $minMaf --minvar  $minVar
+ldak --calc-kins-direct $techOut --bfile $missingNonMissing --ignore-weights YES --kinship-raw YES --minmaf $minMaf --minvar  $minVar --hwe $hwe
 
 
 

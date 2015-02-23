@@ -1,4 +1,4 @@
 git add -u
-git commit -m "Pipeline Overview- readme accessory"
+git commit -m "Updating step1"
 git push -u origin master
 

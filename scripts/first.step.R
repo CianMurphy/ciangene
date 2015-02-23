@@ -1,6 +1,3 @@
-library(snpStats)
-
-
 getArgs <- function() {
   myargs.list <- strsplit(grep("=",gsub("--","",commandArgs()),value=TRUE),"=")
   myargs <- lapply(myargs.list,function(x) x[2] )
@@ -9,14 +6,16 @@ getArgs <- function() {
 }
 
 release <- 'February2015'
-percent.ext.ctrls <- .10
 
 myArgs <- getArgs()
 
 if ('rootODir' %in% names(myArgs))  rootODir <- myArgs[[ "rootODir" ]]
 if ('release' %in% names(myArgs))  release <- myArgs[[ "release" ]]
 
-#######################
+######################
+library(snpStats)
+percent.ext.ctrls <- .10
+
 
 dir <- paste0("/cluster/project8/vyp/exome_sequencing_multisamples/mainset/GATK/mainset_", release , "/mainset_", release, "_snpStats/")
 files <- list.files(dir, pattern ="_snpStats.RData", full.names=T) 
@@ -39,7 +38,6 @@ oBim <- paste0(oDir, "/UCLex_", release, ".bim")
 for(i in 1:length(files)){
   message("Now loading file ", files[i])
   load(files[i])
-  message(files[i])
 
   # Extract clean variants. 
   matrix.calls.snpStats <- matrix.calls.snpStats[,which(annotations.snpStats$FILTER == "PASS")]
@@ -52,29 +50,26 @@ for(i in 1:length(files)){
 	write.table(rownames(matrix.calls.snpStats[ext.ctrls,]) , file = paste0(oDir, "ext_ctrl_samples"), col.names=F, row.names=F, quote=F, sep="\t") 
 	}
 	ext.samples <- matrix.calls.snpStats[ext.ctrls ,]
-	ext.samples.sum <- col.summary(ext.samples) 
+	ext.samples.sum <- data.frame(colnames(matrix.calls.snpStats), col.summary(ext.samples) ) 
 	ext.samples.names <- data.frame(rownames(ext.samples) , row.summary(ext.samples) ) 
 
-	if(i==1) write.table(ext.samples.sum, file = paste0(oDir, "_ext_ctrl_variant_summary") , col.names=T, row.names=F, quote=F, sep="\t", append=F) 
-	if(i==1) write.table(ext.samples.names, file = paste0(oDir, "_ext_ctrl_sample_summary") , col.names=T, row.names=F, quote=F, sep="\t", append=F) 
+	if(i==1) write.table(ext.samples.sum, file = paste0(oDir, "Ext_ctrl_variant_summary") , col.names=T, row.names=F, quote=F, sep="\t", append=F) 
+	if(i==1) write.table(ext.samples.names, file = paste0(oDir, "Ext_ctrl_sample_summary") , col.names=T, row.names=F, quote=F, sep="\t", append=F) 
 	
-	if(i>1) write.table(ext.samples.sum, file = paste0(oDir, "_ext_ctrl_variant_summary") , col.names=F, row.names=F, quote=F, sep="\t", append=T) 
-	if(i>1) write.table(ext.samples.names, file = paste0(oDir, "_ext_ctrl_sample_summary") , col.names=F, row.names=F, quote=F, sep="\t", append=T) 
+	if(i>1) write.table(ext.samples.sum, file = paste0(oDir, "Ext_ctrl_variant_summary") , col.names=F, row.names=F, quote=F, sep="\t", append=T) 
+	if(i>1) write.table(ext.samples.names, file = paste0(oDir, "Ext_ctrl_sample_summary") , col.names=F, row.names=F, quote=F, sep="\t", append=T) 
 
 
   oFile <- paste0(oDir, "/", gsub(basename(files[i]), pattern = ".RData", replacement = ""))
-  #write.table(rownames(matrix.depth),  paste0(oDir, "/variants") , col.names=FALSE, row.names=FALSE, quote=FALSE, sep="\t", append = TRUE) 
   if(i==1) write.SnpMatrix(t(matrix.calls.snpStats), full, col.names=FALSE, row.names=FALSE, quote=FALSE, sep="\t", append=FALSE)   ##this is where it becomes numbers
   if(i>1)  write.SnpMatrix(t(matrix.calls.snpStats), full, col.names=FALSE, row.names=FALSE, quote=FALSE, sep="\t", append=TRUE) 
   
   if(i==1) write.table(annotations.snpStats, annotations.out, col.names=TRUE, row.names=TRUE, quote=FALSE, sep="\t", append=FALSE) 
   if(i>1)  write.table(annotations.snpStats, annotations.out, col.names=FALSE, row.names=TRUE, quote=FALSE, sep="\t", append=TRUE) 
   
-  #pass <- which(annotations.snpStats$FILTER == "PASS")
-  #write.table(rownames(annotations.snpStats)[pass], paste0(oDir, "/clean_variants"), col.names=FALSE , row.names=FALSE, quote=FALSE, sep="\t", append = TRUE)
-
-  matrix.depth <- matrix.depth[which(annotations.snpStats$FILTER == "PASS"),]
   # Make map file 
+  matrix.depth <- matrix.depth[which(annotations.snpStats$FILTER == "PASS"),]
+
   map <- data.frame(matrix(nrow=nrow(matrix.depth), ncol = 4) ) 
   map[,1] <-  gsub(rownames(matrix.depth) ,pattern =  "_.*",  replacement = "" )
   map[,4] <-  gsub(sub(rownames(matrix.depth) ,pattern =  "[0-9]{1,2}_",  replacement = "" ), pattern = "_.*", replacement = "")
