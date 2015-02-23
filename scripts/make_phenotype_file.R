@@ -1,5 +1,5 @@
-release <- 'August2014'
-fam <- data.frame(read.table(paste0("/scratch2/vyp-scratch2/cian/UCLex_", release, "/allChr_snpStats.fam", header=F, sep="\t"))[,1]) 
+release <- 'February2015'
+fam <- data.frame(read.table(paste0("/scratch2/vyp-scratch2/ciangene/UCLex_", release, "/UCLex_", release, ".fam") , header=F, sep="\t")[,1]) 
 
 names <- as.character(unlist(fam[,1]) ) 
 
@@ -20,7 +20,6 @@ for(i in 1:length(fix))
 
 groups <- gsub(names, pattern = "_.*", replacement = "") 
 groups.uniq <- unique(gsub(names, pattern = "_.*", replacement = "") )
-
 
 
 nb.groups <- length(groups.uniq)

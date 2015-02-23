@@ -9,6 +9,7 @@ getArgs <- function() {
 }
 
 release <- 'February2015'
+percent.ext.ctrls <- .10
 
 myArgs <- getArgs()
 
@@ -16,8 +17,6 @@ if ('rootODir' %in% names(myArgs))  rootODir <- myArgs[[ "rootODir" ]]
 if ('release' %in% names(myArgs))  release <- myArgs[[ "release" ]]
 
 #######################
-
-
 
 dir <- paste0("/cluster/project8/vyp/exome_sequencing_multisamples/mainset/GATK/mainset_", release , "/mainset_", release, "_snpStats/")
 files <- list.files(dir, pattern ="_snpStats.RData", full.names=T) 
@@ -45,6 +44,18 @@ for(i in 1:length(files)){
   # Extract clean variants. 
   matrix.calls.snpStats <- matrix.calls.snpStats[,which(annotations.snpStats$FILTER == "PASS")]
   annotations.snpStats <- subset(annotations.snpStats, annotations.snpStats$FILTER == "PASS")
+
+	if(i==1) # ext.ctrls
+	{ 
+	samples <- rownames(matrix.calls.snpStats) 
+	ext.samples <- matrix.calls.snpStats[sample(length(samples), length(samples) * percent.ext.ctrls) ,]
+	ext.samples.sum <- col.summary(ext.samples) 
+	ext.samples.names <- data.frame(rownames(ext.samples) , row.summary(ext.samples) ) 
+
+	write.table(ext.samples.sum, file = paste0(oDir, "_ext_ctrl_variant_summamy") , col.names=T, row.names=F, quote=F, sep="\t") 
+	write.table(ext.samples.names, file = paste0(oDir, "_ext_ctrl_sample_summamy") , col.names=T, row.names=F, quote=F, sep="\t") 
+	}
+
 
   oFile <- paste0(oDir, "/", gsub(basename(files[i]), pattern = ".RData", replacement = ""))
   #write.table(rownames(matrix.depth),  paste0(oDir, "/variants") , col.names=FALSE, row.names=FALSE, quote=FALSE, sep="\t", append = TRUE) 
@@ -94,5 +105,8 @@ write.table(fam, paste0(oDir, "/UCLex_", release, ".fam") , col.names=FALSE, row
 bim <- read.table(oBim, header=FALSE, sep="\t") 
 bim <- bim[with(bim, order(V1, V4)), ]
 write.table(bim, oBim, col.names=FALSE, row.names=FALSE, quote=FALSE ,sep="\t") 
+
+
+
 
 
