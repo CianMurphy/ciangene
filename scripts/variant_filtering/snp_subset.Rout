@@ -1,0 +1,91 @@
+
+R version 3.1.0 (2014-04-10) -- "Spring Dance"
+Copyright (C) 2014 The R Foundation for Statistical Computing
+Platform: x86_64-unknown-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> library(snpStats)
+Loading required package: survival
+Loading required package: splines
+Loading required package: Matrix
+> 
+> 
+> missingness.threshold <- 99 # snps need to be present in missingness.threshold % of cases and controls
+> 
+> 
+> release <- 'October2014'
+> dir <- paste0("/cluster/project8/vyp/exome_sequencing_multisamples/mainset/GATK/mainset_", release , "/mainset_", release, "_by_chr")
+> files <- list.files(dir, pattern ="_snpStats.RData", full.names=T) 
+> files <- files[order(as.numeric(gsub(gsub(basename(files), pattern ="chr", replacement =""), pattern = "_.*", replacement = "") ) )]
+Warning message:
+In order(as.numeric(gsub(gsub(basename(files), pattern = "chr",  :
+  NAs introduced by coercion
+> chr <- gsub(gsub(files, pattern = ".*/chr", replacement = "" ) , pattern = "_snpStats.RData", replacement = "") 
+> oDir <- paste0("/scratch2/vyp-scratch2/cian/UCLex_October2014/Sanity_Check/SNP_filtering/")
+> if(!file.exists(oDir)) dir.create(oDir)
+> 
+> cases <- "Hardcastle"
+> 
+> 
+> for(i in 1:length(files))
++ { 
++ 	load(files[i])
++ 	message(files[i])
++ 
++ 	case.snps <- matrix.calls.snpStats[ grep(cases, rownames(matrix.calls.snpStats)) , ] 
++ 	ctrl.snps <- matrix.calls.snpStats[ -grep(cases, rownames(matrix.calls.snpStats)) , ] 
++ 
++ 	case.var.summary <- col.summary(case.snps) 
++ 	ctrl.var.summary <- col.summary(ctrl.snps) 
++ 
++ 	caseOFile <- paste0(oDir, cases, "_case_snp_summary")
++ 	if(i==1) write.table(case.var.summary, file = caseOFile, col.names=T, row.names=T, quote=F, sep="\t", append = F) 
++ 	if(i>1) write.table(case.var.summary, file = caseOFile, col.names=F, row.names=T, quote=F, sep="\t", append = T) 
++ 
++ 	ctrlOFile <-  paste0(oDir, cases, "_ctrl_snp_summary")
++ 	if(i==1) write.table(ctrl.var.summary, file = ctrlOFile, col.names=T, row.names=T, quote=F, sep="\t", append = F) 
++ 	if(i>1) write.table(ctrl.var.summary, file = ctrlOFile, col.names=F, row.names=T, quote=F, sep="\t", append = T)
++ 
++ }
+/cluster/project8/vyp/exome_sequencing_multisamples/mainset/GATK/mainset_October2014/mainset_October2014_by_chr/chr1_snpStats.RData
+/cluster/project8/vyp/exome_sequencing_multisamples/mainset/GATK/mainset_October2014/mainset_October2014_by_chr/chr2_snpStats.RData
+/cluster/project8/vyp/exome_sequencing_multisamples/mainset/GATK/mainset_October2014/mainset_October2014_by_chr/chr3_snpStats.RData
+/cluster/project8/vyp/exome_sequencing_multisamples/mainset/GATK/mainset_October2014/mainset_October2014_by_chr/chr4_snpStats.RData
+/cluster/project8/vyp/exome_sequencing_multisamples/mainset/GATK/mainset_October2014/mainset_October2014_by_chr/chr5_snpStats.RData
+/cluster/project8/vyp/exome_sequencing_multisamples/mainset/GATK/mainset_October2014/mainset_October2014_by_chr/chr6_snpStats.RData
+/cluster/project8/vyp/exome_sequencing_multisamples/mainset/GATK/mainset_October2014/mainset_October2014_by_chr/chr7_snpStats.RData
+/cluster/project8/vyp/exome_sequencing_multisamples/mainset/GATK/mainset_October2014/mainset_October2014_by_chr/chr8_snpStats.RData
+/cluster/project8/vyp/exome_sequencing_multisamples/mainset/GATK/mainset_October2014/mainset_October2014_by_chr/chr9_snpStats.RData
+/cluster/project8/vyp/exome_sequencing_multisamples/mainset/GATK/mainset_October2014/mainset_October2014_by_chr/chr10_snpStats.RData
+/cluster/project8/vyp/exome_sequencing_multisamples/mainset/GATK/mainset_October2014/mainset_October2014_by_chr/chr11_snpStats.RData
+/cluster/project8/vyp/exome_sequencing_multisamples/mainset/GATK/mainset_October2014/mainset_October2014_by_chr/chr12_snpStats.RData
+/cluster/project8/vyp/exome_sequencing_multisamples/mainset/GATK/mainset_October2014/mainset_October2014_by_chr/chr13_snpStats.RData
+/cluster/project8/vyp/exome_sequencing_multisamples/mainset/GATK/mainset_October2014/mainset_October2014_by_chr/chr14_snpStats.RData
+/cluster/project8/vyp/exome_sequencing_multisamples/mainset/GATK/mainset_October2014/mainset_October2014_by_chr/chr15_snpStats.RData
+/cluster/project8/vyp/exome_sequencing_multisamples/mainset/GATK/mainset_October2014/mainset_October2014_by_chr/chr16_snpStats.RData
+/cluster/project8/vyp/exome_sequencing_multisamples/mainset/GATK/mainset_October2014/mainset_October2014_by_chr/chr17_snpStats.RData
+/cluster/project8/vyp/exome_sequencing_multisamples/mainset/GATK/mainset_October2014/mainset_October2014_by_chr/chr18_snpStats.RData
+/cluster/project8/vyp/exome_sequencing_multisamples/mainset/GATK/mainset_October2014/mainset_October2014_by_chr/chr19_snpStats.RData
+/cluster/project8/vyp/exome_sequencing_multisamples/mainset/GATK/mainset_October2014/mainset_October2014_by_chr/chr20_snpStats.RData
+/cluster/project8/vyp/exome_sequencing_multisamples/mainset/GATK/mainset_October2014/mainset_October2014_by_chr/chr21_snpStats.RData
+/cluster/project8/vyp/exome_sequencing_multisamples/mainset/GATK/mainset_October2014/mainset_October2014_by_chr/chr22_snpStats.RData
+/cluster/project8/vyp/exome_sequencing_multisamples/mainset/GATK/mainset_October2014/mainset_October2014_by_chr/chrX_snpStats.RData
+There were 23 warnings (use warnings() to see them)
+> 
+> 
+> exit
+Error: object 'exit' not found
+Execution halted
