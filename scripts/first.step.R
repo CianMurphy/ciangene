@@ -47,14 +47,18 @@ for(i in 1:length(files)){
 
 	if(i==1) # ext.ctrls
 	{ 
-	samples <- rownames(matrix.calls.snpStats) 
-	ext.samples <- matrix.calls.snpStats[sample(length(samples), length(samples) * percent.ext.ctrls) ,]
+	samples <- rownames(matrix.calls.snpStats)
+	ext.ctrls <- sample(length(samples), length(samples) * percent.ext.ctrls) 
+	}
+	ext.samples <- matrix.calls.snpStats[ext.ctrls ,]
 	ext.samples.sum <- col.summary(ext.samples) 
 	ext.samples.names <- data.frame(rownames(ext.samples) , row.summary(ext.samples) ) 
 
-	write.table(ext.samples.sum, file = paste0(oDir, "_ext_ctrl_variant_summamy") , col.names=T, row.names=F, quote=F, sep="\t") 
-	write.table(ext.samples.names, file = paste0(oDir, "_ext_ctrl_sample_summamy") , col.names=T, row.names=F, quote=F, sep="\t") 
-	}
+	if(i==1) write.table(ext.samples.sum, file = paste0(oDir, "_ext_ctrl_variant_summamy") , col.names=T, row.names=F, quote=F, sep="\t", append=F) 
+	if(i==1) write.table(ext.samples.names, file = paste0(oDir, "_ext_ctrl_sample_summamy") , col.names=T, row.names=F, quote=F, sep="\t", append=F) 
+	
+	if(i==1) write.table(ext.samples.sum, file = paste0(oDir, "_ext_ctrl_variant_summamy") , col.names=F, row.names=F, quote=F, sep="\t", append=T) 
+	if(i==1) write.table(ext.samples.names, file = paste0(oDir, "_ext_ctrl_sample_summamy") , col.names=F, row.names=F, quote=F, sep="\t", append=T) 
 
 
   oFile <- paste0(oDir, "/", gsub(basename(files[i]), pattern = ".RData", replacement = ""))
