@@ -23,21 +23,21 @@ tail -n +2 "tmp" > $Names
 rm tmp
 nbGroups=$(wc -l $groups | awk {'print $1}') 
 
-oDir=$bdir"KinshipDecomposition/"
-if [ ! -e $oDir ]; then mkdir $obDir; fi
+oDir=$bDir"KinshipDecomposition/"
+if [ ! -e $oDir ]; then mkdir $oDir; fi
 
 for pheno in $(seq 1 $nbGroups)
 do
-	batch=$(sed -n $pheno'p' $Names)
-	$ldak --reml $oDir$batch --grm $kinship --bfile $data --pheno $phenotypes --mpheno $pheno
+	batch=$(sed -n $pheno'p' $Names); echo $batch
+	$ldak --reml $oDir$batch --grm $kinship  --pheno $phenotypes --mpheno $pheno # --bfile $data
 	
-	if [ $pheno=1 ] 
+	if (( $pheno==1 ))  
 	then
 		awk '{ print $1, $1, $5}' $oDir$batch".indi.res" > $bDir".NewPhenotypeFiletmp"
 	fi 
-	if [ $pheno>1 ] 
+	if (( $pheno>1 )) 
 	then
-		paste $bDir".NewPhenotypeFiletmp" <(awk '{print $NF}' $oDir$batch".indi.res")
+		cut -f5 $oDir$batch'.indi.res' | paste $bDir".NewPhenotypeFiletmp" - > $bDir".NewPhenotypeFiletmp"
 	fi 
 
 done

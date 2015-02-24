@@ -20,7 +20,7 @@ missingNonMissing=$bDir"Matrix.calls.Missing.NonMissing"
 
 echo "Working with genotype matrix $GenotypeMatrix"
 
-#sed 's/0/2/g' $GenotypeMatrix".sp" | sed 's/1/2/g' | sed 's/NA/1/g' > $missingNonMissing".sp"
+sed 's/0/2/g' $GenotypeMatrix".sp" | sed 's/1/2/g' | sed 's/NA/1/g' > $missingNonMissing".sp"
 
 ln -s $bDir"UCLex_${release}.bim" $GenotypeMatrix".bim"
 ln -s $bDir"UCLex_${release}.fam" $GenotypeMatrix".fam"
@@ -30,7 +30,7 @@ ln -s $bDir"UCLex_${release}.fam" $missingNonMissing".fam"
 
 
 $ldak --make-bed $GenotypeMatrix --sp $GenotypeMatrix
-$ldak --make-bed $missingNonMissing --sp $missingNonMissing".sp"
+$ldak --make-bed $missingNonMissing --sp $missingNonMissing
 
 
 ## Some basic parameters: 
@@ -41,7 +41,7 @@ minVar=0.001			## SNP with variance >= this are retained?
 ## maxTime=500			## Nb minutes calculation allowed run for. 
 hwe=0.0001
 
-$ldak --calc-kins-direct $bDir"TechKin" --bfile $missingNonMissing --ignore-weights YES --kinship-raw YES --minmaf $minMaf --maxmaf $maxMaf --minvar  $minVar --hwe $hwe
+$ldak --calc-kins-direct $bDir"TechKin" --bfile $missingNonMissing"_out" --ignore-weights YES --kinship-raw YES --minmaf $minMaf --maxmaf $maxMaf --minvar  $minVar ## --extract 
 $ldak --pca $bDir"TechPCs" --grm $bDir"TechKin"
 
 
