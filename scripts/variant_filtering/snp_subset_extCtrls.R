@@ -30,11 +30,15 @@ percent.removed <- paste0("(", round(( nrow(extCtrl.var) - nrow(clean.variants))
 message(paste(nrow(extCtrl.var) - nrow(clean.variants) , percent.removed, "variants are removed because of call rate") ) 
 write.table(clean.variants[,1], file = paste0(oDir, "Clean_variants"), col.names=F, row.names=F, quote=F, sep="\t") 
 
-anno <- read.csv(file = paste0(oDir, "annotations.snpStat"), header=T, sep="\t") 
+annotations <- read.csv(file = paste0(oDir, "annotations.snpStat"), header=T, sep="\t") 
 func <-  c("nonsynonymous SNV", "stopgain SNV", "nonframeshift insertion", "nonframeshift deletion", "frameshift deletion", "frameshift substitution", "frameshift insertion",  "nonframeshift substitution", "stoploss SNV")
 lof <-  c("frameshift deletion", "frameshift substitution", "frameshift insertion",  "stoploss SNV")
-funky <- annotations$clean.signature[annotations$ExonicFunc %in% unlist(func)) ] 
+
+funky <- annotations$clean.signature[annotations$ExonicFunc %in% unlist(func) ] 
 rare <- subset(annotations$clean.signature, annotations$ESP6500si_ALL >= min.maf & annotations$ESP6500si_ALL <= max.maf & annotations$X1000g2012apr_ALL >= min.maf & annotations$X1000g2012apr_ALL <= max.maf ) 
+
+save(funky, rare, clean.variants, file = "tmp.RData") 
+
 funky.rare <- funky %in% rare
 clean.variants.rare <- subset(extCtrl.var[,1] , extCtrl.var$Call.rate >= missingness.threshold & extCtrl.var$MAF >= min.maf & extCtrl.var$MAF >= max.maf) 
 
