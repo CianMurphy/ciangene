@@ -33,13 +33,28 @@ do
 	
 	if [ $pheno=1 ] 
 	then
-		awk '{ print $1, $1, $5}' $batch".indi.res" > $bDir"NewPhenotypeFile"
+		awk '{ print $1, $1, $5}' $batch".indi.res" > $bDir".NewPhenotypeFiletmp"
 	fi 
 	if [ $pheno>1 ] 
 	then
-		paste -d' ' $bDir"NewPhenotypeFile" <(awk '{print $NF}' $batch".indi.res")
+		paste -d' ' $bDir".NewPhenotypeFiletmp" <(awk '{print $NF}' $batch".indi.res")
 	fi 
 
 done
 
+tail -n +2 $bDir".NewPhenotypeFile" > $bDir"NewPhenotypeFile"
+
+echo '
+	files <- list.files(pattern = "res")
+	pdf("Residuals.pdf") 
+	par(mfrow=c(2,2))  
+	lapply(files, function(x)) 
+	{
+		name <- gsub(x, pattern = "\\.indi\\.res", replacement = "") 
+		file <- read.table(x, header=T ) 
+		with(file, plot(Phenotype, Residual), xlab = name)
+	}
+	dev.off() 
+	' > plot.residuals.R
+R CMD BATCH --no-save --no-restore plot.residuals.R
 

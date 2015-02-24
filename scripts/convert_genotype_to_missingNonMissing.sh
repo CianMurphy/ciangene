@@ -15,8 +15,8 @@ bDir=${rootODir}/UCLex_${release}/
 ## if [ ! -e ${bDir}/read_depth ]; then mkdir ${bDir}/read_depth; fi ## Not needed as I dont use read depth info right now and bim and fam are now made in first.step.R
 
 ## genotype to missing non missing
-GenotypeMatrix=$bDir"/allChr_snpStats" ## fixed file name. 
-missingNonMissing=$bDir"/Matrix.calls.Missing.NonMissing"
+GenotypeMatrix=$bDir"allChr_snpStats" ## fixed file name. 
+missingNonMissing=$bDir"Matrix.calls.Missing.NonMissing"
 
 echo "Working with genotype matrix $GenotypeMatrix"
 

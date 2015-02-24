@@ -37,9 +37,8 @@ lof <-  c("frameshift deletion", "frameshift substitution", "frameshift insertio
 funky <- annotations$clean.signature[annotations$ExonicFunc %in% unlist(func) ] 
 rare <- subset(annotations$clean.signature, annotations$ESP6500si_ALL >= min.maf & annotations$ESP6500si_ALL <= max.maf & annotations$X1000g2012apr_ALL >= min.maf & annotations$X1000g2012apr_ALL <= max.maf ) 
 
-save(funky, rare, clean.variants, file = "tmp.RData") 
 
-funky.rare <- funky %in% rare
+funky.rare <- funky[funky %in% rare]
 clean.variants.rare <- subset(extCtrl.var[,1] , extCtrl.var$Call.rate >= missingness.threshold & extCtrl.var$MAF >= min.maf & extCtrl.var$MAF >= max.maf) 
 
 clean.funky <- clean.variants.rare %in% funky.rare
