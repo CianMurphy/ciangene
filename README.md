@@ -29,6 +29,10 @@ Order of scripts: in progress
 
 		Creates a large matrix of phenotypes, grouped by names basically.
 
+* check_tk_residuals.sh
+		
+		Checks how much variance TK explains for all phenos (A). Creates new pheno files, using residuals from (A) as phenos. 
+
 * LDAK/run_ldak_on_all_phenos.sh
 
 		gene tests - all UCLex phenos, with and without kinship

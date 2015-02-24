@@ -11,17 +11,35 @@ rootODir=${1-$rootODir}
 release=${2-$release}
 
 bDir=${rootODir}/UCLex_${release}/
-
-
-missingNonMissing=$bDir"/Matrix.calls.Missing.NonMissing.sp"
-
-
-ldak=/cluster/project8/vyp/cian/support/ldak/ldak
 genes=/SAN/biomed/biomed14/vyp-scratch/cian/LDAK/genesldak_ref.txt
-kinship=/scratch2/vyp-scratch2/cian/UCLex_${release}/TechKin_filt
-data=
-phenotypes=
+kinship=$bDir"TechKin"
+data=$bDir"allChr_snpStats"
+phenotypes=$bDir"Phenotypes"
+groups=$bDir"cohort.summary"
 
-nbGroups=$(wc -l $phenotypes) 
+Names=$bDir"GroupNames"
+awk '{print $4}' $groups > tmp
+tail -n +2 "tmp" > $Names
+rm tmp
+nbGroups=$(wc -l $groups | awk {'print $1}') 
 
-ldak --reml kin --grm $kinship --sp $data --pheno $phenotypes
+oDir=$bdir"KinshipDecomposition"
+if [ ! -e $oDir ]; then mkdir $obDir; fi
+
+for pheno in $(seq 1 $nbGroups)
+do
+	batch=$(sed -n $pheno'p' $Names)
+	$ldak --reml $batch --grm $kinship --bfile $data --pheno $phenotypes --mpheno $pheno
+	
+	if [ $pheno=1 ] 
+	then
+		awk '{ print $1, $1, $5}' $batch".indi.res" > $bDir"NewPhenotypeFile"
+	fi 
+	if [ $pheno>1 ] 
+	then
+		paste -d' ' $bDir"NewPhenotypeFile" <(awk '{print $NF}' $batch".indi.res")
+	fi 
+
+done
+
+
