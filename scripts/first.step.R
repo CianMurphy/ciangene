@@ -42,34 +42,30 @@ for(i in 1:length(files)){
   # Extract clean variants. 
   matrix.calls.snpStats <- matrix.calls.snpStats[,which(annotations.snpStats$FILTER == "PASS")]
   annotations.snpStats <- subset(annotations.snpStats, annotations.snpStats$FILTER == "PASS")
-
-	if(i==1) # ext.ctrls
-	{ 
-	samples <- rownames(matrix.calls.snpStats)
-	ext.ctrls <- sample(length(samples), length(samples) * percent.ext.ctrls) 
-	write.table(rownames(matrix.calls.snpStats[ext.ctrls,]) , file = paste0(oDir, "ext_ctrl_samples"), col.names=F, row.names=F, quote=F, sep="\t") 
-	}
-	ext.samples <- matrix.calls.snpStats[ext.ctrls ,]
-	ext.samples.sum <- data.frame(colnames(matrix.calls.snpStats), col.summary(ext.samples) ) 
-	ext.samples.names <- data.frame(rownames(ext.samples) , row.summary(ext.samples) ) 
-
-	if(i==1) write.table(ext.samples.sum, file = paste0(oDir, "Ext_ctrl_variant_summary") , col.names=T, row.names=F, quote=F, sep="\t", append=F) 
-	if(i==1) write.table(ext.samples.names, file = paste0(oDir, "Ext_ctrl_sample_summary") , col.names=T, row.names=F, quote=F, sep="\t", append=F) 
-	
-	if(i>1) write.table(ext.samples.sum, file = paste0(oDir, "Ext_ctrl_variant_summary") , col.names=F, row.names=F, quote=F, sep="\t", append=T) 
-	if(i>1) write.table(ext.samples.names, file = paste0(oDir, "Ext_ctrl_sample_summary") , col.names=F, row.names=F, quote=F, sep="\t", append=T) 
-
-
-  oFile <- paste0(oDir, "/", gsub(basename(files[i]), pattern = ".RData", replacement = ""))
-  if(i==1) write.SnpMatrix(t(matrix.calls.snpStats), full, col.names=FALSE, row.names=FALSE, quote=FALSE, sep="\t", append=FALSE)   ##this is where it becomes numbers
-  if(i>1)  write.SnpMatrix(t(matrix.calls.snpStats), full, col.names=FALSE, row.names=FALSE, quote=FALSE, sep="\t", append=TRUE) 
-  
-  if(i==1) write.table(annotations.snpStats, annotations.out, col.names=TRUE, row.names=TRUE, quote=FALSE, sep="\t", append=FALSE) 
-  if(i>1)  write.table(annotations.snpStats, annotations.out, col.names=FALSE, row.names=TRUE, quote=FALSE, sep="\t", append=TRUE) 
-  
-  # Make map file 
   matrix.depth <- matrix.depth[which(annotations.snpStats$FILTER == "PASS"),]
 
+	if(i==1) 
+  {
+    samples <- rownames(matrix.calls.snpStats)
+    ext.ctrls <- sample(length(samples), length(samples) * percent.ext.ctrls) 
+    write.table(rownames(matrix.calls.snpStats[ext.ctrls,]) , file = paste0(oDir, "ext_ctrl_samples"), col.names=F, row.names=F, quote=F, sep="\t") 
+    write.table(ext.samples.sum, file = paste0(oDir, "Ext_ctrl_variant_summary") , col.names=T, row.names=F, quote=F, sep="\t", append=F) 
+    write.table(ext.samples.names, file = paste0(oDir, "Ext_ctrl_sample_summary") , col.names=T, row.names=F, quote=F, sep="\t", append=F)
+    write.SnpMatrix(t(matrix.calls.snpStats), full, col.names=FALSE, row.names=FALSE, quote=FALSE, sep="\t", append=FALSE)   ##this is where it becomes numbers
+    write.table(annotations.snpStats, annotations.out, col.names=TRUE, row.names=TRUE, quote=FALSE, sep="\t", append=FALSE)
+  } else {
+    write.table(ext.samples.sum, file = paste0(oDir, "Ext_ctrl_variant_summary") , col.names=F, row.names=F, quote=F, sep="\t", append=T) 
+    write.table(ext.samples.names, file = paste0(oDir, "Ext_ctrl_sample_summary") , col.names=F, row.names=F, quote=F, sep="\t", append=T) 
+    write.SnpMatrix(t(matrix.calls.snpStats), full, col.names=FALSE, row.names=FALSE, quote=FALSE, sep="\t", append=TRUE)  
+    write.table(annotations.snpStats, annotations.out, col.names=FALSE, row.names=TRUE, quote=FALSE, sep="\t", append=TRUE) 
+  }
+
+  ext.samples <- matrix.calls.snpStats[ext.ctrls ,]
+  ext.samples.sum <- data.frame(colnames(matrix.calls.snpStats), col.summary(ext.samples) ) 
+  ext.samples.names <- data.frame(rownames(ext.samples) , row.summary(ext.samples) ) 
+  
+
+  # Make map file 
   map <- data.frame(matrix(nrow=nrow(matrix.depth), ncol = 4) ) 
   map[,1] <-  gsub(rownames(matrix.depth) ,pattern =  "_.*",  replacement = "" )
   map[,4] <-  gsub(sub(rownames(matrix.depth) ,pattern =  "[0-9]{1,2}_",  replacement = "" ), pattern = "_.*", replacement = "")
@@ -84,12 +80,15 @@ for(i in 1:length(files)){
   
   map[,1] <- as.numeric(map[,1]) 
   map[,4] <- as.numeric(map[,4]) 
-  if(i==1) write.table(map, oMap, col.names=FALSE, row.names=FALSE, quote=FALSE, sep="\t", append=FALSE) 
-  if(i>1) write.table(map, oMap, col.names=FALSE, row.names=FALSE, quote=FALSE, sep="\t", append=TRUE) 
-  if(i==1) write.table(data.frame(cbind(map, "A", "B") ) , oBim, col.names=FALSE, row.names=FALSE, quote=FALSE, sep="\t", append=FALSE) 
-  if(i>1) write.table(data.frame(cbind(map, "A", "B") ) , oBim, col.names=FALSE, row.names=FALSE, quote=FALSE, sep="\t", append=TRUE) 
-
-
+  if(i==1)
+  {
+    write.table(map, oMap, col.names=FALSE, row.names=FALSE, quote=FALSE, sep="\t", append=FALSE) 
+    write.table(data.frame(cbind(map, "A", "B") ) , oBim, col.names=FALSE, row.names=FALSE, quote=FALSE, sep="\t", append=FALSE)
+  } else {
+    write.table(map, oMap, col.names=FALSE, row.names=FALSE, quote=FALSE, sep="\t", append=TRUE)  
+    write.table(data.frame(cbind(map, "A", "B") ) , oBim, col.names=FALSE, row.names=FALSE, quote=FALSE, sep="\t", append=TRUE) 
+  }
+  
 } 
 
 ## Make fam file. 

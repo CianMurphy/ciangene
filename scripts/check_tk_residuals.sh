@@ -31,32 +31,35 @@ do
 	batch=$(sed -n $pheno'p' $Names); echo $batch
 	$ldak --reml $oDir$batch --grm $kinship  --pheno $phenotypes --mpheno $pheno # --bfile $data
 	
-	if (( $pheno==1 ))  
+	if [[ "$pheno" == "1" ]]  
 	then
-		awk '{ print $1, $1, $5}' $oDir$batch".indi.res" > $bDir".NewPhenotypeFiletmp"
+		if [ -e $oDir$batch'.indi.res' ]; then awk '{ print $1, $1, $5}' $oDir$batch".indi.res" > $bDir".NewPhenotypeFiletmp" ;fi
 	fi 
-	if (( $pheno>1 )) 
+	if [[ "$pheno" > "1" ]] 
 	then
-		cut -f5 $oDir$batch'.indi.res' | paste $bDir".NewPhenotypeFiletmp" - > $bDir".NewPhenotypeFiletmp"
+		if [ -e $oDir$batch'.indi.res' ]; then cut -f5 $oDir$batch'.indi.res' | paste $bDir".NewPhenotypeFiletmp" - > $bDir".NewPhenotypeFiletmp"; fi
 	fi 
 
 done
 
-tail -n +2 $bDir".NewPhenotypeFile" > $bDir"NewPhenotypeFile"
+tail -n +2 $bDir".NewPhenotypeFiletmp" > $bDir"NewPhenotypeFile"
 
 oFile=plot.residuals.R
-echo "dir<-$oDir$batch" > $oFile
+echo "dir<-$oDir" > $oFile
 echo '
 	files <- list.files(dir, pattern = "res", full.names=T)
+
 	pdf("Residuals.pdf") 
-	par(mfrow=c(2,2))  
-	lapply(files, function(x)) 
-	{
-		name <- gsub(x, pattern = "\\.indi\\.res", replacement = "") 
-		file <- read.table(x, header=T ) 
-		with(file, plot(Phenotype, Residual), xlab = name)
-	}
+		par(mfrow=c(2,2))  
+		lapply(files, function(x)
+		{
+			name <- gsub(basename(x) , pattern = "\\.indi\\.res", replacement = "") 
+			file <- read.table(x, header=T ) 
+			with(file, plot(Phenotype, Residual), xlab = name)
+		}
+		)
 	dev.off() 
+
 	' >> $oFile
 R CMD BATCH --no-save --no-restore $oFile
 
