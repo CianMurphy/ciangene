@@ -19,7 +19,7 @@ Order of scripts: in progress
 
 		turns NA/non NA into 0-1 for LDAK/plink use
 
-* make_kinships.sh
+* make_kinships_new.sh
 
 		###Computes variant weights, then computes kinship matrix based on depth and missing/non-missing
 		###Three sets of weights: two kinship matrices and genotypes.
