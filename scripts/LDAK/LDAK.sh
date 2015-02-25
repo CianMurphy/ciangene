@@ -23,43 +23,41 @@ maxmaf=0.5
 
 
 
-oDir="perm_no_kin_maf_${maf}_${role}_${pheno}/"
+oDir=$bDir"perm_no_kin_maf_${maf}_${role}_${pheno}/"
 rm -fr $oDir ; mkdir $oDir
-$ldak --cut-genes $bDir$oDir --genefile $genes --bfile $data  --gene-buffer 20000 --ignore-weights YES --partition-length 50000 --extract $extract --overlap NO --min-weight 3
+$ldak --cut-genes $oDir --genefile $genes --bfile $data  --gene-buffer 20000 --ignore-weights YES --partition-length 50000 --extract $extract --overlap NO --min-weight 3
 Partitions=$(tail -1 $oDir/gene_details.txt | awk '{print $2}')
 for partition in $(seq 1 $Partitions)
 do
 oFile='partition_'$partition'.sh'
 echo "
-$ldak  --calc-genes-reml $bDir$oDir --bfile $data --pheno $phenotypes --mpheno $mPheno --ignore-weights YES --minmaf $maf --minvar $minVar --minobs $missing --partition $partition --permute YES --extract $extract --maxmaf $maxmaf  --overlap NO --min-weight 3
+$ldak  --calc-genes-reml $oDir --bfile $data --pheno $phenotypes --mpheno $mPheno --ignore-weights YES --minmaf $maf --minvar $minVar --minobs $missing --partition $partition --permute YES --extract $extract --maxmaf $maxmaf  --overlap NO --min-weight 3
 " > $oDir$oFile
 cd $oDir ; runSh $oFile ; cd .. 
 done
 
-oDir="no_kin_maf_${maf}_${role}_${pheno}/"
+oDir=$bDir"no_kin_maf_${maf}_${role}_${pheno}/"
 rm -fr $oDir ; mkdir $oDir
-$ldak --cut-genes $bDir$oDir --genefile $genes --bfile $data  --gene-buffer 20000 --ignore-weights YES --partition-length 50000  --extract $extract --overlap NO --min-weight 3
+$ldak --cut-genes $oDir --genefile $genes --bfile $data  --gene-buffer 20000 --ignore-weights YES --partition-length 50000  --extract $extract --overlap NO --min-weight 3
 Partitions=$(tail -1 $oDir/gene_details.txt | awk '{print $2}')
 for partition in $(seq 1 $Partitions)
 do
 oFile='partition_'$partition'.sh'
 echo "
-$ldak  --calc-genes-reml $bDir$oDir --bfile $data --pheno $phenotypes --mpheno $mPheno --ignore-weights YES --minmaf $maf --minvar $minVar --minobs $missing --partition $partition --extract $extract --maxmaf $maxmaf --overlap NO --min-weight 3
+$ldak  --calc-genes-reml $oDir --bfile $data --pheno $phenotypes --mpheno $mPheno --ignore-weights YES --minmaf $maf --minvar $minVar --minobs $missing --partition $partition --extract $extract --maxmaf $maxmaf --overlap NO --min-weight 3
 " > $oDir$oFile
 cd $oDir ; runSh $oFile ; cd .. 
 done
 
-exit
-
-oDir="${kin}_with_kin_maf_${maf}_${role}_${pheno}/"
+oDir=$bDir"${kin}_with_kin_maf_${maf}_${role}_${pheno}/"
 rm -fr $oDir ; mkdir $oDir
-$ldak --cut-genes $bDir$oDir --genefile $genes --bfile $data  --gene-buffer 20000 --ignore-weights YES --partition-length 50000 --extract $extract --overlap NO --min-weight3
+$ldak --cut-genes $oDir --genefile $genes --bfile $data  --gene-buffer 20000 --ignore-weights YES --partition-length 50000 --extract $extract --overlap NO --min-weight 3
 Partitions=$(tail -1 $oDir/gene_details.txt | awk '{print $2}')
 for partition in $(seq 1 $Partitions)
 do
 oFile='partition_'$partition'.sh'
 echo "
-$ldak --calc-genes-reml $bDir$oDir --bfile $data --pheno $phenotypes --mpheno $mPheno --ignore-weights YES --minmaf $maf --minvar $minVar --minobs $missing --partition $partition --grm $kinship --extract $extract --maxmaf $maxmaf --overlap NO --min-weight 3
+$ldak --calc-genes-reml $oDir --bfile $data --pheno $phenotypes --mpheno $mPheno --ignore-weights YES --minmaf $maf --minvar $minVar --minobs $missing --partition $partition --grm $kinship --extract $extract --maxmaf $maxmaf --overlap NO --min-weight 3
 " > $oDir$oFile
 cd $oDir ; runSh $oFile ; cd .. 
 done 

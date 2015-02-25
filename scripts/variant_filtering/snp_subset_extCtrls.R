@@ -23,7 +23,7 @@ extCtrl.var <- read.table( paste0(oDir, "Ext_ctrl_variant_summary") , header=T)
 ## some parameters
 missingness.threshold <- .9
 min.maf <- 0
-max.maf <- 0.1 
+max.maf <- 0.5
 
 clean.variants <- subset(extCtrl.var, extCtrl.var$Call.rate >= missingness.threshold) 
 percent.removed <- paste0("(", round(( nrow(extCtrl.var) - nrow(clean.variants)) / nrow(extCtrl.var)*100), "%)") 
@@ -37,9 +37,10 @@ lof <-  c("frameshift deletion", "frameshift substitution", "frameshift insertio
 funky <- annotations$clean.signature[annotations$ExonicFunc %in% unlist(func) ] 
 rare <- subset(annotations$clean.signature, annotations$ESP6500si_ALL >= min.maf & annotations$ESP6500si_ALL <= max.maf & annotations$X1000g2012apr_ALL >= min.maf & annotations$X1000g2012apr_ALL <= max.maf ) 
 
-
+#save(extCtrl.var, funky, rare, clean.variants, file = "tmp.RData")
 funky.rare <- funky[funky %in% rare]
-clean.variants.rare <- subset(extCtrl.var[,1] , extCtrl.var$Call.rate >= missingness.threshold & extCtrl.var$MAF >= min.maf & extCtrl.var$MAF >= max.maf) 
+clean.variants.rare <- subset(extCtrl.var[,1] , extCtrl.var$Call.rate >= missingness.threshold & extCtrl.var$MAF >= min.maf & extCtrl.var$MAF <= max.maf) 
 
-clean.funky <- clean.variants.rare %in% funky.rare
+clean.funky <- clean.variants.rare[clean.variants.rare %in% funky.rare]
+message(nrow(clean.funky))
 write.table(clean.funky, file = paste0(oDir, "Clean_variants_Func"), col.names=F, row.names=F, quote=F, sep="\t") 
