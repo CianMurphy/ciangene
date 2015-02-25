@@ -45,17 +45,19 @@ done
 tail -n +2 $bDir".NewPhenotypeFiletmp" > $bDir"NewPhenotypeFile"
 
 oFile=plot.residuals.R
-echo "dir<-$oDir" > $oFile
+echo "dir<-'"$oDir"'" > $oFile
 echo '
-	files <- list.files(dir, pattern = "res", full.names=T)
+	files <- list.files(dir, pattern = "indi\\.res", full.names=T)
 
 	pdf("Residuals.pdf") 
 		par(mfrow=c(2,2))  
 		lapply(files, function(x)
 		{
 			name <- gsub(basename(x) , pattern = "\\.indi\\.res", replacement = "") 
+			message(name)
 			file <- read.table(x, header=T ) 
-			with(file, plot(Phenotype, Residual), xlab = name)
+			# with(file, plot(Phenotype, Residual), xlab = name)
+			plot(file$Phenotype, file$Residual, xlab = name) 
 		}
 		)
 	dev.off() 

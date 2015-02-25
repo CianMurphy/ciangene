@@ -21,7 +21,7 @@ techOut=$bDir"/Technical_Kinship"
 minObs=0.9 			## SNP needs to be present in 90% samples to be included. 
 minMaf=0.000001			## SNP with MAF >= this are retained
 maxMaf=0.5				## SNP with MAF <= this are retained
-minVar=0.001			## SNP with variance >= this are retained? 
+minVar=0.0000001			## SNP with variance >= this are retained? 
 ## maxTime=500			## Nb minutes calculation allowed run for. 
 hwe=0.0001
 
@@ -30,7 +30,16 @@ $ldak --calc-kins-direct $bDir"TechKin" --bfile $missingNonMissing"_out" --ignor
 $ldak --pca $bDir"TechPCs" --grm $bDir"TechKin"
 
 
+oFile=plot.techpca.R
+echo "dir<-'"$bDir"'" > $oFile
+echo '
+	file <- read.table(paste0(dir, "TechPCs.vect"), header=F) 
+	pdf("TechPCA.pdf") 
+		plot(file[,3], file[,4], xlab = "PC1", ylab = "PC2", main = paste("TechPCA", date()) ) 
+	dev.off() 
 
+	' >> $oFile
+R CMD BATCH --no-save --no-restore $oFile
 
 
 
