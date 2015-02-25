@@ -13,7 +13,7 @@ Order of scripts: in progress
 
 * variant_filtering
 		
-		Need to incorporate the variant filtering. ie. high call rate in cases and controls. functional variants for gene tests. 
+		variant_filtering/snp_subet_extCtrls.R
 
 * convert_missingNonmissing_matrix_to_plink.sh
 

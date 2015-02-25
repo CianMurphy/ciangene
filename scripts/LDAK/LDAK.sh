@@ -49,7 +49,7 @@ $ldak  --calc-genes-reml $oDir --bfile $data --pheno $phenotypes --mpheno $mPhen
 cd $oDir ; runSh $oFile ; cd .. 
 done
 
-oDir=$bDir"${kin}_with_kin_maf_${maf}_${role}_${pheno}/"
+oDir=$bDir"with_kin_maf_${maf}_${role}_${pheno}/"
 rm -fr $oDir ; mkdir $oDir
 $ldak --cut-genes $oDir --genefile $genes --bfile $data  --gene-buffer 20000 --ignore-weights YES --partition-length 50000 --extract $extract --overlap NO --min-weight 3
 Partitions=$(tail -1 $oDir/gene_details.txt | awk '{print $2}')
