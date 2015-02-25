@@ -47,7 +47,7 @@ for(i in 1:length(files)){
 	if(i==1) 
   {
     samples <- rownames(matrix.calls.snpStats)
-    ext.ctrls <- sample(length(samples), length(samples) * percent.ext.ctrls) 
+    ext.ctrls <- sample(length(samples), length(samples) * percent.ext.ctrls) # Get list of extCtrls. 
     write.table(rownames(matrix.calls.snpStats[ext.ctrls,]) , file = paste0(oDir, "ext_ctrl_samples"), col.names=F, row.names=F, quote=F, sep="\t") 
     write.table(ext.samples.sum, file = paste0(oDir, "Ext_ctrl_variant_summary") , col.names=T, row.names=F, quote=F, sep="\t", append=F) 
     write.table(ext.samples.names, file = paste0(oDir, "Ext_ctrl_sample_summary") , col.names=T, row.names=F, quote=F, sep="\t", append=F)
@@ -88,7 +88,7 @@ for(i in 1:length(files)){
     write.table(map, oMap, col.names=FALSE, row.names=FALSE, quote=FALSE, sep="\t", append=TRUE)  
     write.table(data.frame(cbind(map, "A", "B") ) , oBim, col.names=FALSE, row.names=FALSE, quote=FALSE, sep="\t", append=TRUE) 
   }
-  
+
 } 
 
 ## Make fam file. 
