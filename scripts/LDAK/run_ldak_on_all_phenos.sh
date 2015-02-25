@@ -15,7 +15,7 @@ phenotype=$bDir"Phenotypes"
 oFolder=$bDir"LDAK_gene_tests_all_phenos"
 rm -r $oFolder ; mkdir $oFolder
 
-for pheno in $(seq 1 $nbGroups)
+for pheno in $(seq 73 $nbGroups) # skipping the first few random phenos
 do
 	batch=$(sed -n $pheno'p' $Groups)
 	target=$oFolder"/"$batch".LDAK.sh"

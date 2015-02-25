@@ -10,7 +10,7 @@ ldak="/cluster/project8/vyp/cian/support/ldak/ldak"
 data=/scratch2/vyp-scratch2/cian/UCLex_${release}/allChr_snpStats_out
 genes="/SAN/biomed/biomed14/vyp-scratch/cian/LDAK/genesldak_ref.txt"
 # extract=$bDir"/SNPs.func.ldak" ; role="Func"
-kinship=$bDir"/SADSvsUCLex_plink_func_snps_kinship"; kin="func"
+kinship=/scratch2/vyp-scratch2/cian/UCLex_February2015/TechKin; kin="func"
 # phenotypes=$bDir"/SADSvsUCLex_Pheno" ; pheno="SADSvsUCL"
 Groups="/cluster/project8/vyp/cian/data/UCLex/UCLex_${release}/Groups"
 TestingGroups="/cluster/project8/vyp/cian/data/UCLex/UCLex_${release}/TestingGroups"
@@ -18,7 +18,6 @@ maf=0.000001
 missing=0.9
 minVar=1e-4
 maxmaf=0.5
-
 
 
 
