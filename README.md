@@ -39,7 +39,7 @@ Order of scripts: in progress
 
 * run_single_variant.sh
 
-		single variant tests - Fisher
+		single variant tests - Fisher, logistic regression with and without techPC covariates, plink_single_variant_tests.sh 
 
 * run_fastLMM_on_all_phenotypes.sh 
 
