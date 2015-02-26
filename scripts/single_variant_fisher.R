@@ -1,7 +1,22 @@
+getArgs <- function() {
+  myargs.list <- strsplit(grep("=",gsub("--","",commandArgs()),value=TRUE),"=")
+  myargs <- lapply(myargs.list,function(x) x[2] )
+  names(myargs) <- lapply(myargs.list,function(x) x[1])
+  return (myargs)
+}
+
+release <- 'February2015'
+
+myArgs <- getArgs()
+
+if ('rootODir' %in% names(myArgs))  rootODir <- myArgs[[ "rootODir" ]]
+if ('release' %in% names(myArgs))  release <- myArgs[[ "release" ]]
+
+######################
 
 library(MultiPhen)
 
-bDir <- "/scratch2/vyp-scratch2/cian/UCLex_October2014/Lambiase_case_control"
+bDir <- paste0("/scratch2/vyp-scratch2/cian/UCLex_", release ) 
 
 files <- list.files(bDir, pattern = "bim", full.names=T)
 iFile <- gsub(files, pattern = "\\.bim", replacement = "")

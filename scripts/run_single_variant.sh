@@ -2,14 +2,16 @@
 shopt -s expand_aliases
 source ~/.bashrc
 
-bDir='/cluster/project8/vyp/cian/data/UCLex/UCLex_October2014/Lambiase_case_control/support/'
-Pheno='/cluster/project8/vyp/cian/data/UCLex/UCLex_October2014/All_phenotypes/All_phenotypes'
+release=February2015
+bDir=/scratch2/vyp-scratch2/cian/UCLex_${release}/
+Pheno=$bDir"Phenotypes"
+Groups=$bDir"GroupNames"
+phenos=$(wc -l  $Groups | awk '{print $1}') 
 
 mkdir bin
 
 for fil in {1..23}
 do
-	phenos=$(cat nb.groups)
 	for phen in  $(seq 1 $phenos)
 	do
 		oFile=$(sed -n $phen'p' Groups)

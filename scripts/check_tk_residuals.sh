@@ -29,15 +29,15 @@ if [ ! -e $oDir ]; then mkdir $oDir; fi
 for pheno in $(seq 1 $nbGroups)
 do
 	batch=$(sed -n $pheno'p' $Names); echo $batch
-	$ldak --reml $oDir$batch --grm $kinship  --pheno $phenotypes --mpheno $pheno --bfile $data
+	$ldak --reml $oDir$batch --grm $kinship  --pheno $phenotypes --mpheno $pheno ## --bfile $data
 	
-	if [[ "$pheno" == "1" ]]  
+	if (($pheno==1))
 	then
 		if [ -e $oDir$batch'.indi.res' ]; then awk '{ print $1, $1, $5}' $oDir$batch".indi.res" > $bDir".NewPhenotypeFiletmp" ;fi
 	fi 
-	if [[ "$pheno" > "1" ]] 
+	if (($pheno>1)) 
 	then
-		if [ -e $oDir$batch'.indi.res' ]; then cut -f5 $oDir$batch'.indi.res' | paste $bDir".NewPhenotypeFiletmp" - > $bDir".NewPhenotypeFiletmp"; fi
+		if [ -e $oDir$batch'.indi.res' ]; then cut -f5 $oDir$batch'.indi.res' | paste $bDir".NewPhenotypeFiletmp" - >> $bDir".NewPhenotypeFiletmp"; fi
 	fi 
 
 done
