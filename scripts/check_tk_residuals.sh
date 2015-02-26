@@ -33,12 +33,22 @@ do
 	
 	if (($pheno==1))
 	then
-		if [ -e $oDir$batch'.indi.res' ]; then awk '{ print $1, $1, $5}' $oDir$batch".indi.res" > $bDir".NewPhenotypeFiletmp" ;fi
+		if [ -e $oDir$batch'.indi.res' ]
+		then
+			awk '{ print $1, $1}' $oDir$batch".indi.res" > $bDir".NewPhenotypeFiletmp"
+		fi
 	fi 
-	if (($pheno>1)) 
-	then
-		if [ -e $oDir$batch'.indi.res' ]; then cut -f5 $oDir$batch'.indi.res' | paste $bDir".NewPhenotypeFiletmp" - >> $bDir".NewPhenotypeFiletmp"; fi
-	fi 
+
+	if [ -e $oDir$batch'.indi.res' ]
+	then 
+		cut -f5 $oDir$batch'.indi.res' > .tmp
+		tt=$(expr $pheno + 2)
+		cat .tmp | cut -d ' ' -f $tt |  sed "1s/.*/$batch/"  > .tmp2
+		paste  $bDir".NewPhenotypeFiletmp" .tmp2 > .tmp3
+		sed -i 's/\t/ / g' .tmp3 
+		mv .tmp3 $bDir".NewPhenotypeFiletmp" 
+
+	fi
 
 done
 

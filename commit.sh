@@ -1,4 +1,4 @@
 git add -u
-git commit -m "Added some SingleVariant tests"
+git commit -m "Kinship Decomposition"
 git push -u origin master
 
