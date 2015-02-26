@@ -37,11 +37,13 @@ Order of scripts: in progress
 
 		gene tests - all UCLex phenos, with and without kinship
 
-* run_single_variant.sh
+* plink_single_variant_tests.sh
 
-		single variant tests - Fisher, logistic regression with and without techPC covariates, plink_single_variant_tests.sh 
+		single variant tests - Fisher, logistic regression with and without techPC covariates 
 
 * run_fastLMM_on_all_phenotypes.sh 
+	
+		first, run prepare_kinship_matrix_for_fastLMM.R
 
 		single variant tests - FastLMM - Linear Regression / Mixed model with and without techKin
 
