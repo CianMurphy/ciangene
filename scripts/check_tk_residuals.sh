@@ -29,7 +29,7 @@ if [ ! -e $oDir ]; then mkdir $oDir; fi
 for pheno in $(seq 1 $nbGroups)
 do
 	batch=$(sed -n $pheno'p' $Names); echo $batch
-	$ldak --reml $oDir$batch --grm $kinship  --pheno $phenotypes --mpheno $pheno ## --bfile $data
+	# $ldak --reml $oDir$batch --grm $kinship  --pheno $phenotypes --mpheno $pheno ## --bfile $data
 	
 	if (($pheno==1))
 	then
