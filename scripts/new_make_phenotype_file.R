@@ -82,6 +82,7 @@ write.table(pheno, file = paste0(oDir, "Phenotypes"), col.names=F, row.names=F, 
 cohort.summary <- data.frame(do.call(rbind, lapply(pheno[,3:ncol(pheno)], table) )) 
 cohort.summary$Cohort <- rownames(cohort.summary) 
 colnames(cohort.summary) <- c("Nb.Ctrls", "Nb.cases", "Nb.ext.Ctrls", "Cohort") 
+write.table(data.frame(pheno[,1], groups ), paste0(oDir, "Sample.cohort"),  col.names=F, row.names=F, quote=F, sep="\t") 
 write.table(cohort.summary, file = paste0(oDir, "cohort.summary"), col.names=T, row.names=F, quote=F, sep="\t") 
 
 

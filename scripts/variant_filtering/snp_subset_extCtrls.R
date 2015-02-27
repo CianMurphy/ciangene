@@ -21,7 +21,7 @@ oDir <- "/scratch2/vyp-scratch2/cian/UCLex_February2015/" # temp, until integrat
 extCtrl.var <- read.table( paste0(oDir, "Ext_ctrl_variant_summary") , header=T) 
 
 ## some parameters
-missingness.threshold <- .9
+missingness.threshold <- .7
 min.maf <- 0
 max.maf <- 0.5
 
