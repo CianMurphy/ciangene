@@ -21,7 +21,7 @@ oDir <- "/scratch2/vyp-scratch2/cian/UCLex_February2015/" # temp, until integrat
 extCtrl.var <- read.table( paste0(oDir, "Ext_ctrl_variant_summary") , header=T) 
 
 ## some parameters
-missingness.threshold <- .7
+missingness.threshold <- 0
 min.maf <- 0
 max.maf <- 0.5
 
@@ -43,4 +43,4 @@ clean.variants.rare <- subset(extCtrl.var[,1] , extCtrl.var$Call.rate >= missing
 
 clean.funky <- clean.variants.rare[clean.variants.rare %in% funky.rare]
 message(nrow(clean.funky))
-write.table(clean.funky, file = paste0(oDir, "Clean_variants_Func"), col.names=F, row.names=F, quote=F, sep="\t") 
+write.table(clean.funky, file = paste0(oDir, "Clean_variants_Func_", missingness.threshold), col.names=F, row.names=F, quote=F, sep="\t") 

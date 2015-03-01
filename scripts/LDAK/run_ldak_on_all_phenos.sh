@@ -30,8 +30,8 @@ do
 		for missing in {1..1}
 		do
 
-			echo "minMaf='$maf' ; "'minMaf=$(echo $minMaf/10|bc -l)'"; minMaf=$(echo $minMaf | sed 's/0*$//') " > $target	
-			echo "missing='$missing' ; "'missing=$(echo $missing/10|bc -l)'"; missing=$(echo $missing | sed 's/0*$//')" >> $target	
+			echo "minMaf='$maf' ; "'minMaf=$(echo $minMaf/10|bc -l)'"; "'minMaf=$(echo $minMaf | sed 's/0*$//')'" " > $target	
+			echo "missing='$missing' ; "'missing=$(echo $missing/10|bc -l)'"; "'missing=$(echo $missing | sed 's/0*$//')'"" >> $target	
 			echo "phenotypes='$phenotype' ; mPheno=$pheno ; pheno='$batch'"  >> $target
 			echo "extract='$variants' ; role='Func'" >> $target
 			cat $templateScript >> $target

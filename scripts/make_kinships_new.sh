@@ -12,34 +12,77 @@ release=${2-$release}
 
 bDir=${rootODir}/UCLex_${release}/
 
+data=$bDir"allChr_snpStats_out"
+missingNonMissing=$bDir"/Matrix.calls.Missing.NonMissing_out"
+techOut=$bDir"/TechnKin_0.5"
 
-missingNonMissing=$bDir"/Matrix.calls.Missing.NonMissing"
-techOut=$bDir"/Technical_Kinship"
-
-extract=$bDir"Clean_variants_Func"
+extract=$bDir"Clean_variants_Func_0"
 ## Some basic parameters: 
-minObs=0.7		## SNP needs to be present in 90% samples to be included. 
+minObs=0		## SNP needs to be present in 90% samples to be included. 
 minMaf=0.000001			## SNP with MAF >= this are retained
 maxMaf=0.5				## SNP with MAF <= this are retained
 minVar=0.0000001			## SNP with variance >= this are retained? 
 ## maxTime=500			## Nb minutes calculation allowed run for. 
 hwe=0.0001
 
-$ldak --calc-kins-direct $bDir"TechKin" --bfile $missingNonMissing"_out" --ignore-weights YES \
---kinship-raw YES --minmaf $minMaf --maxmaf $maxMaf --minvar $minVar --minobs $minObs --extract $extract
-$ldak --pca $bDir"TechPCs" --grm $bDir"TechKin" --extract $extract
+#$ldak --make-bed $bDir"techMatrix_filtered" --bfile $missingNonMissing --extract $extract
+$ldak --calc-kins-direct $techOut --bfile $bDir"techMatrix_filtered_out" --ignore-weights YES --kinship-raw YES \
+#--minmaf $minMaf --maxmaf $maxMaf --minvar $minVar --minobs $minObs --extract $extract 
+$ldak --pca $bDir"TechPCs" --grm $bDir"techMatrix_filtered_out"--extract $extract
 
 
 oFile=plot.techpca.R
 echo "dir<-'"$bDir"'" > $oFile
 echo '
 	file <- read.table(paste0(dir, "TechPCs.vect"), header=F) 
+	groups <- read.table(paste0(dir, "Sample.cohort"), header=F)
+	uniq.groups <- unique(groups[,2])
+	nb.groups <- length(uniq.groups)
+
+	buffer <- 0.01
+	xmin <- min(file[,3]) - buffer
+	xmax <- max(file[,3]) + buffer
+	ymin <- min(file[,4]) - buffer
+	ymax <- max(file[,4]) + buffer
+
 	pdf("TechPCA.pdf") 
-		plot(file[,3], file[,4], xlab = "PC1", ylab = "PC2", main = paste("TechPCA", date()) ) 
+#	for(i in 1:nb.groups)
+	for(i in 72:nb.groups)
+	{
+		hit <- which(groups[,2] == uniq.groups[i])
+		if(i==1)
+		{
+		plot(file[hit,3], file[hit,4], 
+			xlab = "PC1", ylab = "PC2", 
+			xlim=c(xmin, xmax), 
+			ylim=c(ymin, ymax), 
+			main = paste("TechPCA", date()) ,
+			col=i
+			) 
+		} else
+		{
+			points(file[hit,3], file[hit,4], col=i)
+		}
+	}
+
+	namess <- FALSE
+	if(namess)
+	{
+	plot(NULL, xlim=c(0,3), ylim=c(0,nb.groups*2))
+		for(i in 1:nb.groups)
+	{
+		x <- 2
+		y <- i+1
+		text(x, y, uniq.groups[i], col=i, cex=.7)
+	}
+	} 
 	dev.off() 
 
 	' >> $oFile
 R CMD BATCH --no-save --no-restore $oFile
+
+
+
 
 
 
