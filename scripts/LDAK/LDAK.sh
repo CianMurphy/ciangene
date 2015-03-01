@@ -15,8 +15,8 @@ Groups="/cluster/project8/vyp/cian/data/UCLex/UCLex_${release}/Groups"
 TestingGroups="/cluster/project8/vyp/cian/data/UCLex/UCLex_${release}/TestingGroups"
 runSh='sh /cluster/project8/vyp/cian/scripts/bash/runBashCluster.sh'
 ####### Parameters
-minMaf=0.000001	
-missing=0.9
+#minMaf=0.000001	
+#missing=0.7
 minVar=1e-4
 maxmaf=0.5
 power=0 ## rare variants arent upweighed with power = 0
@@ -28,7 +28,7 @@ ignoreWeights=YES ## if YES, variants arent weighted for LD correction
 
 
 ##### Permuted with no techKin. 
-oDir=$bDir"perm_${pheno}/"
+oDir=$bDir"perm_${pheno}_${missing}_${maxmaf}_${minMaf}/"
 rm -fr $oDir ; mkdir $oDir
 $ldak --cut-genes $oDir --genefile $genes --bfile $data  --gene-buffer 20000 --ignore-weights $ignoreWeights --partition-length 50000 --extract $extract --overlap $overlap --min-weight $minWeight
 Partitions=$(tail -1 $oDir/gene_details.txt | awk '{print $2}')
@@ -44,7 +44,7 @@ done
 
 
 ### REML no Kinship
-oDir=$bDir"no_kin_${pheno}/"
+oDir=$bDir"no_kin_${pheno}_${missing}_${maxmaf}_${minMaf}/"
 rm -fr $oDir ; mkdir $oDir
 $ldak --cut-genes $oDir --genefile $genes --bfile $data  --gene-buffer 20000 --ignore-weights $ignoreWeights --partition-length 50000  --extract $extract --overlap $overlap --min-weight $minWeight
 Partitions=$(tail -1 $oDir/gene_details.txt | awk '{print $2}')
@@ -60,7 +60,7 @@ done
 
 
 ### REML technical kinship
-oDir=$bDir"with_kin_${pheno}/"
+oDir=$bDir"with_kin_${pheno}_${missing}_${maxmaf}_${minMaf}/"
 rm -fr $oDir ; mkdir $oDir
 $ldak --cut-genes $oDir --genefile $genes --bfile $data  --gene-buffer 20000 --ignore-weights $ignoreWeights --partition-length 50000 --extract $extract --overlap $overlap --min-weight $minWeight
 Partitions=$(tail -1 $oDir/gene_details.txt | awk '{print $2}')
