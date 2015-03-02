@@ -35,6 +35,7 @@ minMaf <- c(0, 0.00001, 0.0001, 0.001, 0.01, 0.1, 0.2)
 oFile <- paste0(iDir, "SingleVariant_qqplots.pdf")
 
 pdf(oFile)
+par(mfrow=c(2,2), cex.main=0.8)
 for(i in 1:length(groups))
 {
 
@@ -44,19 +45,15 @@ for(i in 1:length(groups))
 	colnames(tech.small) <- c("SNP", "TechKinPvalue")
 
 	results.merged <- merge(base, tech, by = "SNP")
-
 	results.merged.anno <- merge(results.merged, annotations, by.x = "SNP", by.y ="clean.signature")
-
 	results.merged.anno.extCtrl <- merge(results.merged.anno, extCtrl.small, by = "SNP")
-
 	write.table(results.merged.anno.extCtrl, paste0(iDir, groups[i], "_filt"), col.names=T, row.names=F, quote=F, sep="\t")
-
 
 	lapply(minMaf, function(x)
 	{
 		dat <- subset(results.merged.anno.extCtrl, results.merged.anno.extCtrl$ExtCtrl_MAF >= ExtCtrl_MAF)
-		qq.chisq(-2*log(dat$Pvalue), df=2, x.max=30, pvals=T, main = paste(groups[i], x, "noKin"))
-		qq.chisq(-2*log(dat$TechKinPvalue), df=2, x.max=30, pvals=T, main = paste(groups[i], x, "TechKin"))
+		qq.chisq(-2*log(as.numeric(dat$Pvalue)), df=2, x.max=30, pvals=T, main = paste(groups[i], x, "noKin"))
+		qq.chisq(-2*log(as.numeric(dat$TechKinPvalue)), df=2, x.max=30, pvals=T, main = paste(groups[i], x, "TechKin"))
 	}
 	)
 
