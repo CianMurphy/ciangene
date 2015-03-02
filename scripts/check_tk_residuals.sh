@@ -12,7 +12,7 @@ release=${2-$release}
 
 bDir=${rootODir}/UCLex_${release}/
 genes=/SAN/biomed/biomed14/vyp-scratch/cian/LDAK/genesldak_ref.txt
-kinship=$bDir"TechKin_0.5"
+kinship=$bDir"TechKin"
 data=$bDir"allChr_snpStats"
 phenotypes=$bDir"Phenotypes"
 groups=$bDir"cohort.summary"
