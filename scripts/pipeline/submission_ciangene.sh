@@ -10,7 +10,7 @@ script=cluster/submission/cian.sh
 # rootODir=/scratch2/vyp-scratch2/ciangene
 rootODir=/scratch2/vyp-scratch2/cian
 
-step1=yes
+step1=no
 step2=yes
 step3=no ## ldak script submits jobs, which wont work when run on a job node. FIX
 

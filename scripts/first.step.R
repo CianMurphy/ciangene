@@ -48,6 +48,7 @@ for(i in 1:length(files)){
   {
     samples <- rownames(matrix.calls.snpStats)
     ext.ctrls <- sample(length(samples), length(samples) * percent.ext.ctrls) # Get list of extCtrls. 
+    write.table(length(ext.ctrls) , file = paste0(oDir, "nb_ext_ctrl_samples"), col.names=F, row.names=F, quote=F, sep="\t") 
     write.table(rownames(matrix.calls.snpStats[ext.ctrls,]) , file = paste0(oDir, "ext_ctrl_samples"), col.names=F, row.names=F, quote=F, sep="\t") 
     ext.samples <- matrix.calls.snpStats[ext.ctrls ,]
     ext.samples.sum <- data.frame(colnames(matrix.calls.snpStats), col.summary(ext.samples) ) 

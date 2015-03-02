@@ -26,10 +26,10 @@ nbGroups=$(wc -l $groups | awk {'print $1}')
 oDir=$bDir"KinshipDecomposition/"
 if [ ! -e $oDir ]; then mkdir $oDir; fi
 
-for pheno in $(seq 1 $nbGroups)
+for pheno in $(seq 72 $nbGroups)
 do
 	batch=$(sed -n $pheno'p' $Names); echo $batch
-	$ldak --reml $oDir$batch --grm $kinship  --pheno $phenotypes --mpheno $pheno ## --bfile $data
+	$ldak --reml $oDir$batch --grm $kinship  --pheno $phenotypes --mpheno $pheno  --bfile $data
 	
 	if (($pheno==1))
 	then
@@ -54,7 +54,7 @@ done
 
 tail -n +2 $bDir".NewPhenotypeFiletmp" > $bDir"NewPhenotypeFile"
 
-oFile=plot.residuals.R
+oFile=$oDir/plot.residuals.R
 echo "dir<-'"$oDir"'" > $oFile
 echo '
 	files <- list.files(dir, pattern = "indi\\.res", full.names=T)
