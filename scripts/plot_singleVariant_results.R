@@ -52,13 +52,13 @@ for(i in 1:length(groups))
 	write.table(results.merged.anno.extCtrl, paste0(iDir, groups[i], "_filt"), col.names=T, row.names=F, quote=F, sep="\t")
 
 
-	lapply(minMaf) (x)
+	lapply(minMaf, function(x)
 	{
 		dat <- subset(results.merged.anno.extCtrl, results.merged.anno.extCtrl$ExtCtrl_MAF >= ExtCtrl_MAF)
 		qq.chisq(-2*log(dat$Pvalue), df=2, x.max=30, pvals=T, main = paste(groups[i], x, "noKin"))
 		qq.chisq(-2*log(dat$TechKinPvalue), df=2, x.max=30, pvals=T, main = paste(groups[i], x, "TechKin"))
 	}
-	
+	)
 
 }
 dev.off()
