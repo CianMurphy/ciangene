@@ -31,17 +31,3 @@ ln -s $bDir"UCLex_${release}.fam" $missingNonMissing".fam"
 
 $ldak --make-bed $GenotypeMatrix --sp $GenotypeMatrix
 $ldak --make-bed $missingNonMissing --sp $missingNonMissing
-
-
-## Some basic parameters: 
-## minObs=0.9 			## SNP needs to be present in 90% samples to be included. 
-minMaf=0.000001			## SNP with MAF >= this are retained
-maxMaf=0.1			## SNP with MAF <= this are retained
-minVar=0.001			## SNP with variance >= this are retained? 
-## maxTime=500			## Nb minutes calculation allowed run for. 
-hwe=0.0001
-
-#$ldak --calc-kins-direct $bDir"TechKin" --bfile $missingNonMissing"_out" --ignore-weights YES --kinship-raw YES --minmaf $minMaf --maxmaf $maxMaf --minvar  $minVar ## --extract 
-#$ldak --pca $bDir"TechPCs" --grm $bDir"TechKin"
-
-

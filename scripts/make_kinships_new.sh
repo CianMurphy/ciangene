@@ -9,14 +9,12 @@ rootODir=/scratch2/vyp-scratch2/cian
 release=February2015
 rootODir=${1-$rootODir}
 release=${2-$release}
-
 bDir=${rootODir}/UCLex_${release}/
 
-data=$bDir"allChr_snpStats_out"
 missingNonMissing=$bDir"/Matrix.calls.Missing.NonMissing_out"
-techOut=$bDir"/TechnKin_0.5"
+techOut=$bDir"/TechnKin"
 
-extract=$bDir"Clean_variants_Func_0"
+extract=$bDir"Clean_variants_Func"
 ## Some basic parameters: 
 minObs=0		## SNP needs to be present in 90% samples to be included. 
 minMaf=0.000001			## SNP with MAF >= this are retained
@@ -26,9 +24,9 @@ minVar=0.0000001			## SNP with variance >= this are retained?
 hwe=0.0001
 
 #$ldak --make-bed $bDir"techMatrix_filtered" --bfile $missingNonMissing --extract $extract
-$ldak --calc-kins-direct $techOut --bfile $bDir"techMatrix_filtered_out" --ignore-weights YES --kinship-raw YES \
-#--minmaf $minMaf --maxmaf $maxMaf --minvar $minVar --minobs $minObs --extract $extract 
-$ldak --pca $bDir"TechPCs" --grm $bDir"techMatrix_filtered_out"--extract $extract
+$ldak --calc-kins-direct $techOut --bfile $missingNonMissing --ignore-weights YES --kinship-raw YES \
+--minmaf $minMaf --maxmaf $maxMaf --minvar $minVar --minobs $minObs --extract $extract 
+$ldak --pca $bDir"TechPCs" --grm $missingNonMissing --extract $extract
 
 
 oFile=plot.techpca.R

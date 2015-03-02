@@ -49,21 +49,25 @@ for(i in 1:length(files)){
     samples <- rownames(matrix.calls.snpStats)
     ext.ctrls <- sample(length(samples), length(samples) * percent.ext.ctrls) # Get list of extCtrls. 
     write.table(rownames(matrix.calls.snpStats[ext.ctrls,]) , file = paste0(oDir, "ext_ctrl_samples"), col.names=F, row.names=F, quote=F, sep="\t") 
+    ext.samples <- matrix.calls.snpStats[ext.ctrls ,]
+    ext.samples.sum <- data.frame(colnames(matrix.calls.snpStats), col.summary(ext.samples) ) 
+    ext.samples.names <- data.frame(rownames(ext.samples) , row.summary(ext.samples) ) 
+
     write.table(ext.samples.sum, file = paste0(oDir, "Ext_ctrl_variant_summary") , col.names=T, row.names=F, quote=F, sep="\t", append=F) 
     write.table(ext.samples.names, file = paste0(oDir, "Ext_ctrl_sample_summary") , col.names=T, row.names=F, quote=F, sep="\t", append=F)
     write.SnpMatrix(t(matrix.calls.snpStats), full, col.names=FALSE, row.names=FALSE, quote=FALSE, sep="\t", append=FALSE)   ##this is where it becomes numbers
     write.table(annotations.snpStats, annotations.out, col.names=TRUE, row.names=TRUE, quote=FALSE, sep="\t", append=FALSE)
   } else {
+    ext.samples <- matrix.calls.snpStats[ext.ctrls ,]
+    ext.samples.sum <- data.frame(colnames(matrix.calls.snpStats), col.summary(ext.samples) ) 
+    ext.samples.names <- data.frame(rownames(ext.samples) , row.summary(ext.samples) ) 
     write.table(ext.samples.sum, file = paste0(oDir, "Ext_ctrl_variant_summary") , col.names=F, row.names=F, quote=F, sep="\t", append=T) 
     write.table(ext.samples.names, file = paste0(oDir, "Ext_ctrl_sample_summary") , col.names=F, row.names=F, quote=F, sep="\t", append=T) 
+
     write.SnpMatrix(t(matrix.calls.snpStats), full, col.names=FALSE, row.names=FALSE, quote=FALSE, sep="\t", append=TRUE)  
     write.table(annotations.snpStats, annotations.out, col.names=FALSE, row.names=TRUE, quote=FALSE, sep="\t", append=TRUE) 
   }
 
-  ext.samples <- matrix.calls.snpStats[ext.ctrls ,]
-  ext.samples.sum <- data.frame(colnames(matrix.calls.snpStats), col.summary(ext.samples) ) 
-  ext.samples.names <- data.frame(rownames(ext.samples) , row.summary(ext.samples) ) 
-  
 
   # Make map file 
   map <- data.frame(matrix(nrow=nrow(matrix.depth), ncol = 4) ) 

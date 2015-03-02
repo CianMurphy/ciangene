@@ -4,12 +4,18 @@ Rbin=/cluster/project8/vyp/vincent/Software/R-3.1.2/bin/R
 
 
 firstStep=${repo}/scripts/first.step.R  ##step 1
-secondStep=${repo}/scripts/first_depth_kin.R  ## step2
+clean=${repo}/scripts/variant_filtering/snp_subset_extCtrls.R  ##step 1.1
 
+secondStep=${repo}/scripts/convert_genotype_to_missingNonMissing.sh  ## step2
+makeKin=${repo}/scripts/make_kinships_new.sh # step 2.1
+checkKin=${repo}/scripts/check_tk_residuals.sh # step 2.2
+
+thirdStep=${repo}/scripts/run_ldak_on_all_phenos.sh
+singleVariant=${repo}/scripts/plink_single_variant_tests.sh
 
 ##### default value of all arguments
 rootODir=/scratch2/vyp-scratch2/cian
-release=August2014
+release=February2015
 
 
 
@@ -39,6 +45,9 @@ until [ -z "$1" ]; do
 	--step2)
 	    shift
 	    step2=$1;;
+	--step3) ## added step 3. 
+	    shift
+	    step3=$1;;
 	-* )
 	    echo "Unrecognized option: $1"
 	    exit 1;;
@@ -68,7 +77,7 @@ if [[ "$step1" == "yes" ]]; then
 #$ -cwd
 
 $Rbin CMD BATCH --no-save --no-restore --release=${release} --rootODir=${rootODir} $firstStep cluster/R/step1.Rout
-
+$Rbin CMD BATCH --no-save --no-restore --release=${release} --rootODir=${rootODir} $clean cluster/R/step1.Rout
 " > $script
     
     qsub $hold $script
@@ -91,11 +100,11 @@ if [[ "$step2" == "yes" ]]; then
 #$ -l h_rt=24:00:00
 #$ -cwd
 
-sh scripts/convert_genotype_to_missingNonMissing.sh $rootODir $release 
+sh $secondStep $rootODir $release 
 
-sh make_kinships.sh $rootODir $release ### make kinships matrix
+sh $makeKin $rootODir $release ### make kinships matrix
 
-
+sh $checkKin
 
 
 " > $script
@@ -107,6 +116,32 @@ fi
 
 
 
+#########
+if [[ "$step3" == "yes" ]]; then    
+
+    script=cluster/submission/step3.sh
+
+    echo "
+#$ -S /bin/bash
+#$ -o cluster/out
+#$ -e cluster/error
+#$ -l h_vmem=5.9G,tmem=5.9G
+#$ -pe smp 1
+#$ -N step3_cian
+#$ -l h_rt=24:00:00
+#$ -cwd
+
+sh $thirdStep $rootODir $release 
+
+sh $singleVariant $release
+
+
+" > $script
+
+    qsub $hold $script
+    if [[ "$hold" == "" ]]; then hold="-hold_jid step3_cian"; else hold="$hold,step3_cian"; fi
+
+fi
 
 
 
