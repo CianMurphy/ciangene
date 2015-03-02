@@ -16,20 +16,17 @@ oFolder=$bDir"LDAK_gene_tests_all_phenos"
 #rm -r $oFolder ; mkdir $oFolder
 
 #for pheno in $(seq 1 $nbGroups) # skipping the first few random phenos
-#for pheno in {73..90}
-for pheno in {73..73}
+for pheno in {79,82,91,92,94,102}
 do
 	batch=$(sed -n $pheno'p' $Groups)
 	target=$oFolder"/"$batch".LDAK.sh"
-	
-#	for maf in {1..5}
-	for maf in {5..5}
+
+	for maf in {0.000001,2.5,4}
 	do
 
-#		for missing in {1..10}
-		for missing in {1..1}
+		for missing in {0.000001,4,7,9.5}
 		do
-
+			echo $missing
 			echo "minMaf='$maf' ; "'minMaf=$(echo $minMaf/10|bc -l)'"; "'minMaf=$(echo $minMaf | sed 's/0*$//')'" " > $target	
 			echo "missing='$missing' ; "'missing=$(echo $missing/10|bc -l)'"; "'missing=$(echo $missing | sed 's/0*$//')'"" >> $target	
 			echo "phenotypes='$phenotype' ; mPheno=$pheno ; pheno='$batch'"  >> $target

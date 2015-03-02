@@ -10,7 +10,7 @@ bDir=/scratch2/vyp-scratch2/cian/UCLex_${release}/LDAK_gene_tests_all_phenos/
 ldak="/cluster/project8/vyp/cian/support/ldak/ldak"
 data=/scratch2/vyp-scratch2/cian/UCLex_${release}/allChr_snpStats_out
 genes="/SAN/biomed/biomed14/vyp-scratch/cian/LDAK/genesldak_ref.txt"
-kinship=/scratch2/vyp-scratch2/cian/UCLex_${release}/TechKin; kin="func"
+kinship=/scratch2/vyp-scratch2/cian/UCLex_${release}/TechnKin_0.5  ; kin="func"
 Groups="/cluster/project8/vyp/cian/data/UCLex/UCLex_${release}/Groups"
 TestingGroups="/cluster/project8/vyp/cian/data/UCLex/UCLex_${release}/TestingGroups"
 runSh='sh /cluster/project8/vyp/cian/scripts/bash/runBashCluster.sh'

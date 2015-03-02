@@ -12,7 +12,7 @@ release=${2-$release}
 
 bDir=${rootODir}/UCLex_${release}/
 genes=/SAN/biomed/biomed14/vyp-scratch/cian/LDAK/genesldak_ref.txt
-kinship=$bDir"TechKin"
+kinship=$bDir"TechKin_0.5"
 data=$bDir"allChr_snpStats"
 phenotypes=$bDir"Phenotypes"
 groups=$bDir"cohort.summary"
@@ -29,7 +29,7 @@ if [ ! -e $oDir ]; then mkdir $oDir; fi
 for pheno in $(seq 1 $nbGroups)
 do
 	batch=$(sed -n $pheno'p' $Names); echo $batch
-	# $ldak --reml $oDir$batch --grm $kinship  --pheno $phenotypes --mpheno $pheno ## --bfile $data
+	$ldak --reml $oDir$batch --grm $kinship  --pheno $phenotypes --mpheno $pheno ## --bfile $data
 	
 	if (($pheno==1))
 	then
