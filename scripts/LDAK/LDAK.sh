@@ -3,14 +3,21 @@
 shopt -s expand_aliases
 source ~/.bashrc
 
-release=February2015
-bDir=/scratch2/vyp-scratch2/cian/UCLex_${release}/LDAK_gene_tests_all_phenos/
+rootODir=$1
+release=$2
+#rootODir=/scratch2/vyp-scratch2/ciangene
+rootODir=/scratch2/vyp-scratch2/cian
+release=October2014
+rootODir=${1-$rootODir}
+release=${2-$release}
+bDir=${rootODir}/UCLex_${release}/LDAK_gene_tests_all_phenos/
+
 
 #### Data
 ldak="/cluster/project8/vyp/cian/support/ldak/ldak"
 data=/scratch2/vyp-scratch2/cian/UCLex_${release}/allChr_snpStats_out
 genes="/SAN/biomed/biomed14/vyp-scratch/cian/LDAK/genesldak_ref.txt"
-kinship=/scratch2/vyp-scratch2/cian/UCLex_${release}/TechnKin_0.5  ; kin="func"
+kinship=/scratch2/vyp-scratch2/cian/UCLex_${release}/TechKin  ; kin="func"
 Groups="/cluster/project8/vyp/cian/data/UCLex/UCLex_${release}/Groups"
 TestingGroups="/cluster/project8/vyp/cian/data/UCLex/UCLex_${release}/TestingGroups"
 runSh='sh /cluster/project8/vyp/cian/scripts/bash/runBashCluster.sh'
@@ -26,11 +33,10 @@ ignoreWeights=YES ## if YES, variants arent weighted for LD correction
 #######
 
 
-
 ##### Permuted with no techKin. 
-oDir=$bDir"perm_${pheno}_${missing}_${maxmaf}_${minMaf}/"
+oDir=$bDir"perm_${pheno}_${missing}_${minMaf}/"
 rm -fr $oDir ; mkdir $oDir
-$ldak --cut-genes $oDir --genefile $genes --bfile $data  --gene-buffer 20000 --ignore-weights $ignoreWeights --partition-length 50000 --extract $extract --overlap $overlap --min-weight $minWeight
+$ldak --cut-genes $oDir --genefile $genes --bfile $data  --gene-buffer 20000 --ignore-weights $ignoreWeights --partition-length 2000000 --extract $extract --overlap $overlap --min-weight $minWeight
 Partitions=$(tail -1 $oDir/gene_details.txt | awk '{print $2}')
 for partition in $(seq 1 $Partitions)
 do
@@ -44,9 +50,9 @@ done
 
 
 ### REML no Kinship
-oDir=$bDir"no_kin_${pheno}_${missing}_${maxmaf}_${minMaf}/"
+oDir=$bDir"no_kin_${pheno}_${missing}_${minMaf}/"
 rm -fr $oDir ; mkdir $oDir
-$ldak --cut-genes $oDir --genefile $genes --bfile $data  --gene-buffer 20000 --ignore-weights $ignoreWeights --partition-length 50000  --extract $extract --overlap $overlap --min-weight $minWeight
+$ldak --cut-genes $oDir --genefile $genes --bfile $data  --gene-buffer 20000 --ignore-weights $ignoreWeights --partition-length 2000000  --extract $extract --overlap $overlap --min-weight $minWeight
 Partitions=$(tail -1 $oDir/gene_details.txt | awk '{print $2}')
 for partition in $(seq 1 $Partitions)
 do
@@ -59,10 +65,11 @@ cd $oDir ; $runSh $oFile ; cd ..
 done
 
 
+
 ### REML technical kinship
-oDir=$bDir"with_kin_${pheno}_${missing}_${maxmaf}_${minMaf}/"
+oDir=$bDir"with_kin_${pheno}_${missing}_${minMaf}/"
 rm -fr $oDir ; mkdir $oDir
-$ldak --cut-genes $oDir --genefile $genes --bfile $data  --gene-buffer 20000 --ignore-weights $ignoreWeights --partition-length 50000 --extract $extract --overlap $overlap --min-weight $minWeight
+$ldak --cut-genes $oDir --genefile $genes --bfile $data  --gene-buffer 20000 --ignore-weights $ignoreWeights --partition-length 2000000 --extract $extract --overlap $overlap --min-weight $minWeight
 Partitions=$(tail -1 $oDir/gene_details.txt | awk '{print $2}')
 for partition in $(seq 1 $Partitions)
 do

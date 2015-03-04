@@ -59,7 +59,7 @@ echo "dir<-'"$oDir"'" > $oFile
 echo '
 	files <- list.files(dir, pattern = "indi\\.res", full.names=T)
 
-	pdf("Residuals.pdf") 
+	pdf(paste0(dir, "/Residuals.pdf") )
 		par(mfrow=c(2,2))  
 		lapply(files, function(x)
 		{

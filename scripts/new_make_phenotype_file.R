@@ -8,22 +8,21 @@ getArgs <- function() {
   return (myargs)
 }
 
-release <- 'February2015'
+release <- 'October2014'
 
 myArgs <- getArgs()
 
 if ('rootODir' %in% names(myArgs))  rootODir <- myArgs[[ "rootODir" ]]
 if ('release' %in% names(myArgs))  release <- myArgs[[ "release" ]]
 
-iFile <- paste0("/cluster/project8/vyp/exome_sequencing_multisamples/mainset/GATK/mainset_", release, "/mainset_", release, "_snpStats/chr21_snpStats.RData")
+iFile <- paste0("/cluster/project8/vyp/exome_sequencing_multisamples/mainset/GATK/mainset_", release, "/mainset_", release, "_by_chr/chr21_snpStats.RData")
 load(iFile)
 
 
-oDir <- "/scratch2/vyp-scratch2/cian/UCLex_February2015/"
+oDir <- paste0("/scratch2/vyp-scratch2/cian/UCLex_", release , "/") 
 
 groups <- gsub(colnames(matrix.depth), pattern = "_.*",replacement = "")
 groups.unique <- unique(groups)
-
 # Tring to group samples by cohort correctly. Default method is to use string before first underscore in their name, but that doesn't work for all samples, 
 # so to try group correctly (eg to prevent ALevine from being treated as a separate phenotype from Levine, use fixPhenoGroupings )
 use.fixPhenoGroupings <- TRUE
@@ -72,6 +71,7 @@ for(i in 1:nb.groups)
 	pheno[hits,i+2] <- 2
 }
 
+write.table(groups.unique, paste0(oDir, "GroupNames"), col.names=F, row.names=F, quote=F, sep="\t")
 
 ## remove pheno for extCtrls
 extCtrls <- read.table(paste0(oDir, "ext_ctrl_samples"), header=F) ## made in first.step.R

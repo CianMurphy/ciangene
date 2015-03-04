@@ -17,7 +17,7 @@ singleVariant=${repo}/scripts/plink_single_variant_tests.sh
 
 ##### default value of all arguments
 rootODir=/scratch2/vyp-scratch2/cian
-release=February2015
+release=October2014
 
 
 

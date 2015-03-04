@@ -5,7 +5,7 @@ getArgs <- function() {
   return (myargs)
 }
 
-release <- 'February2015'
+release <- 'October2014'
 
 myArgs <- getArgs()
 
@@ -16,7 +16,7 @@ if ('release' %in% names(myArgs))  release <- myArgs[[ "release" ]]
 
 
 #oDir <- paste0(rootODir, "/UCLex_", release, "/")
-oDir <- "/scratch2/vyp-scratch2/cian/UCLex_February2015/" # temp, until integrated into pipeline
+oDir <- paste0("/scratch2/vyp-scratch2/cian/UCLex_", release, "/")  # temp, until integrated into pipeline
 
 extCtrl.var <- read.table( paste0(oDir, "Ext_ctrl_variant_summary") , header=T) 
 

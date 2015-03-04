@@ -3,9 +3,16 @@
 shopt -s expand_aliases
 source ~/.bashrc
 
-release=February2015
+rootODir=$1
+release=$2
+#rootODir=/scratch2/vyp-scratch2/ciangene
+rootODir=/scratch2/vyp-scratch2/cian
+release=October2014
+rootODir=${1-$rootODir}
+release=${2-$release}
+bDir=${rootODir}/UCLex_${release}/
 
-bDir=/scratch2/vyp-scratch2/cian/UCLex_${release}/
+
 Groups=$bDir"GroupNames"
 nbGroups=$(wc -l  $Groups | awk '{print $1}') 
 templateScript="/cluster/project8/vyp/cian/data/UCLex/UCLex_August/Scripts/ciangene/scripts/LDAK/LDAK.sh"
@@ -13,18 +20,18 @@ variants=$bDir"Clean_variants_Func"
 phenotype=$bDir"Phenotypes"
 
 oFolder=$bDir"LDAK_gene_tests_all_phenos"
-#rm -r $oFolder ; mkdir $oFolder
+if [ ! -e $oFolder ]; then mkdir $oFolder; fi
 
 #for pheno in $(seq 1 $nbGroups) # skipping the first few random phenos
-for pheno in {79,82,91,92,94,102}
+for pheno in {79,89,102}
 do
 	batch=$(sed -n $pheno'p' $Groups)
 	target=$oFolder"/"$batch".LDAK.sh"
 
-	for maf in {0.000001,2.5,4}
+	for maf in {0.000001,2.5}
 	do
 
-		for missing in {0.000001,4,7,9.5}
+		for missing in {0.000001,4.5,9.5}
 		do
 			echo $missing
 			echo "minMaf='$maf' ; "'minMaf=$(echo $minMaf/10|bc -l)'"; "'minMaf=$(echo $minMaf | sed 's/0*$//')'" " > $target	

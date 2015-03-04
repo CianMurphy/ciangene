@@ -6,7 +6,7 @@ rootODir=$1
 release=$2
 #rootODir=/scratch2/vyp-scratch2/ciangene
 rootODir=/scratch2/vyp-scratch2/cian
-release=February2015
+release=October2014
 rootODir=${1-$rootODir}
 release=${2-$release}
 bDir=${rootODir}/UCLex_${release}/
@@ -25,8 +25,8 @@ hwe=0.0001
 
 #$ldak --make-bed $bDir"techMatrix_filtered" --bfile $missingNonMissing --extract $extract
 $ldak --calc-kins-direct $techOut --bfile $missingNonMissing --ignore-weights YES --kinship-raw YES \
---minmaf $minMaf --maxmaf $maxMaf --minvar $minVar --minobs $minObs --extract $extract 
-$ldak --pca $bDir"TechPCs" --grm $techOut --extract $extract
+#--minmaf $minMaf --maxmaf $maxMaf --minvar $minVar --minobs $minObs --extract $extract 
+$ldak --pca $bDir"TechPCs" --grm $techOut # --extract $extract
 
 
 oFile=$bDir/plot.techpca.R
@@ -43,7 +43,7 @@ echo '
 	ymin <- min(file[,4]) - buffer
 	ymax <- max(file[,4]) + buffer
 
-	pdf("TechPCA.pdf") 
+	pdf(paste0(dir, "/TechPCA.pdf") ) 
 	for(i in 1:nb.groups)
 #	for(i in 72:nb.groups)
 	{

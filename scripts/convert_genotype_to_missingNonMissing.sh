@@ -6,7 +6,7 @@ rootODir=$1
 release=$2
 #rootODir=/scratch2/vyp-scratch2/ciangene
 rootODir=/scratch2/vyp-scratch2/cian
-release=February2015
+release=October2014
 rootODir=${1-$rootODir}
 release=${2-$release}
 
