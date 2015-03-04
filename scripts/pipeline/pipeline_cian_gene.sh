@@ -2,24 +2,24 @@
 
 Rbin=/cluster/project8/vyp/vincent/Software/R-3.1.2/bin/R
 
-
+## First step will be creating genotype matrix and initial filtering
 firstStep=${repo}/scripts/first.step.R  ##step 1
 clean=${repo}/scripts/variant_filtering/snp_subset_extCtrls.R  ##step 1.1
 pheno=${repo}/scripts/new_make_phenotype_file.R
 
+## Second step is creating and validating the technical Kinship
 secondStep=${repo}/scripts/convert_genotype_to_missingNonMissing.sh  ## step2
 makeKin=${repo}/scripts/make_kinships_new.sh # step 2.1
 checkKin=${repo}/scripts/check_tk_residuals.sh # step 2.2
 convertKin=${repo}/scripts/prepare_kinship_matrix_for_fastLMM.R
 
+## Third step is the case control tests
 thirdStep=${repo}/scripts/run_ldak_on_all_phenos.sh
 singleVariant=${repo}/scripts/plink_single_variant_tests.sh
 
 ##### default value of all arguments
 rootODir=/scratch2/vyp-scratch2/cian
-release=October2014
-
-
+release=February2015
 
 ######## create directories
 for dir in cluster cluster/submission cluster/error cluster/out cluster/R; do
