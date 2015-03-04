@@ -71,17 +71,21 @@ for(i in 1:nb.groups)
 	pheno[hits,i+2] <- 2
 }
 
-write.table(groups.unique, paste0(oDir, "GroupNames"), col.names=F, row.names=F, quote=F, sep="\t")
+
 
 ## remove pheno for extCtrls
 extCtrls <- read.table(paste0(oDir, "ext_ctrl_samples"), header=F) ## made in first.step.R
 ex.ctrl.pheno <- pheno[,1] %in% unlist(extCtrls) 
 pheno[ex.ctrl.pheno,3:ncol(pheno)] <- '-9'
-write.table(pheno, file = paste0(oDir, "Phenotypes"), col.names=F, row.names=F, quote=F, sep="\t") 
+
 ## summarise case cohort breakdowns
 cohort.summary <- data.frame(do.call(rbind, lapply(pheno[,3:ncol(pheno)], table) )) 
 cohort.summary$Cohort <- rownames(cohort.summary) 
 colnames(cohort.summary) <- c("Nb.Ctrls", "Nb.cases", "Nb.ext.Ctrls", "Cohort") 
+
+
+write.table(groups.unique, paste0(oDir, "GroupNames"), col.names=F, row.names=F, quote=F, sep="\t")
+write.table(pheno, file = paste0(oDir, "Phenotypes"), col.names=F, row.names=F, quote=F, sep="\t") 
 write.table(data.frame(pheno[,1], groups ), paste0(oDir, "Sample.cohort"),  col.names=F, row.names=F, quote=F, sep="\t") 
 write.table(cohort.summary, file = paste0(oDir, "cohort.summary"), col.names=T, row.names=F, quote=F, sep="\t") 
 

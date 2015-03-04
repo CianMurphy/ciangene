@@ -19,4 +19,9 @@ New UCLex Release
 	Case Control tests. 	
 					
 
+To Do: 
 
+	Change LDAK script to run jobs while on cluster - step 3
+	Add feature: Remove specified cohorts from specific tests - e.g. if batchA has similar phenotype to batchB then batchB should not be used as control for batchA - step2
+	Optimise so lowest MAF and QC possible can be used to get good results -  step3
+	Add feature: As well as creating summary tables and plots of top genes/variants, there should be a way to extract carriers of specific variant(s), output in clinician friendly format
