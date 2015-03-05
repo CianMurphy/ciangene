@@ -11,11 +11,12 @@ pheno=${repo}/scripts/new_make_phenotype_file.R
 secondStep=${repo}/scripts/convert_genotype_to_missingNonMissing.sh  ## step2
 makeKin=${repo}/scripts/make_kinships_new.sh # step 2.1
 checkKin=${repo}/scripts/check_tk_residuals.sh # step 2.2
-convertKin=${repo}/scripts/prepare_kinship_matrix_for_fastLMM.R
+convertKin=${repo}/scripts/prepare_kinship_matrix_for_fastLMM.R # step 2.3
 
 ## Third step is the case control tests
 thirdStep=${repo}/scripts/run_ldak_on_all_phenos.sh
 singleVariant=${repo}/scripts/plink_single_variant_tests.sh
+fastlmm=${repo}/scripts/run_fastLMM_on_all_phenotypes.sh
 
 ##### default value of all arguments
 rootODir=/scratch2/vyp-scratch2/cian
@@ -78,9 +79,9 @@ if [[ "$step1" == "yes" ]]; then
 #$ -l h_rt=24:00:00
 #$ -cwd
 
-$Rbin CMD BATCH --no-save --no-restore --release=${release} --rootODir=${rootODir} $firstStep cluster/R/step1.Rout
-$Rbin CMD BATCH --no-save --no-restore --release=${release} --rootODir=${rootODir} $clean cluster/R/step1.Rout
-$Rbin CMD BATCH --no-save --no-restore --release=${release} --rootODir=${rootODir} $pheno cluster/R/step1.Rout
+$Rbin CMD BATCH --no-save --no-restore --release=${release} --rootODir=${rootODir} $firstStep cluster/R/step1.1.Rout
+$Rbin CMD BATCH --no-save --no-restore --release=${release} --rootODir=${rootODir} $clean cluster/R/step1.2.Rout
+$Rbin CMD BATCH --no-save --no-restore --release=${release} --rootODir=${rootODir} $pheno cluster/R/step1.3.Rout
 
 " > $script
     
@@ -108,7 +109,7 @@ sh $secondStep $rootODir $release
 
 sh $makeKin $rootODir $release ### make kinships matrix
 
-sh $checkKin
+sh $checkKin $rootODir $release
 
 $Rbin CMD BATCH --no-save --no-restore --release=${release} --rootODir=${rootODir} $convertKin cluster/R/step2.Rout
 
@@ -138,8 +139,9 @@ if [[ "$step3" == "yes" ]]; then
 
 sh $thirdStep $rootODir $release 
 
-sh $singleVariant $release
+sh $singleVariant $rootODir $release 
 
+sh $fastlmm $rootODir $release 
 
 " > $script
 

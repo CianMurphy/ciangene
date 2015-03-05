@@ -8,12 +8,12 @@ pipeline=${repo}/scripts/pipeline/pipeline_cian_gene.sh
 
 script=cluster/submission/cian.sh
 # rootODir=/scratch2/vyp-scratch2/ciangene
-rootODir=/scratch2/vyp-scratch2/cian
+rootODir=/scratch2/vyp-scratch2/cian/
 
-step1=yes
-step2=yes
-step3=no ## ldak script submits jobs, which wont work when run on a job node. FIX
+step1=no
+step2=no
+step3=yes 
 
 
-sh ${pipeline} --step1 ${step1} --step2 ${step2} --step3 ${step3} --rootODir ${rootODir} --release October2014
+sh ${pipeline} --step1 ${step1} --step2 ${step2} --step3 ${step3} --rootODir ${rootODir} --release February2015
 
