@@ -1,11 +1,8 @@
 #!/bin/bash
 
 ldak=/cluster/project8/vyp/cian/support/ldak/ldak
-
-rootODir=$1
-release=$2
 #rootODir=/scratch2/vyp-scratch2/ciangene
-rootODir=/scratch2/vyp-scratch2/cian
+rootODir=/scratch2/vyp-scratch2/cian/
 release=February2015
 rootODir=${1-$rootODir}
 release=${2-$release}
@@ -29,7 +26,7 @@ if [ ! -e $oDir ]; then mkdir $oDir; fi
 for pheno in $(seq 72 $nbGroups)
 do
 	batch=$(sed -n $pheno'p' $Names); echo $batch
-	$ldak --reml $oDir$batch --grm $kinship  --pheno $phenotypes --mpheno $pheno  --bfile $data
+	$ldak --reml $oDir$batch --grm $kinship  --pheno $phenotypes --mpheno $pheno  # --bfile $data
 	
 	if (($pheno==1))
 	then

@@ -2,11 +2,9 @@
 
 ldak=/cluster/project8/vyp/cian/support/ldak/ldak
 R=/share/apps/R-3.1.0/bin/R
-rootODir=$1
-release=$2
 #rootODir=/scratch2/vyp-scratch2/ciangene
-rootODir=/scratch2/vyp-scratch2/cian
-release=October2014
+rootODir=/scratch2/vyp-scratch2/cian/
+release=February2015
 rootODir=${1-$rootODir}
 release=${2-$release}
 bDir=${rootODir}/UCLex_${release}/

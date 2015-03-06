@@ -1,6 +1,19 @@
+getArgs <- function() {
+  myargs.list <- strsplit(grep("=",gsub("--","",commandArgs()),value=TRUE),"=")
+  myargs <- lapply(myargs.list,function(x) x[2] )
+  names(myargs) <- lapply(myargs.list,function(x) x[1])
+  return (myargs)
+}
+
 release <- 'February2015'
 
-bDir <- paste0("/scratch2/vyp-scratch2/cian/UCLex_", release, "/") 
+myArgs <- getArgs()
+
+if ('rootODir' %in% names(myArgs))  rootODir <- myArgs[[ "rootODir" ]] else rootODir <- paste0("/scratch2/vyp-scratch2/cian/UCLex_", release, "/") 
+if ('release' %in% names(myArgs))  release <- myArgs[[ "release" ]]
+#########################################
+
+bDir <- paste0(rootODir, "/UCLex_", release, "/")
 
 kin=as.matrix(read.table(paste0(bDir, "TechKin.grm.raw"))) 
 fam=as.matrix(read.table(paste0(bDir, "allChr_snpStats.fam")))

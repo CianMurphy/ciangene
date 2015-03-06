@@ -1,11 +1,8 @@
 #!/bin/bash
 
 ldak=/cluster/project8/vyp/cian/support/ldak/ldak
-
-rootODir=$1
-release=$2
 #rootODir=/scratch2/vyp-scratch2/ciangene
-rootODir=/scratch2/vyp-scratch2/cian
+rootODir=/scratch2/vyp-scratch2/cian/
 release=October2014
 rootODir=${1-$rootODir}
 release=${2-$release}

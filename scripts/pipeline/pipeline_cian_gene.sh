@@ -14,7 +14,7 @@ checkKin=${repo}/scripts/check_tk_residuals.sh # step 2.2
 convertKin=${repo}/scripts/prepare_kinship_matrix_for_fastLMM.R # step 2.3
 
 ## Third step is the case control tests
-thirdStep=${repo}/scripts/run_ldak_on_all_phenos.sh
+thirdStep=${repo}/scripts/LDAK/run_ldak_on_all_phenos.sh
 singleVariant=${repo}/scripts/plink_single_variant_tests.sh
 fastlmm=${repo}/scripts/run_fastLMM_on_all_phenotypes.sh
 
@@ -131,7 +131,7 @@ if [[ "$step3" == "yes" ]]; then
 #$ -S /bin/bash
 #$ -o cluster/out
 #$ -e cluster/error
-#$ -l h_vmem=5.9G,tmem=5.9G
+#$ -l h_vmem=40G,tmem=40G
 #$ -pe smp 1
 #$ -N step3_cian
 #$ -l h_rt=24:00:00

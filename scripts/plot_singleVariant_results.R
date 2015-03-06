@@ -17,7 +17,7 @@ library(snpStats)
 
 bDir <- paste0("/scratch2/vyp-scratch2/cian/UCLex_", release, "/")
 minMaf <- c(0, 0.00001,  0.01, 0.1, 0.2)
-count.thresholds <- c(0,1,10,100)
+count.thresholds <- c(0,100, 200, 500)
 
 iDir <- paste0(bDir, "FastLMM_Single_Variant_all_phenos/")
 

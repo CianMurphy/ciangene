@@ -5,7 +5,7 @@ getArgs <- function() {
   return (myargs)
 }
 
-release <- 'October2014'
+release <- 'February2015'
 
 myArgs <- getArgs()
 
@@ -17,7 +17,7 @@ library(snpStats)
 percent.ext.ctrls <- .10
 
 
-dir <- paste0("/cluster/project8/vyp/exome_sequencing_multisamples/mainset/GATK/mainset_", release , "/mainset_", release, '_by_chr') # "_snpStats/")
+dir <- paste0("/cluster/project8/vyp/exome_sequencing_multisamples/mainset/GATK/mainset_", release , "/mainset_", release,  "_snpStats/")
 files <- list.files(dir, pattern ="_snpStats.RData", full.names=T) 
 files <- files[order(as.numeric(gsub(gsub(basename(files), pattern ="chr", replacement =""), pattern = "_.*", replacement = "") ) )]
 
@@ -40,34 +40,35 @@ for(i in 1:length(files)){
   load(files[i])
 
   # Extract clean variants. 
-  matrix.calls.snpStats <- matrix.calls.snpStats[,which(annotations.snpStats$FILTER == "PASS")]
+	pass.snps <- annotations.snpStats$clean.signature[which(annotations.snpStats$FILTER == "PASS")] 
+	matrix.calls.snpStats <- matrix.calls.snpStats[, which( colnames(matrix.calls.snpStats) %in% pass.snps ) ]
   annotations.snpStats <- subset(annotations.snpStats, annotations.snpStats$FILTER == "PASS")
-  matrix.depth <- matrix.depth[which(annotations.snpStats$FILTER == "PASS"),]
+ 	matrix.depth <-  matrix.depth[which( rownames(matrix.depth) %in% pass.snps) ,]
 
 	if(i==1) 
-  {
-    samples <- rownames(matrix.calls.snpStats)
-    ext.ctrls <- sample(length(samples), length(samples) * percent.ext.ctrls) # Get list of extCtrls. 
-    write.table(length(ext.ctrls) , file = paste0(oDir, "nb_ext_ctrl_samples"), col.names=F, row.names=F, quote=F, sep="\t") 
-    write.table(rownames(matrix.calls.snpStats[ext.ctrls,]) , file = paste0(oDir, "ext_ctrl_samples"), col.names=F, row.names=F, quote=F, sep="\t") 
-    ext.samples <- matrix.calls.snpStats[ext.ctrls ,]
-    ext.samples.sum <- data.frame(colnames(matrix.calls.snpStats), col.summary(ext.samples) ) 
-    ext.samples.names <- data.frame(rownames(ext.samples) , row.summary(ext.samples) ) 
+	{	
+		samples <- rownames(matrix.calls.snpStats)
+		ext.ctrls <- sample(length(samples), length(samples) * percent.ext.ctrls) # Get list of extCtrls. 
+		write.table(length(ext.ctrls) , file = paste0(oDir, "nb_ext_ctrl_samples"), col.names=F, row.names=F, quote=F, sep="\t") 
+		write.table(rownames(matrix.calls.snpStats[ext.ctrls,]) , file = paste0(oDir, "ext_ctrl_samples"), col.names=F, row.names=F, quote=F, sep="\t") 
+		ext.samples <- matrix.calls.snpStats[ext.ctrls ,]
+		ext.samples.sum <- data.frame(colnames(matrix.calls.snpStats), col.summary(ext.samples) ) 
+		ext.samples.names <- data.frame(rownames(ext.samples) , row.summary(ext.samples) ) 
 
-    write.table(ext.samples.sum, file = paste0(oDir, "Ext_ctrl_variant_summary") , col.names=T, row.names=F, quote=F, sep="\t", append=F) 
-    write.table(ext.samples.names, file = paste0(oDir, "Ext_ctrl_sample_summary") , col.names=T, row.names=F, quote=F, sep="\t", append=F)
-    write.SnpMatrix(t(matrix.calls.snpStats), full, col.names=FALSE, row.names=FALSE, quote=FALSE, sep="\t", append=FALSE)   ##this is where it becomes numbers
-    write.table(annotations.snpStats, annotations.out, col.names=TRUE, row.names=TRUE, quote=FALSE, sep="\t", append=FALSE)
-  } else {
-    ext.samples <- matrix.calls.snpStats[ext.ctrls ,]
-    ext.samples.sum <- data.frame(colnames(matrix.calls.snpStats), col.summary(ext.samples) ) 
-    ext.samples.names <- data.frame(rownames(ext.samples) , row.summary(ext.samples) ) 
-    write.table(ext.samples.sum, file = paste0(oDir, "Ext_ctrl_variant_summary") , col.names=F, row.names=F, quote=F, sep="\t", append=T) 
-    write.table(ext.samples.names, file = paste0(oDir, "Ext_ctrl_sample_summary") , col.names=F, row.names=F, quote=F, sep="\t", append=T) 
+		write.table(ext.samples.sum, file = paste0(oDir, "Ext_ctrl_variant_summary") , col.names=T, row.names=F, quote=F, sep="\t", append=F) 
+		write.table(ext.samples.names, file = paste0(oDir, "Ext_ctrl_sample_summary") , col.names=T, row.names=F, quote=F, sep="\t", append=F)
+		write.SnpMatrix(t(matrix.calls.snpStats), full, col.names=FALSE, row.names=FALSE, quote=FALSE, sep="\t", append=FALSE)   ##this is where it becomes numbers
+    		write.table(annotations.snpStats, annotations.out, col.names=TRUE, row.names=TRUE, quote=FALSE, sep="\t", append=FALSE)
+  	} else {
+  		ext.samples <- matrix.calls.snpStats[ext.ctrls ,]
+		ext.samples.sum <- data.frame(colnames(matrix.calls.snpStats), col.summary(ext.samples) ) 
+		ext.samples.names <- data.frame(rownames(ext.samples) , row.summary(ext.samples) ) 
+    		write.table(ext.samples.sum, file = paste0(oDir, "Ext_ctrl_variant_summary") , col.names=F, row.names=F, quote=F, sep="\t", append=T) 
+		write.table(ext.samples.names, file = paste0(oDir, "Ext_ctrl_sample_summary") , col.names=F, row.names=F, quote=F, sep="\t", append=T) 
 
-    write.SnpMatrix(t(matrix.calls.snpStats), full, col.names=FALSE, row.names=FALSE, quote=FALSE, sep="\t", append=TRUE)  
-    write.table(annotations.snpStats, annotations.out, col.names=FALSE, row.names=TRUE, quote=FALSE, sep="\t", append=TRUE) 
-  }
+		write.SnpMatrix(t(matrix.calls.snpStats), full, col.names=FALSE, row.names=FALSE, quote=FALSE, sep="\t", append=TRUE)  
+    		write.table(annotations.snpStats, annotations.out, col.names=FALSE, row.names=TRUE, quote=FALSE, sep="\t", append=TRUE) 
+	}
 
 
   # Make map file 
@@ -102,8 +103,9 @@ fam[,1] <- colnames(matrix.depth)
 fam[,2] <- colnames(matrix.depth)
 fam[,3] <- 0 
 fam[,4] <- 0 
-fam[,3] <- 0 
-fam[,3] <- 0 
+fam[,5] <- 1 
+fam[,6] <- 0
+
 write.table(fam, paste0(oDir, "/UCLex_", release, ".fam") , col.names=FALSE, row.names=FALSE, quote=FALSE, sep="\t") 
 
 bim <- read.table(oBim, header=FALSE, sep="\t") 

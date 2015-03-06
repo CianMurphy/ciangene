@@ -8,18 +8,18 @@ getArgs <- function() {
   return (myargs)
 }
 
-release <- 'October2014'
+release <- 'February2015'
 
 myArgs <- getArgs()
 
 if ('rootODir' %in% names(myArgs))  rootODir <- myArgs[[ "rootODir" ]]
 if ('release' %in% names(myArgs))  release <- myArgs[[ "release" ]]
+#############################################
 
-iFile <- paste0("/cluster/project8/vyp/exome_sequencing_multisamples/mainset/GATK/mainset_", release, "/mainset_", release, "_by_chr/chr21_snpStats.RData")
+iFile <- paste0("/cluster/project8/vyp/exome_sequencing_multisamples/mainset/GATK/mainset_", release, "/mainset_", release, "_snpStats/chr21_snpStats.RData")
 load(iFile)
 
-
-oDir <- paste0("/scratch2/vyp-scratch2/cian/UCLex_", release , "/") 
+oDir <- paste0(rootODir, "/UCLex_", release, "/")
 
 groups <- gsub(colnames(matrix.depth), pattern = "_.*",replacement = "")
 groups.unique <- unique(groups)
