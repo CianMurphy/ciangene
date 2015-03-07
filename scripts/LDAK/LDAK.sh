@@ -15,8 +15,8 @@ kinship=$rootODir/UCLex_${release}/TechKin
 genes=/SAN/biomed/biomed14/vyp-scratch/cian/LDAK/genesldak_ref.txt
 
 ####### Parameters
-minMaf=0.000001	
-missing=0.7
+#minMaf=0.000001	
+#missing=0.7
 minVar=1e-4
 maxmaf=0.5
 power=0 # rare variants arent upweighed with power = 0
