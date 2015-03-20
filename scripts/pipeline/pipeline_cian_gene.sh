@@ -1,25 +1,24 @@
-
-
 Rbin=/cluster/project8/vyp/vincent/Software/R-3.1.2/bin/R
 
-## First step will be creating genotype matrix and initial filtering
+## First step - genotype matrix and initial filtering
 firstStep=${repo}/scripts/first.step.R  ##step 1
-clean=${repo}/scripts/variant_filtering/snp_subset_extCtrls.R  ##step 1.1
-pheno=${repo}/scripts/new_make_phenotype_file.R
+clean=${repo}/scripts/variant_filtering/qc.sh   ##step 1.1
+filter=${repo}/scripts/variant_filtering/filter_snps.R   ##step 1.2
+pheno=${repo}/scripts/new_make_phenotype_file.R ## step 1.3
 
-## Second step is creating and validating the technical Kinship
+## Second step - creating and validating the technical Kinship
 secondStep=${repo}/scripts/convert_genotype_to_missingNonMissing.sh  ## step2
 makeKin=${repo}/scripts/make_kinships_new.sh # step 2.1
 checkKin=${repo}/scripts/check_tk_residuals.sh # step 2.2
 convertKin=${repo}/scripts/prepare_kinship_matrix_for_fastLMM.R # step 2.3
 
-## Third step is the case control tests
+## Third step - case control tests
 thirdStep=${repo}/scripts/LDAK/run_ldak_on_all_phenos.sh
 singleVariant=${repo}/scripts/plink_single_variant_tests.sh
 fastlmm=${repo}/scripts/run_fastLMM_on_all_phenotypes.sh
 
 ##### default value of all arguments
-rootODir=/scratch2/vyp-scratch2/cian
+rootODir=/scratch2/vyp-scratch2/cian/
 release=February2015
 
 ######## create directories
@@ -80,8 +79,9 @@ if [[ "$step1" == "yes" ]]; then
 #$ -cwd
 
 $Rbin CMD BATCH --no-save --no-restore --release=${release} --rootODir=${rootODir} $firstStep cluster/R/step1.1.Rout
-$Rbin CMD BATCH --no-save --no-restore --release=${release} --rootODir=${rootODir} $clean cluster/R/step1.2.Rout
-$Rbin CMD BATCH --no-save --no-restore --release=${release} --rootODir=${rootODir} $pheno cluster/R/step1.3.Rout
+sh $clean $rootODir $release
+$Rbin CMD BATCH --no-save --no-restore --release=${release} --rootODir=${rootODir} $filter cluster/R/step1.3.Rout
+$Rbin CMD BATCH --no-save --no-restore --release=${release} --rootODir=${rootODir} $pheno cluster/R/step1.4.Rout
 
 " > $script
     
@@ -99,17 +99,17 @@ if [[ "$step2" == "yes" ]]; then
 #$ -S /bin/bash
 #$ -o cluster/out
 #$ -e cluster/error
-#$ -l h_vmem=5.9G,tmem=5.9G
+#$ -l h_vmem=15G,tmem=15G
 #$ -pe smp 1
 #$ -N step2_cian
 #$ -l h_rt=24:00:00
 #$ -cwd
 
-sh $secondStep $rootODir $release 
+sh $secondStep $rootODir $release ## convert geno to missingNonMissing
 
 sh $makeKin $rootODir $release ### make kinships matrix
 
-sh $checkKin $rootODir $release
+sh $checkKin $rootODir $release # check how much variance the kinships explained. 
 
 $Rbin CMD BATCH --no-save --no-restore --release=${release} --rootODir=${rootODir} $convertKin cluster/R/step2.Rout
 

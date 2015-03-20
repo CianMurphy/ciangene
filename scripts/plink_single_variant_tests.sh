@@ -3,6 +3,7 @@ shopt -s expand_aliases
 source ~/.bashrc
 
 R=/share/apps/R-3.1.0/bin/R
+runSh='sh /cluster/project8/vyp/cian/scripts/bash/runBashCluster.sh'
 rootODir=$1
 release=$2
 #rootODir=/scratch2/vyp-scratch2/ciangene
@@ -24,17 +25,17 @@ if [ ! -e $oDir ]; then mkdir $oDir; fi
 
 cwd=$(pwd)
 
-for pheno in $(seq 73  $nbGroups)
+for pheno in $(seq 86 $nbGroups)
 do
 	batch=$(sed -n $pheno'p' $Groups)	
-	oFile=$oDir"run_${batch}.sh"
+	oFile=$oDir"/run_${batch}.sh"
 	echo "
-	plink --noweb  --bfile $data --assoc   --counts --allow-no-sex  --pheno $Pheno --adjust --mpheno $pheno --out $oDir$batch"_assoc"
-	#plink --noweb  --bfile $data --fisher  --pfilter 1e-4 --allow-no-sex  --pheno $Pheno --adjust --mpheno $pheno --out $oDir$batch"_fisher"
-	#plink --noweb  --bfile $data --logistic --pfilter 1e-4 --allow-no-sex --pheno $Pheno --adjust --mpheno $pheno --out $oDir$batch"_logistic_no_covars"	
-	plink --noweb  --bfile $data --logistic  --hide-covar --allow-no-sex --pheno $Pheno --adjust --mpheno $pheno --covar $covar --covar-number 1-10 --out $oDir$batch"_logistic_tech_pcs_covars"
+	#plink --noweb  --bfile $data --assoc --counts --allow-no-sex  --pheno $Pheno --adjust --mpheno $pheno --out $oDir$batch"_assoc"
+	#plink --noweb  --bfile $data --fisher --allow-no-sex  --pheno $Pheno --adjust --mpheno $pheno --out $oDir$batch"_fisher"
+	plink --noweb  --bfile $data --logistic --allow-no-sex --pheno $Pheno --adjust --mpheno $pheno --out $oDir$batch"_logistic_no_covars"	
+	plink --noweb  --bfile $data --logistic  --hide-covar --allow-no-sex --pheno $Pheno --adjust --mpheno $pheno --covar $covar --covar-number 1-2 --out $oDir$batch"_logistic_tech_pcs_covars"
 	" > $oFile
-	cd $oDir; sh "run_${batch}.sh" ; cd $cwd
+	cd $oDir; $runSh "run_${batch}.sh" ; cd $cwd
 done
 
 

@@ -11,8 +11,8 @@ script=cluster/submission/cian.sh
 rootODir=/scratch2/vyp-scratch2/cian/
 
 step1=no
-step2=no
-step3=yes 
+step2=yes
+step3=no 
 
 
 sh ${pipeline} --step1 ${step1} --step2 ${step2} --step3 ${step3} --rootODir ${rootODir} --release February2015

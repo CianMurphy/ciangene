@@ -10,6 +10,7 @@ release=${2-$release}
 bDir=${rootODir}/UCLex_${release}/
 genes=/SAN/biomed/biomed14/vyp-scratch/cian/LDAK/genesldak_ref.txt
 kinship=$bDir"TechKin"
+pKinship=$bDir"PopKin"
 data=$bDir"allChr_snpStats"
 phenotypes=$bDir"Phenotypes"
 groups=$bDir"cohort.summary"
@@ -26,8 +27,12 @@ if [ ! -e $oDir ]; then mkdir $oDir; fi
 for pheno in $(seq 72 $nbGroups)
 do
 	batch=$(sed -n $pheno'p' $Names); echo $batch
-	$ldak --reml $oDir$batch --grm $kinship  --pheno $phenotypes --mpheno $pheno  # --bfile $data
+	$ldak --decompose $kinship"_decomposed" --grm $kinship
+	$ldak --reml $oDir$batch"_tech" --grm $kinship  --pheno $phenotypes --mpheno $pheno  --eigen $kinship"_decomposed"
 	
+	$ldak --decompose $pKinship"_decomposed" --grm $pKinship
+	$ldak --reml $oDir$batch"_geno" --grm $pKinship  --pheno $phenotypes --mpheno $pheno  --eigen $pKinship"_decomposed"
+
 	if (($pheno==1))
 	then
 		if [ -e $oDir$batch'.indi.res' ]
@@ -70,7 +75,7 @@ echo '
 	dev.off() 
 
 	' >> $oFile
-R CMD BATCH --no-save --no-restore $oFile
+$R CMD BATCH --no-save --no-restore $oFile
 
 
 

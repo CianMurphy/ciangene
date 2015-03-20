@@ -40,10 +40,10 @@ for(i in 1:length(files)){
   load(files[i])
 
   # Extract clean variants. 
-	pass.snps <- annotations.snpStats$clean.signature[which(annotations.snpStats$FILTER == "PASS")] 
-	matrix.calls.snpStats <- matrix.calls.snpStats[, which( colnames(matrix.calls.snpStats) %in% pass.snps ) ]
+  pass.snps <- annotations.snpStats$clean.signature[which(annotations.snpStats$FILTER == "PASS")] #
+  matrix.calls.snpStats <- matrix.calls.snpStats[, which( colnames(matrix.calls.snpStats) %in% pass.snps ) ]
   annotations.snpStats <- subset(annotations.snpStats, annotations.snpStats$FILTER == "PASS")
- 	matrix.depth <-  matrix.depth[which( rownames(matrix.depth) %in% pass.snps) ,]
+  matrix.depth <-  matrix.depth[which( rownames(matrix.depth) %in% pass.snps) ,]
 
 	if(i==1) 
 	{	
@@ -63,11 +63,11 @@ for(i in 1:length(files)){
   		ext.samples <- matrix.calls.snpStats[ext.ctrls ,]
 		ext.samples.sum <- data.frame(colnames(matrix.calls.snpStats), col.summary(ext.samples) ) 
 		ext.samples.names <- data.frame(rownames(ext.samples) , row.summary(ext.samples) ) 
-    		write.table(ext.samples.sum, file = paste0(oDir, "Ext_ctrl_variant_summary") , col.names=F, row.names=F, quote=F, sep="\t", append=T) 
+   		write.table(ext.samples.sum, file = paste0(oDir, "Ext_ctrl_variant_summary") , col.names=F, row.names=F, quote=F, sep="\t", append=T) 
 		write.table(ext.samples.names, file = paste0(oDir, "Ext_ctrl_sample_summary") , col.names=F, row.names=F, quote=F, sep="\t", append=T) 
 
 		write.SnpMatrix(t(matrix.calls.snpStats), full, col.names=FALSE, row.names=FALSE, quote=FALSE, sep="\t", append=TRUE)  
-    		write.table(annotations.snpStats, annotations.out, col.names=FALSE, row.names=TRUE, quote=FALSE, sep="\t", append=TRUE) 
+   		write.table(annotations.snpStats, annotations.out, col.names=FALSE, row.names=TRUE, quote=FALSE, sep="\t", append=TRUE) 
 	}
 
 

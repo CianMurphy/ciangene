@@ -31,12 +31,12 @@ echo "
 	phenoFile=$bDir"Phenotypes"
 	extract=$bDir"Clean_variants_Func"
 
-	"'$fastlmm'"  -simLearnType Full -verboseOutput -maxThreads 1 -bfile "'$snpFile'" -sim "'$kinshipFile'" -pheno "'$phenoFile'" -mpheno "$pheno" -out "$batch"_Tech_kin -extract "'$extract'"
-	"'$fastlmm'"  -linreg -simLearnType Full -verboseOutput -maxThreads 1 -bfile "'$snpFile'" -pheno "'$phenoFile'" -mpheno "$pheno" -out "$batch"_no_kin -extract "'$extract'"
+	"'$fastlmm'"  -simLearnType Full -verboseOutput -maxThreads 1 -bfile "'$snpFile'" -sim "'$kinshipFile'" -pheno "'$phenoFile'" -mpheno "$pheno" -out "$batch"_Tech_kin
+	"'$fastlmm'"  -linreg -simLearnType Full -verboseOutput -maxThreads 1 -bfile "'$snpFile'" -pheno "'$phenoFile'" -mpheno "$pheno" -out "$batch"_no_kin 
 	" >> $target
 
-# cd $oFolder ; runSh $batch".fastlmm.sh" ; cd ..
-cd $oFolder ; sh $batch".fastlmm.sh" ; cd ..
+ cd $oFolder ; runSh $batch".fastlmm.sh" ; cd ..
+#cd $oFolder ; sh $batch".fastlmm.sh" ; cd ..
 done
 
 

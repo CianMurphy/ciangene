@@ -20,7 +20,7 @@ iFile <- paste0("/cluster/project8/vyp/exome_sequencing_multisamples/mainset/GAT
 load(iFile)
 
 oDir <- paste0(rootODir, "/UCLex_", release, "/")
-
+message(oDir) 
 groups <- gsub(colnames(matrix.depth), pattern = "_.*",replacement = "")
 groups.unique <- unique(groups)
 # Tring to group samples by cohort correctly. Default method is to use string before first underscore in their name, but that doesn't work for all samples, 
@@ -82,7 +82,7 @@ pheno[ex.ctrl.pheno,3:ncol(pheno)] <- '-9'
 cohort.summary <- data.frame(do.call(rbind, lapply(pheno[,3:ncol(pheno)], table) )) 
 cohort.summary$Cohort <- rownames(cohort.summary) 
 colnames(cohort.summary) <- c("Nb.Ctrls", "Nb.cases", "Nb.ext.Ctrls", "Cohort") 
-
+head(cohort.summary)
 
 write.table(groups.unique, paste0(oDir, "GroupNames"), col.names=F, row.names=F, quote=F, sep="\t")
 write.table(pheno, file = paste0(oDir, "Phenotypes"), col.names=F, row.names=F, quote=F, sep="\t") 

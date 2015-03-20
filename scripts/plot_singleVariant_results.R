@@ -30,10 +30,25 @@ groups <- gsub(basename(techKin) , pattern = "_.*", replacement = "")
 oFile <- paste0(iDir, "SingleVariant_qqplots.pdf")
 
 counts <- list.files(paste0(bDir, "Single_variant_tests/") , pattern = "assoc$", full.names=T) 
+noCovar <- list.files(paste0(bDir, "Single_variant_tests/") , pattern = ".*no.*adjusted", full.names=T)
+techCovar <- list.files(paste0(bDir, "Single_variant_tests/") , pattern = ".*tech.*adjusted", full.names=T)
+
+models <- data.frame(matrix(nrow=length(groups), ncol=6))
+models[,1] <- groups
+for(i in 1:length(groups))
+{
 
 
-#annotations <- read.csv(paste0(bDir, "annotations.snpStat"), header=T, sep="\t")
-#extCtrl <- read.table(paste0(bDir, "Ext_ctrl_variant_summary"), header=T )
+
+
+}
+
+
+
+
+
+annotations <- read.csv(paste0(bDir, "annotations.snpStat"), header=T, sep="\t")
+extCtrl <- read.table(paste0(bDir, "Ext_ctrl_variant_summary"), header=T )
 extCtrl.small <- data.frame(extCtrl[,1], extCtrl$MAF)
 colnames(extCtrl.small) <-  c("SNP", "ExtCtrl_MAF") 
 extCtrl.small$ExtCtrl_MAF[is.na(extCtrl.small$ExtCtrl_MAF)] <- 0 
@@ -43,8 +58,8 @@ par(mfrow=c(2,2), cex.main=0.8)
 for(i in 25:length(groups))
 {
 	message(paste("Now plotting", groups[i]))
-	base <- read.table(noKin[i], header=T, stringsAsFactors=F)
-	tech <- read.table(techKin[i], header=T, stringsAsFactors=F)
+	base <- read.table(noKin[grep(groups[i], noKin) ], header=T, stringsAsFactors=F)
+	tech <- read.table(techKin[grep(groups[i], techKin) ], header=T, stringsAsFactors=F)
 	tech.small <- data.frame(tech$SNP, tech$Pvalue)
 	colnames(tech.small) <- c("SNP", "TechKinPvalue")
 
@@ -52,7 +67,10 @@ for(i in 25:length(groups))
 	results.merged.anno <- merge(results.merged, annotations, by.x = "SNP", by.y ="clean.signature")
 	results.merged.anno.extCtrl <- merge(results.merged.anno, extCtrl.small, by = "SNP")
 
-	current.counts <- read.table(counts[grep(groups[i], counts)][1], header=T) 
+	hit <- counts[grep(groups[i], counts)][1]
+	if(file.exists(hit))
+	{
+	current.counts <- read.table(hit, header=T) 
 
 	final <- merge(results.merged.anno.extCtrl, current.counts, by = "SNP")
 	write.table(results.merged.anno.extCtrl, paste0(iDir, groups[i], "_filt"), col.names=T, row.names=F, quote=F, sep="\t")
@@ -71,5 +89,6 @@ for(i in 25:length(groups))
 	}
 	)
 
+	} ## file.xists(hit)
 }
 dev.off()
