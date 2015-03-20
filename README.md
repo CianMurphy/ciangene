@@ -8,30 +8,34 @@ Order of scripts: in progress
 * first.step.R
 
 		Takes the snpStats files from the data release and turn into a numeric matrix
-		Same thing but with depth, prepares the kinshpi matrix computation
-		Takes the list of clean variants and outputs the filtered result
+		Establishes UCLex External Controls (Uex) and calculates their summary stats
 
-* variant_filtering
+* variant_filtering/qc.sh
 		
-		variant_filtering/qc.sh
-
-* convert_missingNonmissing_matrix_to_plink.sh
-
-		turns NA/non NA into 0-1 for LDAK/plink use
-
-* make_kinships_new.sh
-
-		###Computes variant weights, then computes kinship matrix based on depth and missing/non-missing
-		###Three sets of weights: two kinship matrices and genotypes.
-		###Why? Need to understand why we use weights from genotype matrix.
+		filters by Uex missingness and MAF
+		filters by function - gene tests
+		add hwe filter
 
 * new_make_phenotype_file.R
 
 		Creates a large matrix of phenotypes, grouped by names basically.
+		Remove Uex
+		Fix sample groupings
+
+* convert_missingNonmissing_matrix_to_plink.sh
+
+		turns NA/non NA into 0-1 for LDAK/plink use
+		Makes bed file for both 
+		Case control missingness
+
+* make_kinships_new.sh
+
+		Makes technical kinship (TK) and geno kinship matrix
+		calculate and plot PCs
 
 * check_tk_residuals.sh
 		
-		Checks how much variance TK explains for all phenos (A). Creates new pheno files, using residuals from (A) as phenos. 
+		Checks how much variance pop and TK explains for all phenos (A). Creates new pheno files, using residuals from (A) as phenos. 
 
 * LDAK/run_ldak_on_all_phenos.sh
 
