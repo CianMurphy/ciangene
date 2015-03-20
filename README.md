@@ -13,7 +13,7 @@ Order of scripts: in progress
 
 * variant_filtering
 		
-		variant_filtering/snp_subet_extCtrls.R
+		variant_filtering/qc.sh
 
 * convert_missingNonmissing_matrix_to_plink.sh
 
