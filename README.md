@@ -35,7 +35,8 @@ Order of scripts: in progress
 
 * check_tk_residuals.sh
 		
-		Checks how much variance pop and TK explains for all phenos (A). Creates new pheno files, using residuals from (A) as phenos. 
+		Checks how much variance pop (A) and TK (B) explains for all phenos. 
+		Creates new pheno files, using residuals from (B) as phenoss 
 
 * LDAK/run_ldak_on_all_phenos.sh
 
