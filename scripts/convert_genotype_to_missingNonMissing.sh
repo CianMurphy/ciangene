@@ -17,17 +17,12 @@ missingNonMissing=$bDir"Matrix.calls.Missing.NonMissing"
 
 echo "Working with genotype matrix $GenotypeMatrix"
 
-#sed 's/0/2/g' $GenotypeMatrix".sp" | sed 's/1/2/g' | sed 's/NA/1/g' > $missingNonMissing".sp"
-
-ln -s $bDir"UCLex_${release}.bim" $GenotypeMatrix".bim"
-ln -s $bDir"UCLex_${release}.fam" $GenotypeMatrix".fam"
+sed 's/0/2/g' $GenotypeMatrix".sp" | sed 's/1/2/g' | sed 's/NA/1/g' > $missingNonMissing".sp"
 
 ln -s $bDir"UCLex_${release}.bim" $missingNonMissing".bim"
 ln -s $bDir"UCLex_${release}.fam" $missingNonMissing".fam"
 
-
-#$ldak --make-bed $GenotypeMatrix --sp $GenotypeMatrix
-#$ldak --make-bed $missingNonMissing --sp $missingNonMissing
+$ldak --make-bed $missingNonMissing --sp $missingNonMissing
 
 
 Names=$bDir"GroupNames"

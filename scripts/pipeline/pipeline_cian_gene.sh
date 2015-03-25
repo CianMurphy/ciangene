@@ -105,9 +105,9 @@ if [[ "$step2" == "yes" ]]; then
 #$ -l h_rt=24:00:00
 #$ -cwd
 
-sh $secondStep $rootODir $release ## convert geno to missingNonMissing
+## sh $secondStep $rootODir $release ## convert geno to missingNonMissing
 
-sh $makeKin $rootODir $release ### make kinships matrix
+## sh $makeKin $rootODir $release ### make kinships matrix
 
 sh $checkKin $rootODir $release # check how much variance the kinships explained. 
 

@@ -23,7 +23,7 @@ minVar=0.0000001			## SNP with variance >= this are retained?
 
 ######### Tech Kin
 $ldak --calc-kins-direct $techOut --bfile $missingNonMissing --ignore-weights YES --kinship-raw YES \
---minmaf $minMaf --maxmaf $maxMaf --minvar $minVar --minobs $minObs --extract $extract 
+ --minmaf $minMaf --maxmaf $maxMaf --minvar $minVar --minobs $minObs --extract $extract 
 $ldak --pca $bDir"TechPCs" --grm $techOut --extract $extract
 
 
@@ -60,7 +60,10 @@ echo '
 			points(file[hit,3], file[hit,4], col=i)
 		}
 	}
-
+	file <- read.table(paste0(dir,"TechPCs.values"), header=F)
+	file$sd <- file[,1]^.5
+	file$var <- file[,1]^2 / sum(file[,1]^2)
+	plot(file$var*100, xlab = "Technical Principal Components" , ylab = "Proportion Variance Explained (%)", main = "Variance explained by each Principal Component") 
 	dev.off() 
 
 	' >> $oFile
@@ -110,7 +113,10 @@ echo '
 			points(file[hit,3], file[hit,4], col=i)
 		}
 	}
-
+	file <- read.table(paste0(dir,"popPCs.values"), header=F)
+	# file$sd <- file[,1]^.5
+	file$var <- file[,1]^2 / sum(file[,1]^2)
+	plot(file$var*100, xlab = "Genotype Principal Components" , ylab = "Proportion Variance Explained (%)", main = "Variance explained by each Principal Component") 
 	dev.off() 
 
 	' >> $oFile

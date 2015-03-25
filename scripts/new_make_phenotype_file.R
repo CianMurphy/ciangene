@@ -16,12 +16,10 @@ if ('rootODir' %in% names(myArgs))  rootODir <- myArgs[[ "rootODir" ]]
 if ('release' %in% names(myArgs))  release <- myArgs[[ "release" ]]
 #############################################
 
-iFile <- paste0("/cluster/project8/vyp/exome_sequencing_multisamples/mainset/GATK/mainset_", release, "/mainset_", release, "_snpStats/chr21_snpStats.RData")
-load(iFile)
-
 oDir <- paste0(rootODir, "/UCLex_", release, "/")
 message(oDir) 
-groups <- gsub(colnames(matrix.depth), pattern = "_.*",replacement = "")
+fam <- read.table(paste0(oDir, "UCLex_February2015.fam"), header=F) 
+groups <- gsub(fam[,1], pattern = "_.*",replacement = "")
 groups.unique <- unique(groups)
 # Tring to group samples by cohort correctly. Default method is to use string before first underscore in their name, but that doesn't work for all samples, 
 # so to try group correctly (eg to prevent ALevine from being treated as a separate phenotype from Levine, use fixPhenoGroupings )
@@ -60,9 +58,9 @@ if(use.fixPhenoGroupings)
 nb.groups <- length(unique(groups))
 
 ## now make phenotype file 
-pheno <- data.frame(matrix(nrow = ncol(matrix.depth), ncol = nb.groups+2))
+pheno <- data.frame(matrix(nrow = nrow(fam), ncol = nb.groups+2))
 colnames(pheno) <- c("SampleID1", "SampleID2", groups.unique)
-pheno[,1:2] <- colnames(matrix.depth)
+pheno[,1:2] <- fam[,1]
 
 for(i in 1:nb.groups)
 {
@@ -76,7 +74,15 @@ for(i in 1:nb.groups)
 ## remove pheno for extCtrls
 extCtrls <- read.table(paste0(oDir, "ext_ctrl_samples"), header=F) ## made in first.step.R
 ex.ctrl.pheno <- pheno[,1] %in% unlist(extCtrls) 
-pheno[ex.ctrl.pheno,3:ncol(pheno)] <- '-9'
+pheno[ex.ctrl.pheno,3:ncol(pheno)] <- 'NA'
+
+## remove Lambiase family
+family <- c("UCLG569", "UCLG567", "LambiaseSD_UCLG594", "UCLG568", "UCLG570", "UCLG571", "UCLG572" )
+for(i in 1:length(family))
+{
+	hit <- grep(family[i], pheno[,1])
+	pheno[hit,3] <- 'NA' 
+} 
 
 ## summarise case cohort breakdowns
 cohort.summary <- data.frame(do.call(rbind, lapply(pheno[,3:ncol(pheno)], table) )) 

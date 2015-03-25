@@ -6,7 +6,7 @@ rootODir=/scratch2/vyp-scratch2/cian/
 release=February2015
 rootODir=${1-$rootODir}
 release=${2-$release}
-
+R=/share/apps/R-3.1.0/bin/R
 bDir=${rootODir}/UCLex_${release}/
 genes=/SAN/biomed/biomed14/vyp-scratch/cian/LDAK/genesldak_ref.txt
 kinship=$bDir"TechKin"
@@ -19,42 +19,37 @@ Names=$bDir"GroupNames"
 awk '{print $4}' $groups > tmp
 tail -n +2 "tmp" > $Names
 rm tmp
-nbGroups=$(wc -l $groups | awk {'print $1}') 
+nbGroups=$(wc -l $Names | awk {'print $1}') 
 
 oDir=$bDir"KinshipDecomposition/"
 if [ ! -e $oDir ]; then mkdir $oDir; fi
 
+
+
 for pheno in $(seq 72 $nbGroups)
 do
 	batch=$(sed -n $pheno'p' $Names); echo $batch
-	$ldak --decompose $kinship"_decomposed" --grm $kinship
-	$ldak --reml $oDir$batch"_tech" --grm $kinship  --pheno $phenotypes --mpheno $pheno  --eigen $kinship"_decomposed"
-	
-	$ldak --decompose $pKinship"_decomposed" --grm $pKinship
-	$ldak --reml $oDir$batch"_geno" --grm $pKinship  --pheno $phenotypes --mpheno $pheno  --eigen $pKinship"_decomposed"
 
-	if (($pheno==1))
+	$ldak --reml $oDir$batch"_tech" --grm $kinship  --pheno $phenotypes --mpheno $pheno	
+	$ldak --reml $oDir$batch"_geno" --grm $pKinship  --pheno $phenotypes --mpheno $pheno
+
+	if (($pheno==72))
 	then
-		if [ -e $oDir$batch'.indi.res' ]
-		then
-			awk '{ print $1, $1}' $oDir$batch".indi.res" > $bDir".NewPhenotypeFiletmp"
-		fi
-	fi 
-
-	if [ -e $oDir$batch'.indi.res' ]
-	then 
-		cut -f5 $oDir$batch'.indi.res' > .tmp
-		tt=$(expr $pheno + 2)
-		cat .tmp | cut -d ' ' -f $tt |  sed "1s/.*/$batch/"  > .tmp2
-		paste  $bDir".NewPhenotypeFiletmp" .tmp2 > .tmp3
-		sed -i 's/\t/ / g' .tmp3 
-		mv .tmp3 $bDir".NewPhenotypeFiletmp" 
-
+		awk '{ print $1, $1}' $oDir$batch"_tech.indi.res" > $bDir".NewPhenotypeFiletmp"
 	fi
+	
+	cut -f5 $oDir$batch'_tech.indi.res' > .tmp
+	tt=$(expr $pheno + 2)
+	cat .tmp | cut -d ' ' -f $tt |  sed "1s/.*/$batch/"  > .tmp2
+	paste  $bDir".NewPhenotypeFiletmp" .tmp2 > .tmp3
+	mv .tmp3 $bDir".NewPhenotypeFiletmp" 
+	
 
 done
 
-tail -n +2 $bDir".NewPhenotypeFiletmp" > $bDir"NewPhenotypeFile"
+##tail -n +2 $bDir".NewPhenotypeFiletmp" > $bDir"NewPhenotypeFile"
+mv $bDir".NewPhenotypeFiletmp"  $bDir"NewPhenotypeFile"
+exit
 
 oFile=$oDir/plot.residuals.R
 echo "dir<-'"$oDir"'" > $oFile

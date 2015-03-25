@@ -11,11 +11,15 @@ rootODir=${1-$rootODir}
 release=${2-$release}
 bDir=${rootODir}/UCLex_${release}/
 
-data=$bDir"allChr_snpStats_out" ## fixed file name. 
+iData=$bDir"allChr_snpStats"
+ln -s $bDir"UCLex_${release}.bim" $iData".bim"
+ln -s $bDir"UCLex_${release}.fam" $iData".fam"
+$ldak --make-bed $iData --sp $iData
 
+data=$bDir"allChr_snpStats_out" 
 $plink --noweb --allow-no-sex --bfile $data --freq --out $bDir/gstats
 $plink --noweb --allow-no-sex --bfile $data --missing --out $bDir/gstats
 $plink --noweb --allow-no-sex --bfile $data --hardy --out $bDir/gstats
 
-
+ 
 
