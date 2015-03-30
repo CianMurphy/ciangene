@@ -36,12 +36,17 @@ Order of scripts: in progress
 * check_tk_residuals.sh
 		
 		Checks how much variance pop (A) and TK (B) explains for all phenos. 
-		Creates new pheno files, using residuals from (B) as phenoss 
+		Creates new pheno files, using residuals from (B) as phenos
 
-* LDAK/run_ldak_on_all_phenos.sh
+* LDAK/run_ldak_on_all_phenos.sh & run_ldak_on_all_phenos_res.sh
 
-		gene tests - all UCLex phenos, with and without kinship
+		run_ldak_on_all_phenos.sh - gene tests - all UCLex phenos, with and without kinship
+		run_ldak_on_all_phenos_res.sh - gene tests using new pheno file with TK residuals. 		
 
+* plot_gene_test.R
+		
+		plot gene based results from LDAK. 
+	
 * plink_single_variant_tests.sh
 
 		single variant tests - Fisher, logistic regression with and without techPC covariates 
