@@ -6,6 +6,7 @@ getArgs <- function() {
 }
 
 release <- 'February2015'
+rootODir<-'/scratch2/vyp-scratch2/cian'
 
 myArgs <- getArgs()
 

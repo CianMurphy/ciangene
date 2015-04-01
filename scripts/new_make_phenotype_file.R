@@ -9,6 +9,7 @@ getArgs <- function() {
 }
 
 release <- 'February2015'
+rootODir<-'/scratch2/vyp-scratch2/cian'
 
 myArgs <- getArgs()
 
@@ -56,7 +57,7 @@ if(use.fixPhenoGroupings)
 } ### use.fixPhenoGroupings 
 
 nb.groups <- length(unique(groups))
-
+message("Here") 
 ## now make phenotype file 
 pheno <- data.frame(matrix(nrow = nrow(fam), ncol = nb.groups+2))
 colnames(pheno) <- c("SampleID1", "SampleID2", groups.unique)
@@ -66,6 +67,7 @@ for(i in 1:nb.groups)
 {
 	pheno[, i + 2] <- 1 
 	hits <- grep(groups.unique[i], groups )
+	message(length(hits) 	) 
 	pheno[hits,i+2] <- 2
 }
 
@@ -94,5 +96,23 @@ write.table(groups.unique, paste0(oDir, "GroupNames"), col.names=F, row.names=F,
 write.table(pheno, file = paste0(oDir, "Phenotypes"), col.names=F, row.names=F, quote=F, sep="\t") 
 write.table(data.frame(pheno[,1], groups ), paste0(oDir, "Sample.cohort"),  col.names=F, row.names=F, quote=F, sep="\t") 
 write.table(cohort.summary, file = paste0(oDir, "cohort.summary"), col.names=T, row.names=F, quote=F, sep="\t") 
+
+
+### fastLMM wants missing as -9, so use separate pheno file. 
+oDir <- paste0(rootODir, "/UCLex_", release, "/")
+inPheno<-paste0(oDir, 'Phenotypes')
+pheno <- read.table(inPheno, header=F)
+pheno[is.na(pheno)] <- '-9'
+write.table(pheno,paste0(inPheno,"_fastlmm"), col.names=F, row.names=F, quote=F, sep="\t")
+
+###### make permuted phenotype file for fastLMM/plink 
+for(i in 1:nb.groups)
+{
+	nb.cases <- length(which(pheno[,i+2]==2)) 
+	pheno[, i + 2] <- 1 
+	pheno[sample(1:nrow(pheno),nb.cases),i+2] <- 2
+}
+write.table(pheno,paste0(inPheno,"_fastlmm_permuted"), col.names=F, row.names=F, quote=F, sep="\t")
+
 
 
