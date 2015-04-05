@@ -109,7 +109,7 @@ write.table(pheno,paste0(inPheno,"_fastlmm"), col.names=F, row.names=F, quote=F,
 for(i in 1:nb.groups)
 {
 	nb.cases <- length(which(pheno[,i+2]==2)) 
-	pheno[, i + 2] <- 1 
+	pheno[,i+2] <- 1 
 	pheno[sample(1:nrow(pheno),nb.cases),i+2] <- 2
 }
 write.table(pheno,paste0(inPheno,"_fastlmm_permuted"), col.names=F, row.names=F, quote=F, sep="\t")

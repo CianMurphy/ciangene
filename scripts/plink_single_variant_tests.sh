@@ -16,7 +16,7 @@ bDir=${rootODir}/UCLex_${release}/
 Groups=$bDir"GroupNames"
 nbGroups=$(wc -l  $Groups | awk '{print $1}') 
 data=$bDir"allChr_snpStats_out"
-Pheno=$bDir"Phenotypes"
+Pheno=$bDir"Phenotypes_fastlmm"
 covar=$bDir"TechPCs.vect"
 phenos=$(wc -l  $Groups | awk '{print $1}') 
 
@@ -30,7 +30,7 @@ do
 	batch=$(sed -n $pheno'p' $Groups)	
 	oFile=$oDir"/run_${batch}.sh"
 	echo "
-	plink --noweb  --bfile $data --assoc --counts --allow-no-sex  --pheno $Pheno --adjust --mpheno $pheno --out $oDir$batch"_assoc"
+	plink --noweb  --bfile $data --assoc --counts --allow-no-sex  --pheno $Pheno --adjust --mpheno $pheno --out $oDir$batch"_counts_assoc"
 	plink --noweb  --bfile $data --fisher --allow-no-sex  --pheno $Pheno --adjust --mpheno $pheno --out $oDir$batch"_fisher"
 	plink --noweb  --bfile $data --logistic --allow-no-sex --pheno $Pheno --adjust --mpheno $pheno --out $oDir$batch"_logistic_no_covars"	
 	plink --noweb  --bfile $data --logistic  --hide-covar --allow-no-sex --pheno $Pheno --adjust --mpheno $pheno --covar $covar --covar-number 1-2 --out $oDir$batch"_logistic_tech_pcs_covars"

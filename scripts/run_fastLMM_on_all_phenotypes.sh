@@ -33,12 +33,16 @@ echo "
 	kinshipFile=$bDir"TechnicalKinship_Fastlmm"
 	phenoFile=$bDir"Phenotypes_fastlmm"
 	extract=$bDir"Clean_variants_Func"
-
-	"'$fastlmm'"  -simLearnType Full -verboseOutput -maxThreads 1 -bfile "'$snpFile'" -sim "'$kinshipFile'" -pheno "'$phenoFile'" -mpheno "$pheno" -out "$batch"_Tech_kin
-	"'$fastlmm'"  -linreg -simLearnType Full -verboseOutput -maxThreads 1 -bfile "'$snpFile'" -pheno "'$phenoFile'" -mpheno "$pheno" -out "$batch"_no_kin 
+	permPheno=$bDir"Phenotypes_fastlmm_permuted"
+	for chunk in {1..20}
+	do
+	"'$fastlmm'"  -simLearnType Full -verboseOutput -maxThreads 1 -bfile "'$snpFile'" -sim "'$kinshipFile'" -pheno "'$phenoFile'" -mpheno "$pheno" -out "$batch"_Tech_kin_"'$chunk'" -numjobs 20 -thisjob "'$chunk'"
+	"'$fastlmm'"  -linreg -simLearnType Full -verboseOutput -maxThreads 1 -bfile "'$snpFile'" -pheno "'$phenoFile'" -mpheno "$pheno" -out "$batch"_no_kin_"'$chunk'" -numjobs 20 -thisjob "'$chunk'"
+	"'$fastlmm'"  -linreg -simLearnType Full -verboseOutput -maxThreads 1 -bfile "'$snpFile'" -pheno "'permPheno'" -mpheno "$pheno" -out "$batch"_perm_"'$chunk'" -numjobs 20 -thisjob "'$chunk'"
+	done
 	" >> $target
 
- cd $oFolder ; $runSh $batch".fastlmm.sh" ; cd ..
+cd $oFolder ; $runSh $batch".fastlmm.sh" ; cd ..
 #cd $oFolder ; sh $batch".fastlmm.sh" ; cd ..
 done
 

@@ -6,7 +6,7 @@ getArgs <- function() {
 }
 
 release <- 'February2015'
-
+rootODir<-'/scratch2/vyp-scratch2/cian'
 myArgs <- getArgs()
 
 if ('rootODir' %in% names(myArgs))  rootODir <- myArgs[[ "rootODir" ]]
@@ -42,7 +42,7 @@ par(mfrow=c(2,2), cex.main = 0.6)
 	for(i in 1:length(files)) 	
 	{
 		cohort.res <- read.table(var[grep(paste0(cohorts[i],"_"), var)  ], header=T, sep="\t") 
-		var.explained <- paste0("(", round(cohort.res[nrow(cohort.res),2], 2 ) *100, "%)")
+		var.explained <- paste0("(", round(cohort.res[nrow(cohort.res),2], 3 ) *100, "%)")
 
 		if(file.exists(noKins[i]))
 		{
