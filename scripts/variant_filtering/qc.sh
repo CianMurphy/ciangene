@@ -29,8 +29,8 @@ echo '
 
 	pdf(paste0(dir, "/gstats.pdf") )
 		par(mfrow=c(2,2))  
-		hist(miss$F_MISS, xlab="Missingness", main = "UCLex_Missingness")		
-		hist(frq$MAF, xlab="MAF", main = "UCLex_MAF")
+		plot(density(miss$F_MISS), xlab="Missingness", main = "UCLex_Missingness")		
+		hist(frq$MAF, xlab="MAF", main = "UCLex_MAF", breaks=100, ylim=c(0,10000))
 	dev.off() 
 
 	' >> $oFile

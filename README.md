@@ -2,7 +2,7 @@ ciangene
 ========
 
 [![Join the chat at https://gitter.im/CianMurphy/ciangene](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/CianMurphy/ciangene?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-Order of scripts: in progress
+# Order of scripts: 
 
 
 * first.step.R
