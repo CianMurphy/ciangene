@@ -18,8 +18,8 @@ phenFile=$bDir"Phenotypes"
 echo "Working with genotype matrix $GenotypeMatrix"
 
 #sed 's/0/2/g' $GenotypeMatrix".sp" | sed 's/1/2/g' | sed 's/NA/1/g' > $missingNonMissing".sp"
-#ln -s $bDir"UCLex_${release}.bim" $missingNonMissing".bim"
-#ln -s $bDir"UCLex_${release}.fam" $missingNonMissing".fam"
+#rm $missingNonMissing".bim"; ln -s $bDir"UCLex_${release}.bim" $missingNonMissing".bim"
+#rm $missingNonMissing".fam"; ln -s $bDir"UCLex_${release}.fam" $missingNonMissing".fam"
 #$ldak --make-bed $missingNonMissing --sp $missingNonMissing
 
 runSh='sh /cluster/project8/vyp/cian/scripts/bash/runBashCluster.sh'
@@ -31,14 +31,13 @@ if [ ! -e $oDir ]; then mkdir $oDir; fi
 
 for pheno in $(seq 72 $nbGroups)
 do
-	batch=$(sed -n $pheno'p' $Names); echo $batch
-	oFile=$bDir"missing_"$batch.sh
-	echo $oFile
+	batch=$(sed -n $pheno'p' $Names) # ; echo $batch
+	oFile=$oDir"missing_"$batch.sh
 	echo "
 	for chr in {1..23}
 	do
 	$plink --noweb --allow-no-sex --bfile $bDir"allChr_snpStats_out" --test-missing --missing --chr "'$chr'" \
-	--out $oDir/$batch"_missing_""'$chr'" --pheno $phenFile --mpheno $pheno --pfilter 1e-3
+	--out $oDir/$batch"_missing_""'$chr'" --pheno $phenFile"_fastlmm" --mpheno $pheno --pfilter 1e-3
 	done
 	" > $oFile
 	$runSh $oFile

@@ -47,9 +47,8 @@ do
 
 done
 
-##tail -n +2 $bDir".NewPhenotypeFiletmp" > $bDir"NewPhenotypeFile"
 mv $bDir".NewPhenotypeFiletmp"  $bDir"NewPhenotypeFile"
-exit
+tail -n +2 $bDir"NewPhenotypeFile" > $bDir"phenotype_res"
 
 oFile=$oDir/plot.residuals.R
 echo "dir<-'"$oDir"'" > $oFile

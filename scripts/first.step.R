@@ -53,8 +53,8 @@ for(i in 1:length(files)){
 		write.table(length(ext.ctrls) , file = paste0(oDir, "nb_ext_ctrl_samples"), col.names=F, row.names=F, quote=F, sep="\t") 
 		write.table(rownames(matrix.calls.snpStats[ext.ctrls,]) , file = paste0(oDir, "ext_ctrl_samples"), col.names=F, row.names=F, quote=F, sep="\t") 
 		ext.samples <- matrix.calls.snpStats[ext.ctrls ,]
-		ext.samples.sum <- data.frame(colnames(matrix.calls.snpStats), col.summary(ext.samples) ) 
-		ext.samples.names <- data.frame(rownames(ext.samples) , row.summary(ext.samples) ) 
+		ext.samples.sum <- data.frame('SNP'=colnames(matrix.calls.snpStats), col.summary(ext.samples)) 
+		ext.samples.names <- data.frame(rownames(ext.samples) , row.summary(ext.samples)) 
 
 		write.table(ext.samples.sum, file = paste0(oDir, "Ext_ctrl_variant_summary") , col.names=T, row.names=F, quote=F, sep="\t", append=F) 
 		write.table(ext.samples.names, file = paste0(oDir, "Ext_ctrl_sample_summary") , col.names=T, row.names=F, quote=F, sep="\t", append=F)

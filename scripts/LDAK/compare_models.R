@@ -18,17 +18,11 @@ colnames(res.small)[2]<-"ResKinPvalue"
 base.tech <- merge(base, tech.small, by="Gene_name") 
 base.tech.res <- merge(base.tech, res.small, by="Gene_name") 
 
-
-
-png("model_comparison.png") 
+png(paste0(dDir,"model_comparison.png") ) 
 par(mfrow=c(2,2))  
-qq.chisq(-2*log(base.tech.res$LRT_P_Perm), df=2, x.max=30, main = "Base") 
-qq.chisq(-2*log(base.tech.res$TechKinPvalue), df=2, x.max=30, main = "TechKin") 
-qq.chisq(-2*log(base.tech.res$ResKinPvalue), df=2, x.max=30, main = "Res") 
-
-plot(x=1:nrow(base.tech.res), y=base.tech.res$LRT_P_Perm) 
-points(x=1:nrow(base.tech.res), y=base.tech.res$TechKinPvalue, col="blue") 
-points(x=1:nrow(base.tech.res), y=base.tech.res$ResKinPvalue, col="red") 
+qq.chisq(-2*log(base.tech.res$LRT_P_Perm), df=2, x.max=30, main = "IoN Base 10% missingness") 
+qq.chisq(-2*log(base.tech.res$TechKinPvalue), df=2, x.max=30, main = "IoN TechKin 10% missingness") 
+qq.chisq(-2*log(base.tech.res$ResKinPvalue), df=2, x.max=30, main = "IoN Res 10% missingness") 
 dev.off()
 
 

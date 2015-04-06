@@ -20,6 +20,18 @@ data=$bDir"allChr_snpStats_out"
 $plink --noweb --allow-no-sex --bfile $data --freq --out $bDir/gstats
 $plink --noweb --allow-no-sex --bfile $data --missing --out $bDir/gstats
 $plink --noweb --allow-no-sex --bfile $data --hardy --out $bDir/gstats
-
  
+oFile=$bDir/plot.qc.R
+echo "dir<-'"$bDir"'" > $oFile
+echo '
+	miss <- read.table(paste0(dir,"gstats.lmiss"),header=T )
+	frq <- read.table(paste0(dir,"gstats.frq"),header=T )
 
+	pdf(paste0(dir, "/gstats.pdf") )
+		par(mfrow=c(2,2))  
+		hist(miss$F_MISS, xlab="Missingness", main = "UCLex_Missingness")		
+		hist(frq$MAF, xlab="MAF", main = "UCLex_MAF")
+	dev.off() 
+
+	' >> $oFile
+$Rbin CMD BATCH --no-save --no-restore $oFile

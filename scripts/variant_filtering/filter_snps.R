@@ -23,7 +23,7 @@ hwe.pval <- .0001
 hwe <- subset(hwe$SNP, hwe$TEST == "ALL" & hwe$P >= hwe.pval ) 
 
 ## some parameters
-missingness.threshold <- 0.01 # snps higher than this are kept. 
+missingness.threshold <- 0 # snps higher than this are kept. 
 min.maf <- 0
 max.maf <- 0.5
 

@@ -14,7 +14,6 @@ templateScript="/cluster/project8/vyp/cian/data/UCLex/UCLex_August/Scripts/ciang
 variants=$bDir"/Clean_variants_Func"
 
 iPhenotype=$bDir"/NewPhenotypeFile"
-tail -n +2 $iPhenotype > $bDir/phenotype_res
 phenotype=$bDir/phenotype_res
 
 oFolder=$bDir"/LDAK_gene_tests_all_phenos"
