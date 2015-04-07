@@ -41,64 +41,60 @@ par(mfrow=c(2,2), cex.main = 0.6)
 
 	for(i in 1:length(files)) 	
 	{
-		cohort.res <- read.table(var[grep(paste0(cohorts[i],"_"), var)  ], header=T, sep="\t") 
-		var.explained <- paste0("(", round(cohort.res[nrow(cohort.res),2], 3 ) *100, "%)")
-
-		if(file.exists(noKins[i]))
+		target <- grep(paste0(cohorts[i],"_"), var)
+		if(length(target)>0)
 		{
-		file <- read.table(noKins[i] , header=T)		
-		GI <- qq.chisq(-2*log(as.numeric(as.character(file$LRT_P_Perm))), df=2, x.max=30, main = paste(names[i], "Base", sum(file$Gene_Weight)) ,  pvals=T)
-		legend("topleft", , signif(GI[3][[1]]),2) 
-		out <- gsub(dirname(noKins[i]), pattern = ".*phenos/", replacement = "")
-		message(paste(out, "base GI is", GI[3][[1]] ) ) 
-
-		hit <- grep(batches[i], groups$Cohort ) 		
-		groups$GenomicInflationBase[hit] <- GI[3][[1]]
+			cohort.res <- read.table(var[grep(paste0(cohorts[i],"_"), var)  ], header=T, sep="\t") 
+			var.explained <- paste0("(", round(cohort.res[nrow(cohort.res),2], 3 ) *100, "%)")	
 		}
+		if(file.exists(noKins[i]))	
+		{
+			file <- read.table(noKins[i] , header=T)		
+			GI <- qq.chisq(-2*log(as.numeric(as.character(file$LRT_P_Perm))), df=2, x.max=30, main = paste(names[i], "Base", sum(file$Gene_Weight)) ,  pvals=T)
+			legend("topleft", , signif(GI[3][[1]]),2) 
+			out <- gsub(dirname(noKins[i]), pattern = ".*phenos/", replacement = "")
+			message(paste(out, "base GI is", GI[3][[1]] ) ) 
 
+			hit <- grep(batches[i], groups$Cohort ) 		
+			groups$GenomicInflationBase[hit] <- GI[3][[1]]
+		}
 		permFile <- paste0(files[i], "/regress1")
 		if(file.exists(permFile))
 		{
-		file <- read.table(permFile , header=T)		
-		pvals=pchisq(file$Perm_1,1,lower=F)*0.5
-		GI <- qq.chisq(-2*log(as.numeric(as.character(pvals))), df=2, x.max=30, main = paste(names[i], "Perm", sum(file$Gene_Weight)) ,  pvals=T)
-		legend("topleft", , signif(GI[3][[1]]),2) 
-		out <- gsub(dirname(permFile), pattern = ".*phenos//", replacement = "")
-		message(paste(out, "permuted GI is", GI[3][[1]] ) ) 
+			file <- read.table(permFile , header=T)		
+			pvals=pchisq(file$Perm_1,1,lower=F)*0.5
+			GI <- qq.chisq(-2*log(as.numeric(as.character(pvals))), df=2, x.max=30, main = paste(names[i], "Perm", sum(file$Gene_Weight)) ,  pvals=T)
+			legend("topleft", , signif(GI[3][[1]]),2) 
+			out <- gsub(dirname(permFile), pattern = ".*phenos//", replacement = "")
+			message(paste(out, "permuted GI is", GI[3][[1]] ) ) 
 
-		hit <- grep(batches[i], groups$Cohort ) 		
-		groups$GenomicInflationPerm[hit] <- GI[3][[1]]
+			hit <- grep(batches[i], groups$Cohort ) 		
+			groups$GenomicInflationPerm[hit] <- GI[3][[1]]
 		}
-
 		techFile <- paste0(files[i], "/regressALL")
 		if(file.exists(techFile)) 
 		{	
-		file <- read.table(techFile , header=T)		
-		GI <- qq.chisq(-2*log(as.numeric(as.character(file$LRT_P_Perm))), df=2, x.max=30, main = paste(names[i], "Tech", sum(file$Gene_Weight), var.explained) ,  pvals=T)
-		legend("topleft", , signif(GI[3][[1]]),2) 
-		out <- gsub(dirname(techFile), pattern = ".*phenos//", replacement = "")
-		message(paste(out, "GI is", GI[3][[1]] ) ) 
+			file <- read.table(techFile , header=T)		
+			GI <- qq.chisq(-2*log(as.numeric(as.character(file$LRT_P_Perm))), df=2, x.max=30, main = paste(names[i], "Tech", sum(file$Gene_Weight), var.explained) ,  pvals=T)
+			legend("topleft", , signif(GI[3][[1]]),2) 
+			out <- gsub(dirname(techFile), pattern = ".*phenos//", replacement = "")
+			message(paste(out, "GI is", GI[3][[1]] ) ) 
 
-		hit <- grep(batches[i], groups$Cohort ) 		
-		groups$GenomicInflationTech[hit] <- GI[3][[1]]
+			hit <- grep(batches[i], groups$Cohort ) 		
+			groups$GenomicInflationTech[hit] <- GI[3][[1]]
 		}
-		
 		if(file.exists(res[i])) 
 		{	
-		file <- read.table(res[i], header=T)		
-		GI <- qq.chisq(-2*log(as.numeric(as.character(file$LRT_P_Perm))), df=2, x.max=30, main = paste(names[i], "TechResiduals", sum(file$Gene_Weight), var.explained) ,  pvals=T)
-		legend("topleft", , signif(GI[3][[1]]),2) 
-		out <- gsub(dirname(techFile), pattern = ".*phenos//", replacement = "")
-		message(paste(out, "GI is", GI[3][[1]] ) ) 
+			file <- read.table(res[i], header=T)		
+			GI <- qq.chisq(-2*log(as.numeric(as.character(file$LRT_P_Perm))), df=2, x.max=30, main = paste(names[i], "TechResiduals", sum(file$Gene_Weight), var.explained) ,  pvals=T)
+			legend("topleft", , signif(GI[3][[1]]),2) 
+			out <- gsub(dirname(techFile), pattern = ".*phenos//", replacement = "")
+			message(paste(out, "GI is", GI[3][[1]] ) ) 
 
-		hit <- grep(batches[i], groups$Cohort ) 		
-		groups$GenomicInflationTech[hit] <- GI[3][[1]]
+			hit <- grep(batches[i], groups$Cohort ) 		
+			groups$GenomicInflationTech[hit] <- GI[3][[1]]
 		}
-
-
-
 	}	
-
 dev.off()
 
 
