@@ -11,7 +11,7 @@ bDir=${rootODir}/UCLex_${release}/
 genes=/SAN/biomed/biomed14/vyp-scratch/cian/LDAK/genesldak_ref.txt
 kinship=$bDir"TechKin"
 pKinship=$bDir"PopKin"
-data=$bDir"allChr_snpStats"
+data=$bDir"allChr_snpStats_out"
 phenotypes=$bDir"Phenotypes"
 groups=$bDir"cohort.summary"
 
@@ -28,10 +28,16 @@ if [ ! -e $oDir ]; then mkdir $oDir; fi
 
 for pheno in $(seq 72 $nbGroups)
 do
-	batch=$(sed -n $pheno'p' $Names); echo $batch
 
-	$ldak --reml $oDir$batch"_tech" --grm $kinship  --pheno $phenotypes --mpheno $pheno	
-	$ldak --reml $oDir$batch"_geno" --grm $pKinship  --pheno $phenotypes --mpheno $pheno
+	batch=$(sed -n $pheno'p' $Names); echo $batch is nb $pheno
+	if (($pheno==72))
+	then
+		$ldak --reml $oDir$batch"_tech" --grm $kinship  --pheno $phenotypes --mpheno $pheno --eigen-save $oDir/techEigen
+		$ldak --reml $oDir$batch"_geno" --grm $pKinship  --pheno $phenotypes --mpheno $pheno --eigen-save $oDir/popEigen
+	else
+		$ldak --reml $oDir$batch"_tech" --grm $kinship  --pheno $phenotypes --mpheno $pheno --eigen $oDir/techEigen	
+		$ldak --reml $oDir$batch"_geno" --grm $pKinship  --pheno $phenotypes --mpheno $pheno --eigen $oDir/popEigen
+	fi
 
 	if (($pheno==72))
 	then

@@ -5,13 +5,14 @@ rootODir=/scratch2/vyp-scratch2/cian/
 release=February2015
 rootODir=${1-$rootODir}
 release=${2-$release}
-bDir=${rootODir}/UCLex_${release}/LDAK_gene_tests_all_phenos/
+bDir=${rootODir}/UCLex_${release}/LDAK_gene_tests_all_phenos_flt/
 
 
 #### Data
 ldak=/cluster/project8/vyp/cian/support/ldak/ldak
 data=$rootODir/UCLex_${release}/allChr_snpStats_out
-kinship=$rootODir/UCLex_${release}/TechKin
+#kinship=$rootODir/UCLex_${release}/TechKin
+kinship=kinship=/cluster/project8/vyp/cian/data/UCLex/UCLex_August/Scripts/ciangene/scripts/TK_Subset/TechKinFiltered
 genes=/SAN/biomed/biomed14/vyp-scratch/cian/LDAK/genesldak_ref.txt
 
 ####### Parameters

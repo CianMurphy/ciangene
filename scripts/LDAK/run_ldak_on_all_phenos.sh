@@ -14,7 +14,7 @@ templateScript="/cluster/project8/vyp/cian/data/UCLex/UCLex_August/Scripts/ciang
 variants=$bDir"/Clean_variants_Func"
 phenotype=$bDir"/Phenotypes"
 
-oFolder=$bDir"/LDAK_gene_tests_all_phenos"
+oFolder=$bDir"/LDAK_gene_tests_all_phenos_flt/"
 if [ ! -e $oFolder ]; then mkdir $oFolder; fi
 
 for pheno in $(seq 80 $nbGroups) 

@@ -17,10 +17,10 @@ missingNonMissing=$bDir"Matrix.calls.Missing.NonMissing"
 phenFile=$bDir"Phenotypes" 
 echo "Working with genotype matrix $GenotypeMatrix"
 
-#sed 's/0/2/g' $GenotypeMatrix".sp" | sed 's/1/2/g' | sed 's/NA/1/g' > $missingNonMissing".sp"
-#rm $missingNonMissing".bim"; ln -s $bDir"UCLex_${release}.bim" $missingNonMissing".bim"
-#rm $missingNonMissing".fam"; ln -s $bDir"UCLex_${release}.fam" $missingNonMissing".fam"
-#$ldak --make-bed $missingNonMissing --sp $missingNonMissing
+sed 's/0/2/g' $GenotypeMatrix".sp" | sed 's/1/2/g' | sed 's/NA/1/g' > $missingNonMissing".sp"
+rm $missingNonMissing".bim"; ln -s $bDir"UCLex_${release}.bim" $missingNonMissing".bim"
+rm $missingNonMissing".fam"; ln -s $bDir"UCLex_${release}.fam" $missingNonMissing".fam"
+$ldak --make-bed $missingNonMissing --sp $missingNonMissing
 
 runSh='sh /cluster/project8/vyp/cian/scripts/bash/runBashCluster.sh'
 Names=$bDir"GroupNames"
@@ -36,7 +36,7 @@ do
 	echo "
 	for chr in {1..23}
 	do
-	$plink --noweb --allow-no-sex --bfile $bDir"allChr_snpStats_out" --test-missing --missing --chr "'$chr'" \
+	$plink --noweb --allow-no-sex --bfile $bDir"allChr_snpStats_out" --test-missing  --chr "'$chr'" \
 	--out $oDir/$batch"_missing_""'$chr'" --pheno $phenFile"_fastlmm" --mpheno $pheno --pfilter 1e-3
 	done
 	" > $oFile

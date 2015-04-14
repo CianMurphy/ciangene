@@ -24,8 +24,8 @@ oDir=$bDir"Single_variant_tests/"
 if [ ! -e $oDir ]; then mkdir $oDir; fi
 
 cwd=$(pwd)
-
-for pheno in $(seq 86 $nbGroups)
+nbGroups=85
+for pheno in $(seq 79 $nbGroups)
 do
 	batch=$(sed -n $pheno'p' $Groups)	
 	oFile=$oDir"/run_${batch}.sh"

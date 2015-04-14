@@ -1,22 +1,18 @@
-
 #!/bin/bash
-shopt -s expand_aliases
-source ~/.bashrc
 
-rootODir=$1
-release=$2
 #rootODir=/scratch2/vyp-scratch2/ciangene
 rootODir=/scratch2/vyp-scratch2/cian/
 release=February2015
 rootODir=${1-$rootODir}
 release=${2-$release}
-bDir=${rootODir}/UCLex_${release}/LDAK_gene_tests_all_phenos/
+bDir=${rootODir}/UCLex_${release}/LDAK_gene_tests_all_phenos_flt/
 
 
 #### Data
 ldak=/cluster/project8/vyp/cian/support/ldak/ldak
 data=$rootODir/UCLex_${release}/allChr_snpStats_out
-kinship=$rootODir/UCLex_${release}/TechKin
+#kinship=$rootODir/UCLex_${release}/TechKin
+/cluster/project8/vyp/cian/data/UCLex/UCLex_August/Scripts/ciangene/scripts/TK_Subset/TechKinFiltered
 genes=/SAN/biomed/biomed14/vyp-scratch/cian/LDAK/genesldak_ref.txt
 
 ####### Parameters
@@ -33,7 +29,7 @@ partition=1
 
 
 ### REML no Kinship
-oDir=$bDir"no_kin_${pheno}_${missing}_${minMaf}/"
+oDir=$bDir"/no_kin_${pheno}_${missing}_${minMaf}/"
 rm -fr $oDir ; mkdir $oDir
 $ldak --cut-genes $oDir --genefile $genes --bfile $data  --gene-buffer 20000 --ignore-weights $ignoreWeights --partition-length 2000000  --extract $extract --overlap $overlap --min-weight $minWeight
 
@@ -42,7 +38,7 @@ $ldak  --calc-genes-reml $oDir --bfile $data --pheno $phenotypes --mpheno $mPhen
 
 
 ##### Permuted with no techKin. 
-oDir=$bDir"perm_${pheno}_${missing}_${minMaf}/"
+oDir=$bDir"/perm_${pheno}_${missing}_${minMaf}/"
 rm -fr $oDir ; mkdir $oDir
 $ldak --cut-genes $oDir --genefile $genes --bfile $data  --gene-buffer 20000 --ignore-weights $ignoreWeights --partition-length 2000000 --extract $extract --overlap $overlap --min-weight $minWeight
 
@@ -51,7 +47,7 @@ $ldak  --calc-genes-reml $oDir --bfile $data --pheno $phenotypes --mpheno $mPhen
 
 
 ### REML technical kinship
-oDir=$bDir"with_kin_${pheno}_${missing}_${minMaf}/"
+oDir=$bDir"/with_kin_${pheno}_${missing}_${minMaf}/"
 rm -fr $oDir ; mkdir $oDir
 $ldak --cut-genes $oDir --genefile $genes --bfile $data  --gene-buffer 20000 --ignore-weights $ignoreWeights --partition-length 2000000 --extract $extract --overlap $overlap --min-weight $minWeight
 

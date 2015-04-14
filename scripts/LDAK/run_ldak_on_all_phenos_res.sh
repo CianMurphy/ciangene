@@ -16,7 +16,7 @@ variants=$bDir"/Clean_variants_Func"
 iPhenotype=$bDir"/NewPhenotypeFile"
 phenotype=$bDir/phenotype_res
 
-oFolder=$bDir"/LDAK_gene_tests_all_phenos"
+oFolder=$bDir"/LDAK_gene_tests_all_phenos_flt/"
 if [ ! -e $oFolder ]; then mkdir $oFolder; fi
 
 head -1 $iPhenotype  > $bDir/tmp

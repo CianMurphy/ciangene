@@ -60,8 +60,8 @@ do
 
 tt=$(expr $pheno + 2)
 batch=$(awk "{print \$$tt}" $bDir/tmp)
-target=$oFolder"/"$batch".fastlmm.sh"; if [ -e $target ]; then rm $target; fi
-oFile=$oFolder$batch"_Out"
+target=$oFolder"/"$batch".res.fastlmm.sh"; if [ -e $target ]; then rm $target; fi
+
 
 echo "
 	release=February2015
@@ -75,11 +75,11 @@ echo "
 	resPheno=$bDir"phenotype_res"
 	for chunk in {1..20}
 	do
-	# "'$fastlmm'"  -linreg -simLearnType Full -verboseOutput -maxThreads 1 -bfile "'$snpFile'" -pheno "'$resPheno'" -mpheno "$pheno" -out "$batch"_res_"'$chunk'" -numjobs 20 -thisjob "'$chunk'"
+	"'$fastlmm'"  -linreg -simLearnType Full -verboseOutput -maxThreads 1 -bfile "'$snpFile'" -pheno "'$resPheno'" -mpheno "$pheno" -out "$batch"_res_"'$chunk'" -numjobs 20 -thisjob "'$chunk'"
 	done
 	" >> $target
 
-cd $oFolder ; $runSh $batch".fastlmm.sh" ; cd ..
+cd $oFolder ; $runSh $batch".res.fastlmm.sh" ; cd ..
 #cd $oFolder ; sh $batch".fastlmm.sh" ; cd ..
 done
 

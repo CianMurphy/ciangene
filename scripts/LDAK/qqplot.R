@@ -1,6 +1,6 @@
 qq.chisq <- 
 function (x, df = 1, x.max, main = "QQ plot", sub = paste("Expected distribution: chi-squared (", 
-    df, " df)", sep = ""), xlab = "Expected", ylab = "Observed", 
+    df, " df)", sep = ""), xlab = "Expected", ylab = "Observed", cex.main=0.8,
     conc = c(0.025, 0.975), overdisp = FALSE, trim = 0.5, slope.one = FALSE, 
     slope.lambda = FALSE, pvals = FALSE, thin = c(0.25, 50), 
     oor.pch = 24, col.shade = "gray", ...) 
@@ -56,7 +56,7 @@ function (x, df = 1, x.max, main = "QQ plot", sub = paste("Expected distribution
         else pvals <- FALSE
     }
     plot(c(0, right), c(0, top), type = "n", xlab = xlab, ylab = ylab, 
-        main = main, sub = sub)
+        main = main, sub = sub, cex.main=cex.main)
     if (pvals) {
         nvals <- length(lp.vals)
         for (i in 1:nvals) axis(side = 4, at = chi2.vals[i], 

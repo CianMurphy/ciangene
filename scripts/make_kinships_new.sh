@@ -12,7 +12,7 @@ bDir=${rootODir}/UCLex_${release}/
 missingNonMissing=$bDir"/Matrix.calls.Missing.NonMissing_out"
 techOut=$bDir"/TechKin"
 
-extract=$bDir"Clean_variants_Func"
+extract=$bDir"Clean_variants"
 ## Some basic parameters: 
 minObs=0		## SNP needs to be present in 90% samples to be included. 
 minMaf=0.000001			## SNP with MAF >= this are retained

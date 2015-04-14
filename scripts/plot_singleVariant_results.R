@@ -22,46 +22,55 @@ count.thresholds <- c(0,100,500,1000)
 
 iDir <- paste0(bDir, "FastLMM_Single_Variant_all_phenos/")
 
-noKin <- list.files(iDir, pattern = "no_kin", full.names=TRUE)
-techKin <- list.files(iDir, pattern = "Tech_kin", full.names=TRUE)
-perm <- list.files(iDir, pattern ="perm_", full.names=TRUE)
-groups <- gsub(basename(techKin) , pattern = "_.*", replacement = "")
+models<-c("no_kin","Tech_kin","perm","res")
+AllFiles<-list.files(iDir,full.names=TRUE)
+if(length(grep('sh',AllFiles))>0)AllFiles<- AllFiles[-grep('sh',AllFiles)]
+if(length(grep('merged',AllFiles))>0)AllFiles<- AllFiles[-grep('merged',AllFiles)]
+if(length(grep('pdf',AllFiles))>0)AllFiles<- AllFiles[-grep('pdf',AllFiles)]
 
+Collate<-function(group,model)
+{
+	model.files<-AllFiles[grep(model,AllFiles)]
+	files<-model.files[grep(paste0(group,"_"),model.files)]
+	if(length(files)>0)
+	{
+		for(i in 1:length(files))
+		{
+			oFile<-paste0(iDir,model,"_",group,"_merged")
+			#if(!file.exists(oFile))
+			#{
+				message(paste('Merging into',oFile))
+				file<-read.table(files[i],header=T,sep="\t") 
+				if(i==1)write.table(file,oFile,col.names=T, row.names=F, quote=F, sep="\t", append=F) 
+				if(i>1)write.table(file,oFile,col.names=F, row.names=F, quote=F, sep="\t", append=T) 
+			#} else message(paste(oFile,'already exists, so skipping'))
+		}
+	} else message("No files match input, wtf")
+}
+
+groups <- gsub(basename(AllFiles[grep("Tech",AllFiles)]), pattern = "_.*", replacement = "")
 uniq.groups <- unique(groups)
 start.group <- 8 
-if(!file.exists(paste0(iDir, "noKin_", uniq.groups[start.group], "_merged")))
+end.group<-length(uniq.groups)
+
+prep<-TRUE
+if(prep)
 {
-#for(i in 1:length(uniq.groups)) 
-for(i in start.group:length(uniq.groups)) 
-{
-	hit <- which(groups %in% uniq.groups[i]); message(uniq.groups[i]) 
-	for(inp in 1:length(hit))
+	for(i in start.group:end.group) 
 	{
-		nok <- read.table(noKin[inp], header=T)
-		tek <- read.table(techKin[inp], header=T)
-		per <- read.table(perm[inp], header=T)
-		if(inp==1)
+		for(mod in 1:length(models))
 		{
-			write.table(nok, paste0(iDir, "noKin_", uniq.groups[i], "_merged") , col.names=T, row.names=F, quote=F, sep="\t", append=F) 
-			write.table(tek, paste0(iDir, "techKin_", uniq.groups[i], "_merged") , col.names=T, row.names=F, quote=F, sep="\t", append=F) 
-			write.table(per, paste0(iDir, "permuted_", uniq.groups[i], "_merged") , col.names=T, row.names=F, quote=F, sep="\t", append=F) 
-
-		}
-		if(inp>1)
-		{	
-			write.table(nok, paste0(iDir, "noKin_", uniq.groups[i], "_merged") , col.names=F, row.names=F, quote=F, sep="\t", append=T) 
-			write.table(tek, paste0(iDir, "techKin_", uniq.groups[i], "_merged") , col.names=F, row.names=F, quote=F, sep="\t", append=T) 
-			write.table(per, paste0(iDir, "permuted_", uniq.groups[i], "_merged") , col.names=F, row.names=F, quote=F, sep="\t", append=T) 
-
+			Collate(uniq.groups[i],models[mod])
 		}
 	}
 }
-} # file exists
 
+files <- list.files(iDir, pattern = "merged", full.names=TRUE)
 
-noKin <- list.files(iDir, pattern = "noKin", full.names=TRUE)
-techKin <- list.files(iDir, pattern = "techKin", full.names=TRUE)
-permy <- list.files(iDir, pattern = "permuted", full.names=TRUE)
+noKin <- files[grep('no_kin',files)]
+techKin <-files[grep('Tech',files)]
+permy <- files[grep('perm',files)]
+inRes<-files[grep('res',files)]
 
 counts <- list.files(paste0(bDir, "Single_variant_tests/") , pattern = "assoc$", full.names=TRUE) 
 noCovar <- list.files(paste0(bDir, "Single_variant_tests/") , pattern = ".*no.*adjusted", full.names=TRUE)
@@ -80,22 +89,26 @@ for(i in 1:length(uniq.groups))
 {
 	iBase <- noKin[grep(paste0("_",uniq.groups[i],"_"), noKin) ]
 	iTech <- techKin[grep(paste0("_",uniq.groups[i],"_"), techKin) ]
-	iCovar <- noCovar[grep(paste0("_",uniq.groups[i],"_"), noCovar) ]
-	iTk <- techCovar[grep(paste0("_",uniq.groups[i],"_"), techCovar) ]
-	iPerm <- permy[grep(uniq.groups[i], permy) ]
-	inputs <- c(iBase, iTech, iCovar, iTk, iPerm)
-	if(length(which(file.exists(inputs)))==5)
+	iCovar <- noCovar[grep(paste0(uniq.groups[i],"_"), noCovar) ]
+	iTk <- techCovar[grep(paste0(uniq.groups[i],"_"), techCovar) ]
+	iPerm <- permy[grep(paste0(uniq.groups[i],"_"), permy) ]
+	iRes<-inRes[grep(paste0("_",uniq.groups[i],"_"),inRes) ]
+	inputs <- c(iBase, iTech, iCovar, iTk, iPerm,iRes)
+	if(length(which(file.exists(inputs)))==6)
 	{
-		message("Now plotting", uniq.groups[i])
+		message("Now processing ", uniq.groups[i])
 		base <- read.table(iBase, header=T, stringsAsFactors=F)
 		tech <- read.table(iTech, header=T, stringsAsFactors=F)
 		tech.small <- data.frame(SNP=tech$SNP, TechKinPvalue=tech$Pvalue)
 		perm <- read.table(iPerm, header=T, stringsAsFactors=F)
 		perm.small <- data.frame(SNP=perm$SNP, permPvalue=perm$Pvalue)
+		res <- read.table(iRes, header=T, stringsAsFactors=F)
+		res.small <- data.frame(SNP=res$SNP, resPvalue=res$Pvalue)
 
 		results.merged <- merge(base, tech.small, by = "SNP")
-		results.merged2 <- merge(results.merged,perm.small,by='SNP')
-		results.merged.anno <- merge(results.merged2, annotations, by.x = "SNP", by.y ="clean.signature")
+		results.merged2<-merge(results.merged, res.small, by = "SNP")
+		results.merged3 <- merge(results.merged2,perm.small,by='SNP')
+		results.merged.anno <- merge(results.merged3, annotations, by.x = "SNP", by.y ="clean.signature")
 
 		noCov <- read.table(iCovar, header=T, stringsAsFactors=F)
 		noCov.small<-data.frame(SNP=noCov$SNP, noCov$UNADJ)
@@ -113,6 +126,7 @@ for(i in 1:length(uniq.groups))
 		final <- merge(results.merged.anno.extCtrl, current.counts, by = "SNP")
 		write.table(results.merged.anno.extCtrl, paste0(iDir, groups[i], "_filt"), col.names=T, row.names=F, quote=F, sep="\t")
 	#	lapply(minMaf, function(x)
+		message("Now plotting ", uniq.groups[i])
 		lapply(count.thresholds,function(x)
 		{
 	#		dat <- data.frame(subset(results.merged.anno.extCtrl, results.merged.anno.extCtrl$ExtCtrl_MAF >= x )) 
@@ -126,6 +140,6 @@ for(i in 1:length(uniq.groups))
 		}
 		)
 	} ## file.xists(hit)
-} else message("Skipping", uniq.groups[i]) # file.exists(inputs)
+} else message("Skipping " , uniq.groups[i]) # file.exists(inputs)
 }
 dev.off()

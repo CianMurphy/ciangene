@@ -63,3 +63,7 @@ ciangene
 		Doesn't just merge. Also uses permuted pvalue in regress1..regressN to define null distribution (permuted pheno with kin) to calc final pvalue in regressALL. Script hangs when run on just one chunk/gene (eg as per power studies). 
 
 * plot_singleVariant_results.R
+
+* annotate_qqplot.R 
+
+		Makes qqPlots of snpStats style but allows you to label points too. 
