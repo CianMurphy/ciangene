@@ -11,10 +11,10 @@ runSh='sh /cluster/project8/vyp/cian/scripts/bash/runBashCluster.sh'
 Groups=$bDir"GroupNames"
 nbGroups=$(wc -l  $Groups | awk '{print $1}') 
 templateScript="/cluster/project8/vyp/cian/data/UCLex/UCLex_August/Scripts/ciangene/scripts/LDAK/LDAK.sh"
-variants=$bDir"/Clean_variants_Func"
+variants=$bDir"/Clean_variants_func_rare"
 phenotype=$bDir"/Phenotypes"
 
-oFolder=$bDir"/LDAK_gene_tests_all_phenos_flt/"
+oFolder=$bDir"/LDAK_gene_tests_all_phenos/"
 if [ ! -e $oFolder ]; then mkdir $oFolder; fi
 
 for pheno in $(seq 80 $nbGroups) 

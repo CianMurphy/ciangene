@@ -5,7 +5,7 @@ rootODir=/scratch2/vyp-scratch2/cian/
 release=February2015
 rootODir=${1-$rootODir}
 release=${2-$release}
-bDir=${rootODir}/UCLex_${release}/LDAK_gene_tests_all_phenos_flt/
+bDir=${rootODir}/UCLex_${release}/LDAK_gene_tests_all_phenos/
 
 
 #### Data
