@@ -1,18 +1,172 @@
-release <- "February2015"
+## Run after plot_singleVariant_results.R to get more detailed stats about interesting variants. 
+library(HardyWeinberg)
+library(biomaRt)
+## Some data and links to start
+ldak<-'/cluster/project8/vyp/cian/support/ldak/ldak'
+bDir<-"/scratch2/vyp-scratch2/cian//UCLex_February2015/"
+data<-paste0(bDir,'allChr_snpStats_out') 
+func <-  c("nonsynonymous SNV", "stopgain SNV", "nonframeshift insertion", "nonframeshift deletion", "frameshift deletion", "frameshift substitution", "frameshift insertion",  "nonframeshift substitution", "stoploss SNV")
+lof <-  c("frameshift deletion", "frameshift substitution", "frameshift insertion",  "stoploss SNV")
 
-bDir <- paste0("/scratch2/vyp-scratch2/cian/UCLex_", release, "/")
 
-fisherDir <- paste0(bDir, "Single_variant_tests/") 
-fisher <- list.files(fisherDir, pattern = "assoc.fisher", full.names=T )
-groups <- gsub(basename(fisher), pattern = "_.*", replacement = "")
-
-logistic.base <- list.files(fisherDir, pattern = "logistic_no_covars.assoc.logistic.adjusted", full.names=T) 
-logistic.tech <- list.files(fisherDir, pattern = "logistic_tech_pcs_covars.assoc.logistic.adjusted", full.names=T) 
-
-for(i in 1:length(fisher))
+## Do initial filtering, by pvalue, quality, extCtrl maf and function/LOF status
+variant.filter<-function(dat,pval=0.0001,pval.col="Pvalue",func.filt=TRUE, lof.filt=FALSE,max.maf=0.001) 
 {
-	file <- read.table(fisher[i], header=T)
-
-
-
+	message("Filtering data")
+	clean<-subset(dat, dat$FILTER=="PASS") 
+	pval.col.nb<-colnames(clean)%in%pval.col
+	sig<-subset(clean,clean[,pval.col.nb]<=pval) 
+	funcy<-sig[sig$ExonicFunc %in% func,]
+	rare<- funcy[funcy$ExtCtrl_MAF < max.maf,]
+	return(rare) 
 }
+
+## Get calls for variants that are left after filtering. 
+prepData<-function(file,snp.col="SNP")
+{
+	snps<-file[,colnames(file)%in%snp.col]
+	write.table(snps,paste0(bDir,"tmp"),col.names=F,row.names=F,quote=F,sep="\t") 
+	message("Extracting variants from full file") 
+	system( paste(ldak, "--make-sp tmp --bfile", data, "--extract", paste0(bDir,"tmp") )) 
+	message("Reading variants into R session") 
+	calls<-read.table("tmp_out.sp",header=F)
+	fam<-read.table("tmp_out.fam",header=F)
+	bim<-read.table("tmp_out.bim",header=F) 
+	rownames(calls)<-bim[,2]
+	colnames(calls)<-fam[,1]
+	return(calls)
+}
+
+
+############# Now do fisher test
+## data is the data.frame/matrix of calls, rows are variants. cases is the character vector of phenotype to be treated as cases. 
+doFisher<-function(data, cases="Syrris")
+{
+	case.cols<-grep(cases, colnames(data)) 
+	ctrl.cols<-which(!grepl(cases, colnames(data)) )
+
+	## make dataframe for results
+	colNamesDat <- c("SNP",  "FisherPvalue", "nb.mutations.HCM", "nb.mutations.ARVC", "nb.HCM", "nb.ARVC", 
+	"HCM.maf", "ARVC.maf" , "nb.Homs.HCM", "nb.Homs.ARVC", "nb.Hets.HCM", "nb.Hets.ARVC",
+	"nb.NAs.HCM", "nb.NAs.ARVC") 
+	dat <- data.frame(matrix(nrow = nrow(calls), ncol = length(colNamesDat) ) )
+	colnames(dat) <- colNamesDat
+	dat[,1] <- rownames(calls) 
+
+	message("Starting fisher tests")
+	## calc fisher pvals
+	for(i in 1:nrow(data))
+	{
+	case.calls <-  t(as.matrix(calls[i,case.cols]))
+	ctrl.calls <- t(as.matrix(calls[i,ctrl.cols]) )
+
+	number_Homs_cases <- length(which(unlist(case.calls) == 2))
+	number_Homs_ctrls <- length(which(unlist(ctrl.calls) == 2))
+
+	case.hom.major <- length(which(unlist(case.calls) == 0))
+	case.hets<- length(which(unlist(case.calls) == 1))
+	case.freqs <- c(case.hom.major, case.hets, number_Homs_cases)
+	case.maf <- maf(case.freqs)
+
+	ctrl.hom.major <- length(which(unlist(ctrl.calls) == 0))
+	ctrl.hets<- length(which(unlist(ctrl.calls) == 1))
+	ctrl.freqs <- c(ctrl.hom.major, ctrl.hets, number_Homs_ctrls)
+	ctrl.maf <- maf(ctrl.freqs)	
+
+	if(number_Homs_cases>case.hom.major) ## fix minor allele switch. doesnt affect pvalue/maf calcs but looks stupid
+	{
+	tmp<-case.hom.major
+	case.hom.major<-number_Homs_cases
+	number_Homs_cases<-tmp
+	case.calls[which(unlist(case.calls) == 2)]<-3
+	case.calls[which(unlist(case.calls) == 0)]<-2
+	case.calls[which(unlist(case.calls) == 3)]<-0
+	}
+	if(number_Homs_ctrls>ctrl.hom.major)
+	{
+	tmp<-ctrl.hom.major
+	ctrl.hom.major<-number_Homs_ctrls
+	number_Homs_ctrls<-tmp
+	ctrl.calls[which(unlist(ctrl.calls) == 2)]<-3
+	ctrl.calls[which(unlist(ctrl.calls) == 0)]<-2
+	ctrl.calls[which(unlist(ctrl.calls) == 3)]<-0
+	}
+
+	number_mutations_cases <- sum( case.calls , na.rm=T )
+	number_mutations_ctrls <- sum( ctrl.calls , na.rm=T ) 
+
+	nb.nas.cases <- length(which(is.na(case.calls)))
+	nb.nas.ctrls <- length(which(is.na(ctrl.calls)))
+
+	nb.cases <-  length(which(!is.na( case.calls )) ) 
+	nb.ctrls <-  length(which(!is.na( ctrl.calls )) ) 
+		
+	mean_number_case_chromosomes <- nb.cases * 2
+	mean_number_ctrl_chromosomes <- nb.ctrls * 2
+
+	if (!is.na(number_mutations_cases)  & !is.na(number_mutations_ctrls)  )
+	{
+	if (nb.cases > 0 & nb.ctrls > 0)
+	{
+		fishertest <-  fisher.test((matrix(c(number_mutations_cases, mean_number_case_chromosomes
+		                         - number_mutations_cases, number_mutations_ctrls, mean_number_ctrl_chromosomes - number_mutations_ctrls),
+		                       nrow = 2, ncol = 2)))
+
+
+	dat$FisherPvalue[i] <- fishertest$p.value 
+	dat$nb.mutations.HCM[i] <- number_mutations_cases
+	dat$nb.mutations.ARVC[i]<- number_mutations_ctrls
+	dat$nb.HCM[i]<- nb.cases 
+	dat$nb.ARVC[i] <- nb.ctrls 
+	dat$nb.NAs.HCM[i] <- nb.nas.cases 
+	dat$nb.NAs.ARVC[i] <- nb.nas.ctrls
+	dat$nb.Homs.HCM[i]<- number_Homs_cases
+	dat$nb.Homs.ARVC[i]<- number_Homs_ctrls	
+	dat$HCM.maf[i]<- case.maf
+	dat$ARVC.maf[i]	<- ctrl.maf
+	dat$nb.Hets.HCM[i] <- case.hets
+	dat$nb.Hets.ARVC[i] <- ctrl.hets
+
+	}
+	}
+} # for(i in 1:nrow(data))
+
+colnames(dat)<-gsub(colnames(dat), pattern="HCM", replacement=cases) 
+colnames(dat)<-gsub(colnames(dat), pattern="ARVC", replacement="ctrls") 
+dat<-dat[order(dat$"FisherPvalue"),]
+message("Finished Fisher tests")
+return(dat)
+} # End of function 
+
+
+
+#########################################
+######### Now run
+#########################################
+
+setwd("/scratch2/vyp-scratch2/cian/UCLex_February2015/FastLMM_Single_Variant_all_phenos/") 
+file<-read.table("Syrris_final",header=T,sep="\t",stringsAsFactors=F) 
+file$Pvalue<-as.numeric(file$Pvalue)
+filt<-variant.filter(file,pval=1) 
+calls<-prepData(filt)
+pvals<-doFisher(calls) 
+
+merged<-merge(filt, pvals,by="SNP") 
+
+ensembl = useMart("ensembl",dataset="hsapiens_gene_ensembl")
+filter="ensembl_gene_id"
+attributes =  c("ensembl_gene_id", "external_gene_name",  "phenotype_description")
+gene.data <- getBM(attributes= attributes , filters = filter , values = merged$Gene , mart = ensembl)
+gene.data.uniq <- gene.data[!duplicated(gene.data$external_gene_name),]
+
+anno<-merge(merged,gene.data.uniq,by.x='Gene',by.y='ensembl_gene_id')
+
+dat.small<-data.frame(anno$SNP, anno$ExonicFunc,anno$external_gene_name, anno$Gene, anno$FisherPvalue,anno$OR, anno$nb.mutations.Syrris,anno$nb.mutations.ctrls,
+	anno$nb.Syrris,anno$nb.ctrls,anno$Syrris.maf,anno$ctrls.maf,anno$nb.Homs.Syrris,anno$nb.Homs.ctrls,
+	anno$nb.Hets.Syrris,anno$nb.Hets.ctrls,anno$nb.NAs.Syrris,anno$nb.NAs.ctrls,anno$phenotype_description) 
+colnames(dat.small)<-gsub(colnames(dat.small),pattern="anno.",replacement="")
+dat.sig<-subset(dat.small,dat.small$FisherPvalue<=0.001)
+dat.sig<-dat.sig[order(dat.sig$FisherPvalue),]
+	
+write.table(dat.sig, "Syrris_ARVC_vs_UCLex.csv", col.names=T,row.names=F,quote=T,sep=",") 
+

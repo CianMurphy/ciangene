@@ -6,7 +6,7 @@ getArgs <- function() {
 }
 
 release <- 'February2015'
-rootODir<-'/scratch2/vyp-scratch2/cian'
+rootODir<-'/scratch2/vyp-scratch2/cian/'
 
 myArgs <- getArgs()
 
@@ -32,12 +32,13 @@ clean.variants <- subset(extCtrl.var, extCtrl.var$Call.rate >= missingness.thres
 clean.variants$SNP <- clean.variants[,1]
 percent.removed <- paste0("(", round(( nrow(extCtrl.var) - nrow(clean.variants)) / nrow(extCtrl.var)*100), "%)") 
 message(paste(nrow(extCtrl.var) - nrow(clean.variants) , percent.removed, "variants are removed because of call rate") ) 
-clean.variants <- clean.variants[clean.variants$SNP %in% hwe, ]
+clean.variants <- clean.variants[clean.variants$SNP %in% hwe2, ]
 
 annotations <- read.csv(file = paste0(oDir, "annotations.snpStat"), header=T, sep="\t") 
 pass.snps <- annotations$clean.signature[which(annotations$FILTER == "PASS") ] 
-
+qual<-data.frame(snp=rownames(annotations),qual=annotations$FILTER)
 clean.out <- clean.variants$SNP[clean.variants$SNP %in% pass.snps]
+write.table(qual, file = paste0(oDir, "snp_quality_score"), col.names=F, row.names=F, quote=F, sep="\t") 
 write.table(clean.out, file = paste0(oDir, "Clean_variants"), col.names=F, row.names=F, quote=F, sep="\t") 
 
 

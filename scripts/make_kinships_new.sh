@@ -10,8 +10,7 @@ release=${2-$release}
 bDir=${rootODir}/UCLex_${release}/
 
 missingNonMissing=$bDir"/Matrix.calls.Missing.NonMissing_out"
-techOut=$bDir"/TechKin"
-
+techOut=$bDir"/TechKin_clean"
 extract=$bDir"Clean_variants"
 ## Some basic parameters: 
 minObs=0		## SNP needs to be present in 90% samples to be included. 
@@ -76,8 +75,8 @@ missingNonMissing=$bDir"/allChr_snpStats_out"
 techOut=$bDir"/PopKin"
 
 $ldak --calc-kins-direct $techOut --bfile $missingNonMissing --ignore-weights YES --kinship-raw YES \
---minmaf $minMaf --maxmaf $maxMaf --minvar $minVar --minobs $minObs --extract $extract 
-$ldak --pca $bDir"popPCs" --grm $techOut --extract $extract
+--minmaf $minMaf --maxmaf $maxMaf --minvar $minVar --minobs $minObs  --extract $extract 
+$ldak --pca $bDir"popPCs" --grm $techOut  --extract $extract
 
 
 oFile=$bDir/plot.popPca.R

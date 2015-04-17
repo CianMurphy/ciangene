@@ -18,7 +18,7 @@ library(snpStats)
 
 oDir <- paste0("/scratch2/vyp-scratch2/cian/UCLex_", release, "/") 
 
-files <- list.files(paste0(oDir, "LDAK_gene_tests_all_phenos_flt/"), pattern = "with_kin", full.names=T) 
+files <- list.files(paste0(oDir, "LDAK_gene_tests_all_phenos/"), pattern = "with_kin", full.names=T) 
 #batches <- gsub(files, pattern = ".*kin_", replacement = "")
 batches <- basename(files)
 names <- gsub(batches, pattern = "with_kin_", replacement = "") 
@@ -29,13 +29,13 @@ groups$GenomicInflationTech <- 0
 groups$GenomicInflationPerm <- 0 
 groups$GenomicInflationBase <- 0 
 
-noKins <- paste0(oDir, "LDAK_gene_tests_all_phenos_flt/no_kin", gsub(batches,pattern="with_kin", replacement=''),  "/regressALL")
-res <- paste0(oDir, "LDAK_gene_tests_all_phenos_flt/no_kin", gsub(batches,pattern="with_kin", replacement=''),  "_res/regressALL")
+noKins <- paste0(oDir, "LDAK_gene_tests_all_phenos/no_kin", gsub(batches,pattern="with_kin", replacement=''),  "/regressALL")
+res <- paste0(oDir, "LDAK_gene_tests_all_phenos/no_kin", gsub(batches,pattern="with_kin", replacement=''),  "_res/regressALL")
 
 var <- list.files(paste0(oDir, "KinshipDecomposition") , pattern = "tech.progress", full.names=T) 
 
 
-oFile <- paste0( "UCLex_", release, "_gene_tests_flt.pdf") 
+oFile <- paste0( "UCLex_", release, "_gene_tests.pdf") 
 pdf(oFile)
 par(mfrow=c(2,2), cex.main = 0.6) 
 

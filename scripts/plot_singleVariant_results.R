@@ -53,7 +53,7 @@ uniq.groups <- unique(groups)
 start.group <- 8 
 end.group<-length(uniq.groups)
 
-prep<-TRUE
+prep<-FALSE
 if(prep)
 {
 	for(i in start.group:end.group) 
@@ -92,9 +92,9 @@ for(i in 1:length(uniq.groups))
 	iCovar <- noCovar[grep(paste0(uniq.groups[i],"_"), noCovar) ]
 	iTk <- techCovar[grep(paste0(uniq.groups[i],"_"), techCovar) ]
 	iPerm <- permy[grep(paste0(uniq.groups[i],"_"), permy) ]
-	iRes<-inRes[grep(paste0("_",uniq.groups[i],"_"),inRes) ]
-	inputs <- c(iBase, iTech, iCovar, iTk, iPerm,iRes)
-	if(length(which(file.exists(inputs)))==6)
+#	iRes<-inRes[grep(paste0("_",uniq.groups[i],"_"),inRes) ]
+	inputs <- c(iBase, iTech, iCovar, iTk, iPerm)#,iRes)
+	if(length(which(file.exists(inputs)))==5)
 	{
 		message("Now processing ", uniq.groups[i])
 		base <- read.table(iBase, header=T, stringsAsFactors=F)
@@ -102,11 +102,11 @@ for(i in 1:length(uniq.groups))
 		tech.small <- data.frame(SNP=tech$SNP, TechKinPvalue=tech$Pvalue)
 		perm <- read.table(iPerm, header=T, stringsAsFactors=F)
 		perm.small <- data.frame(SNP=perm$SNP, permPvalue=perm$Pvalue)
-		res <- read.table(iRes, header=T, stringsAsFactors=F)
-		res.small <- data.frame(SNP=res$SNP, resPvalue=res$Pvalue)
+#		res <- read.table(iRes, header=T, stringsAsFactors=F)
+#		res.small <- data.frame(SNP=res$SNP, resPvalue=res$Pvalue)
 
-		results.merged <- merge(base, tech.small, by = "SNP")
-		results.merged2<-merge(results.merged, res.small, by = "SNP")
+		results.merged2 <- merge(base, tech.small, by = "SNP")
+#		results.merged2<-merge(results.merged, res.small, by = "SNP")
 		results.merged3 <- merge(results.merged2,perm.small,by='SNP')
 		results.merged.anno <- merge(results.merged3, annotations, by.x = "SNP", by.y ="clean.signature")
 
@@ -124,7 +124,8 @@ for(i in 1:length(uniq.groups))
 		{
 		current.counts <- read.table(hit, header=T) 
 		final <- merge(results.merged.anno.extCtrl, current.counts, by = "SNP")
-		write.table(results.merged.anno.extCtrl, paste0(iDir, groups[i], "_filt"), col.names=T, row.names=F, quote=F, sep="\t")
+		oFile<-paste0(iDir, uniq.groups[i], "_final");message(paste("Writing to", oFile)) 
+		write.table(final, oFile, col.names=T, row.names=F, quote=F, sep="\t")
 	#	lapply(minMaf, function(x)
 		message("Now plotting ", uniq.groups[i])
 		lapply(count.thresholds,function(x)

@@ -18,7 +18,7 @@ if ('release' %in% names(myArgs))  release <- myArgs[[ "release" ]]
 #############################################
 
 oDir <- paste0(rootODir, "/UCLex_", release, "/")
-message(oDir) 
+
 fam <- read.table(paste0(oDir, "UCLex_February2015.fam"), header=F) 
 groups <- gsub(fam[,1], pattern = "_.*",replacement = "")
 groups.unique <- unique(groups)
@@ -57,7 +57,7 @@ if(use.fixPhenoGroupings)
 } ### use.fixPhenoGroupings 
 
 nb.groups <- length(unique(groups))
-message("Here") 
+
 ## now make phenotype file 
 pheno <- data.frame(matrix(nrow = nrow(fam), ncol = nb.groups+2))
 colnames(pheno) <- c("SampleID1", "SampleID2", groups.unique)
@@ -67,7 +67,7 @@ for(i in 1:nb.groups)
 {
 	pheno[, i + 2] <- 1 
 	hits <- grep(groups.unique[i], groups )
-	message(length(hits) 	) 
+#	message(length(hits) 	) 
 	pheno[hits,i+2] <- 2
 }
 
@@ -83,7 +83,7 @@ family <- c("UCLG569", "UCLG567", "LambiaseSD_UCLG594", "UCLG568", "UCLG570", "U
 for(i in 1:length(family))
 {
 	hit <- grep(family[i], pheno[,1])
-	pheno[hit,3] <- 'NA' 
+	pheno[hit,3:ncol(pheno)] <- 'NA' 
 } 
 
 ## summarise case cohort breakdowns

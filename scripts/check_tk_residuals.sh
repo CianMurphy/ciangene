@@ -24,22 +24,22 @@ nbGroups=$(wc -l $Names | awk {'print $1}')
 oDir=$bDir"KinshipDecomposition/"
 if [ ! -e $oDir ]; then mkdir $oDir; fi
 
+startPheno=1
 
-
-for pheno in $(seq 72 $nbGroups)
+for pheno in $(seq $startPheno $nbGroups)
 do
 
 	batch=$(sed -n $pheno'p' $Names); echo $batch is nb $pheno
-	if (($pheno==72))
+	if (($pheno==$startPheno))
 	then
 		$ldak --reml $oDir$batch"_tech" --grm $kinship  --pheno $phenotypes --mpheno $pheno --eigen-save $oDir/techEigen
 		$ldak --reml $oDir$batch"_geno" --grm $pKinship  --pheno $phenotypes --mpheno $pheno --eigen-save $oDir/popEigen
-	else
+	fi
 		$ldak --reml $oDir$batch"_tech" --grm $kinship  --pheno $phenotypes --mpheno $pheno --eigen $oDir/techEigen	
 		$ldak --reml $oDir$batch"_geno" --grm $pKinship  --pheno $phenotypes --mpheno $pheno --eigen $oDir/popEigen
-	fi
+	
 
-	if (($pheno==72))
+	if (($pheno==$startPheno))
 	then
 		awk '{ print $1, $1}' $oDir$batch"_tech.indi.res" > $bDir".NewPhenotypeFiletmp"
 	fi
