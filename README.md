@@ -10,22 +10,25 @@ ciangene
 		Takes the snpStats files from the data release and turn into a numeric matrix
 		Establishes UCLex External Controls (Uex) and calculates their summary stats
 
-* variant_filtering/qc.sh
+* variant_filtering/qc.sh 
 		
 		filters by Uex missingness and MAF
-		filters by function - gene tests
-		add hwe filter
+		Makes geno bed file
 
+* variant_filtering/filter_snps.R
+		filters by function - gene tests
+		Uex hwe filter
+	
 * new_make_phenotype_file.R
 
 		Creates a large matrix of phenotypes, grouped by names basically.
-		Remove Uex
+		Remove Uex - label as missing 
 		Fix sample groupings
 
-* convert_missingNonmissing_matrix_to_plink.sh
+* convert_genotype_to_missingNonMissing.sh
 
 		turns NA/non NA into 0-1 for LDAK/plink use
-		Makes bed file for both 
+		Makes TK bed 
 		Case control missingness
 
 * make_kinships_new.sh
@@ -63,6 +66,8 @@ ciangene
 		Doesn't just merge. Also uses permuted pvalue in regress1..regressN to define null distribution (permuted pheno with kin) to calc final pvalue in regressALL. Script hangs when run on just one chunk/gene (eg as per power studies). 
 
 * plot_singleVariant_results.R
+
+		Merges single variant tests and plots some of them. 
 
 * annotate_qqplot.R 
 
