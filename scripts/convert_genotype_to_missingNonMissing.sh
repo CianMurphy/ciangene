@@ -3,7 +3,7 @@
 ldak=/cluster/project8/vyp/cian/support/ldak/ldak
 #rootODir=/scratch2/vyp-scratch2/ciangene
 rootODir=/scratch2/vyp-scratch2/cian/
-release=February2015
+release=May2015
 rootODir=${1-$rootODir}
 release=${2-$release}
 plink=/share/apps/genomics/plink-1.07-x86_64/plink
@@ -29,7 +29,7 @@ nbGroups=$(wc -l $Names | awk {'print $1}')
 oDir=$bDir"CaseControlMissingness/"
 if [ ! -e $oDir ]; then mkdir $oDir; fi
 
-for pheno in $(seq 72 $nbGroups)
+for pheno in $(seq 1 $nbGroups)
 do
 	batch=$(sed -n $pheno'p' $Names) # ; echo $batch
 	oFile=$oDir"missing_"$batch.sh
@@ -41,6 +41,7 @@ do
 	done
 	" > $oFile
 	$runSh $oFile
+	sh $oFile
 done
 
 

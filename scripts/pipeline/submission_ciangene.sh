@@ -1,5 +1,5 @@
 #repo=/cluster/project8/vyp/exome_sequencing_multisamples/ciangene/
-repo=/cluster/project8/vyp/cian/data/UCLex/UCLex_August/Scripts/ciangene/
+repo=/cluster/project8/vyp/cian/data/UCLex/ciangene/
 
 export repo
 
@@ -15,5 +15,5 @@ step2=yes
 step3=no 
 
 
-sh ${pipeline} --step1 ${step1} --step2 ${step2} --step3 ${step3} --rootODir ${rootODir} --release February2015
+sh ${pipeline} --step1 ${step1} --step2 ${step2} --step3 ${step3} --rootODir ${rootODir} --release May2015
 

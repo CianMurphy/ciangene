@@ -19,7 +19,7 @@ if ('release' %in% names(myArgs))  release <- myArgs[[ "release" ]]
 
 oDir <- paste0(rootODir, "/UCLex_", release, "/")
 
-fam <- read.table(paste0(oDir, "UCLex_February2015.fam"), header=F) 
+fam <- read.table(paste0(oDir, "UCLex_",release,".fam"), header=F) 
 groups <- gsub(fam[,1], pattern = "_.*",replacement = "")
 groups.unique <- unique(groups)
 # Tring to group samples by cohort correctly. Default method is to use string before first underscore in their name, but that doesn't work for all samples, 

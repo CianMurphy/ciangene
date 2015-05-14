@@ -1,10 +1,10 @@
 Rbin=/cluster/project8/vyp/vincent/Software/R-3.1.2/bin/R
 
 ## First step - genotype matrix and initial filtering
-firstStep=${repo}/scripts/first.step.R  ##step 1
-clean=${repo}/scripts/variant_filtering/qc.sh   ##step 1.1
-filter=${repo}/scripts/variant_filtering/filter_snps.R   ##step 1.2
-pheno=${repo}/scripts/new_make_phenotype_file.R ## step 1.3
+firstStep=${repo}/scripts/first.step.R  ##step 1.1
+clean=${repo}/scripts/variant_filtering/qc.sh   ##step 1.2
+filter=${repo}/scripts/variant_filtering/filter_snps.R   ##step 1.3
+pheno=${repo}/scripts/new_make_phenotype_file.R ## step 1.4
 
 ## Second step - creating and validating the technical Kinship
 secondStep=${repo}/scripts/convert_genotype_to_missingNonMissing.sh  ## step2
@@ -78,10 +78,10 @@ if [[ "$step1" == "yes" ]]; then
 #$ -l h_rt=24:00:00
 #$ -cwd
 
-$Rbin CMD BATCH --no-save --no-restore --release=${release} --rootODir=${rootODir} $firstStep cluster/R/step1.1.Rout
+$Rbin CMD BATCH --no-save --no-restore --release=${release} --rootODir=${rootODir} $firstStep cluster/R/step1.1_first_step.Rout
 sh $clean $rootODir $release
-$Rbin CMD BATCH --no-save --no-restore --release=${release} --rootODir=${rootODir} $filter cluster/R/step1.3.Rout
-$Rbin CMD BATCH --no-save --no-restore --release=${release} --rootODir=${rootODir} $pheno cluster/R/step1.4.Rout
+$Rbin CMD BATCH --no-save --no-restore --release=${release} --rootODir=${rootODir} $filter cluster/R/step1.3.filter_snps.Rout
+$Rbin CMD BATCH --no-save --no-restore --release=${release} --rootODir=${rootODir} $pheno cluster/R/step1.4_pheno.Rout
 
 " > $script
     
@@ -105,7 +105,7 @@ if [[ "$step2" == "yes" ]]; then
 #$ -l h_rt=24:00:00
 #$ -cwd
 
-# sh $secondStep $rootODir $release ## convert geno to missingNonMissing
+#sh $secondStep $rootODir $release ## convert geno to missingNonMissing
 
 sh $makeKin $rootODir $release ### make kinships matrix
 
