@@ -3,7 +3,7 @@
 shopt -s expand_aliases
 source ~/.bashrc
 
-release=February2015
+release=May2015
 bDir=/scratch2/vyp-scratch2/cian/UCLex_${release}/
 Groups=$bDir"GroupNames"
 nbGroups=$(wc -l  $Groups | awk '{print $1}') 

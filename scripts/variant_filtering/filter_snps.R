@@ -5,18 +5,17 @@ getArgs <- function() {
   return (myargs)
 }
 
-release <- 'February2015'
-rootODir<-'/scratch2/vyp-scratch2/cian/'
+
 
 myArgs <- getArgs()
-
-if ('rootODir' %in% names(myArgs))  rootODir <- myArgs[[ "rootODir" ]] else 
+print(myArgs)
+if ('rootODir' %in% names(myArgs))  rootODir <- myArgs[[ "rootODir" ]]
 if ('release' %in% names(myArgs))  release <- myArgs[[ "release" ]]
 
 #######################################
 
 oDir <- paste0(rootODir, "/UCLex_", release, "/")
-
+print(oDir)
 extCtrl.var <- read.table( paste0(oDir, "/Ext_ctrl_variant_summary") , header=T) 
 
 hwe <- read.table(paste0(oDir, "gstats.hwe" ) , header=T ) 

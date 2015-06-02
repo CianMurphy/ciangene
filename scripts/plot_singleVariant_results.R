@@ -15,10 +15,12 @@ if ('release' %in% names(myArgs))  release <- myArgs[[ "release" ]]
 
 ######################
 library(snpStats)
+library(biomaRt) 
 
 bDir <- paste0("/scratch2/vyp-scratch2/cian/UCLex_", release, "/")
 minMaf <- c(0, 0.00001,0.01,0.1,0.2)
-count.thresholds <- c(0,100,500,1000)
+# count.thresholds <- c(0,100,500,1000)
+count.thresholds<-c(0,0.00001,0.001,0.1)
 
 iDir <- paste0(bDir, "FastLMM_Single_Variant_all_phenos/")
 
@@ -53,7 +55,7 @@ uniq.groups <- unique(groups)
 start.group <- 8 
 end.group<-length(uniq.groups)
 
-prep<-FALSE
+prep<-TRUE
 if(prep)
 {
 	for(i in start.group:end.group) 
@@ -105,33 +107,43 @@ for(i in 1:length(uniq.groups))
 #		res <- read.table(iRes, header=T, stringsAsFactors=F)
 #		res.small <- data.frame(SNP=res$SNP, resPvalue=res$Pvalue)
 
-		results.merged2 <- merge(base, tech.small, by = "SNP")
+		results.merged2 <- merge(base, tech.small, by = "SNP",all=T)
 #		results.merged2<-merge(results.merged, res.small, by = "SNP")
-		results.merged3 <- merge(results.merged2,perm.small,by='SNP')
-		results.merged.anno <- merge(results.merged3, annotations, by.x = "SNP", by.y ="clean.signature")
+		results.merged3 <- merge(results.merged2,perm.small,by='SNP',all=T)
+		results.merged.anno <- merge(results.merged3, annotations, by.x = "SNP", by.y ="clean.signature",all=T)
 
 		noCov <- read.table(iCovar, header=T, stringsAsFactors=F)
 		noCov.small<-data.frame(SNP=noCov$SNP, noCov$UNADJ)
 		tk <- read.table(iTk, header=T, stringsAsFactors=F)
 		tk.small<-data.frame(SNP=tk$SNP,tk$UNADJ)
-		covariate.pvalues<-merge(noCov.small, tk.small,by='SNP')
+		covariate.pvalues<-merge(noCov.small, tk.small,by='SNP',all=T)
 
-		results.merged.anno2 <- merge(results.merged.anno, covariate.pvalues,by='SNP')
-		results.merged.anno.extCtrl <- merge(results.merged.anno2, extCtrl.small, by = "SNP")
+		results.merged.anno2 <- merge(results.merged.anno, covariate.pvalues,by='SNP',all=T)
+		results.merged.anno.extCtrl <- merge(results.merged.anno2, extCtrl.small, by = "SNP",all=T)
 		results.merged.anno.extCtrl$tk.UNADJ[which(is.infinite(results.merged.anno.extCtrl$tk.UNADJ) )] <- 1
 		hit <- counts[grep(uniq.groups[i], counts)][1]
 		if(file.exists(hit))
 		{
 		current.counts <- read.table(hit, header=T) 
-		final <- merge(results.merged.anno.extCtrl, current.counts, by = "SNP")
+		final <- merge(results.merged.anno.extCtrl, current.counts, by = "SNP",all=T)
+		final<-final[order(as.numeric(as.character(final$TechKinPvalue))),]
 		oFile<-paste0(iDir, uniq.groups[i], "_final");message(paste("Writing to", oFile)) 
+
+#		ensembl = useMart("ensembl",dataset="hsapiens_gene_ensembl")
+#		filter="ensembl_gene_id"
+#		attributes =  c("ensembl_gene_id", "external_gene_name",  "phenotype_description")
+#		print("Done tests, now getting gene names and phenotype")
+#		dat.anno <- getBM(attributes= attributes , filters = filter , values = final$Gene , mart = ensembl)
+#		skat.annotated <- 	skat.annotated[!duplicated(skat.annotated$external_gene_name),]
+#		merged<-merge(dat,skat.annotated,by.x="Gene",by.y="ensembl_gene_id",all.x=T)
+
 		write.table(final, oFile, col.names=T, row.names=F, quote=F, sep="\t")
 	#	lapply(minMaf, function(x)
 		message("Now plotting ", uniq.groups[i])
 		lapply(count.thresholds,function(x)
 		{
-	#		dat <- data.frame(subset(results.merged.anno.extCtrl, results.merged.anno.extCtrl$ExtCtrl_MAF >= x )) 
-			dat <- subset(final, final$C_U >= x )
+			dat <- data.frame(subset(final, final$ExtCtrl_MAF >= x )) 
+	#		dat <- subset(final, final$C_U >= x )
 			message(nrow(dat),' rows with counts greater than ',x)
 			if(nrow(dat) > 0 )
 			{
