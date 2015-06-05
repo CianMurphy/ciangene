@@ -10,12 +10,12 @@ bDir=${rootODir}/UCLex_${release}/
 runSh='sh /cluster/project8/vyp/cian/scripts/bash/runBashCluster.sh'
 Groups=$bDir"GroupNames"
 nbGroups=$(wc -l  $Groups | awk '{print $1}') 
-templateScript="/cluster/project8/vyp/cian/data/UCLex/UCLex_August/Scripts/ciangene/scripts/LDAK/LDAK_res.sh"
+#templateScript="/cluster/project8/vyp/cian/data/UCLex/UCLex_August/Scripts/ciangene/scripts/LDAK/ldak_techres_DepthKin.sh"
+templateScript=/cluster/project8/vyp/cian/data/UCLex/ciangene/scripts/LDAK/ldak_techres_DepthKin.sh
 variants=$bDir"/Clean_variants_func_rare"
 
 iPhenotype=$bDir"/NewPhenotypeFile"
-phenotype=$bDir/phenotype_res
-
+phenotype=/cluster/project8/vyp/cian/data/UCLex/UCLex_August/Scripts/ciangene/scripts/LDAK/Res_filt_phenotype_file
 oFolder=$bDir"/LDAK_gene_tests_all_phenos/"
 if [ ! -e $oFolder ]; then mkdir $oFolder; fi
 

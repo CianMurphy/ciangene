@@ -19,8 +19,8 @@ library(biomaRt)
 
 bDir <- paste0("/scratch2/vyp-scratch2/cian/UCLex_", release, "/")
 minMaf <- c(0, 0.00001,0.01,0.1,0.2)
-# count.thresholds <- c(0,100,500,1000)
-count.thresholds<-c(0,0.00001,0.001,0.1)
+count.thresholds <- c(0,100,500,1000)
+#count.thresholds<-c(0,0.00001,0.001,0.1)
 
 iDir <- paste0(bDir, "FastLMM_Single_Variant_all_phenos/")
 
@@ -84,7 +84,7 @@ extCtrl.small <- data.frame(extCtrl[,1], extCtrl$MAF)
 colnames(extCtrl.small) <-  c("SNP", "ExtCtrl_MAF") 
 extCtrl.small$ExtCtrl_MAF[is.na(extCtrl.small$ExtCtrl_MAF)] <- 0 
 
-oFile <- paste0(iDir, "SingleVariant_qqplots.pdf")
+oFile <- paste0(iDir, "SingleVariant_qqplots_counts.pdf")
 pdf(oFile)
 par(mfrow=c(2,2), cex.main=0.8)
 for(i in 1:length(uniq.groups))
@@ -142,8 +142,8 @@ for(i in 1:length(uniq.groups))
 		message("Now plotting ", uniq.groups[i])
 		lapply(count.thresholds,function(x)
 		{
-			dat <- data.frame(subset(final, final$ExtCtrl_MAF >= x )) 
-	#		dat <- subset(final, final$C_U >= x )
+	#		dat <- data.frame(subset(final, final$ExtCtrl_MAF >= x )) 
+			dat <- subset(final, final$C_U >= x )
 			message(nrow(dat),' rows with counts greater than ',x)
 			if(nrow(dat) > 0 )
 			{
