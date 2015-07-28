@@ -38,12 +38,12 @@ ciangene
 
 * make_kinships_new.sh
 
-		Makes technical kinship (TK) and geno kinship matrix
+		Makes technical kinship (TK), Read Depth (RD) and geno kinship matrix
 		calculate and plot PCs
 
 * check_tk_residuals.sh
 		
-		Checks how much variance pop (A) and TK (B) explains for all phenos. 
+		Checks how much kinships explain for all phenos. 
 		Creates new pheno files, using residuals from (B) as phenos
 
 * LDAK/run_ldak_on_all_phenos.sh & run_ldak_on_all_phenos_res.sh
