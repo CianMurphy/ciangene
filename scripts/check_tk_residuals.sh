@@ -11,6 +11,7 @@ bDir=${rootODir}/UCLex_${release}/
 genes=/SAN/biomed/biomed14/vyp-scratch/cian/LDAK/genesldak_ref.txt
 kinship=$bDir"TechKin"
 pKinship=$bDir"PopKin"
+dKinship=$bDir"read_depth/Depthkin"
 data=$bDir"allChr_snpStats_out"
 phenotypes=$bDir"Phenotypes"
 groups=$bDir"cohort.summary"
@@ -34,10 +35,11 @@ do
 	then
 		$ldak --reml $oDir$batch"_tech" --grm $kinship  --pheno $phenotypes --mpheno $pheno --eigen-save $oDir/techEigen
 		$ldak --reml $oDir$batch"_geno" --grm $pKinship  --pheno $phenotypes --mpheno $pheno --eigen-save $oDir/popEigen
+		$ldak --reml $oDir$batch"_tech" --grm $dKinship  --pheno $phenotypes --mpheno $pheno --eigen-save $oDir/depthEigen
 	fi
 		$ldak --reml $oDir$batch"_tech" --grm $kinship  --pheno $phenotypes --mpheno $pheno --eigen $oDir/techEigen	
 		$ldak --reml $oDir$batch"_geno" --grm $pKinship  --pheno $phenotypes --mpheno $pheno --eigen $oDir/popEigen
-	
+		$ldak --reml $oDir$batch"_geno" --grm $dKinship  --pheno $phenotypes --mpheno $pheno --eigen $oDir/depthEigen
 
 	if (($pheno==$startPheno))
 	then

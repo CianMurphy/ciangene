@@ -40,11 +40,11 @@ for(i in 1:length(files)){
   message("Now loading file ", files[i])
   load(files[i])
 
-  # Extract clean variants. 
-  pass.snps <- annotations.snpStats$clean.signature[which(annotations.snpStats$FILTER == "PASS")] #
- # matrix.calls.snpStats <- matrix.calls.snpStats[, which( colnames(matrix.calls.snpStats) %in% pass.snps ) ]
- # annotations.snpStats <- subset(annotations.snpStats, annotations.snpStats$FILTER == "PASS")
- # matrix.depth <-  matrix.depth[which( rownames(matrix.depth) %in% pass.snps) ,]
+##      Extract clean variants. 
+	pass.snps <- annotations.snpStats$clean.signature[which(annotations.snpStats$FILTER == "PASS")] #
+	matrix.calls.snpStats <- matrix.calls.snpStats[, which( colnames(matrix.calls.snpStats) %in% pass.snps ) ]#
+	annotations.snpStats <- subset(annotations.snpStats, annotations.snpStats$FILTER == "PASS")
+	matrix.depth <-  matrix.depth[which( rownames(matrix.depth) %in% pass.snps) ,]
 
 	if(i==1) 
 	{	
@@ -112,8 +112,3 @@ write.table(fam, paste0(oDir, "/UCLex_", release, ".fam") , col.names=FALSE, row
 bim <- read.table(oBim, header=FALSE, sep="\t") 
 bim <- bim[with(bim, order(V1, V4)), ]
 write.table(bim, oBim, col.names=FALSE, row.names=FALSE, quote=FALSE ,sep="\t") 
-
-
-
-
-

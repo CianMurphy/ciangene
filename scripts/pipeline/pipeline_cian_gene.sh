@@ -4,13 +4,18 @@ Rbin=/cluster/project8/vyp/vincent/Software/R-3.1.2/bin/R
 firstStep=${repo}/scripts/first.step.R  ##step 1.1
 clean=${repo}/scripts/variant_filtering/qc.sh   ##step 1.2
 filter=${repo}/scripts/variant_filtering/filter_snps.R   ##step 1.3
-pheno=${repo}/scripts/new_make_phenotype_file.R ## step 1.4
+pca=${repo}/scripts/PCA/ancestry_pca.R  ## step 1.4
+pca_extract=${repo}/scripts/PCA/getPCAsnps_UCLex.sh
+plot_pca=${repo}/scripts/PCA/plot_pca.R
+pheno=${repo}/scripts/MakePhenotypes/prepare_all_phenos.R ## step 1.5
 
 ## Second step - creating and validating the technical Kinship
 secondStep=${repo}/scripts/convert_genotype_to_missingNonMissing.sh  ## step2
 makeKin=${repo}/scripts/make_kinships_new.sh # step 2.1
 checkKin=${repo}/scripts/check_tk_residuals.sh # step 2.2
 convertKin=${repo}/scripts/prepare_kinship_matrix_for_fastLMM.R # step 2.3
+DepthKin=${repo}/scripts/first_depth_kin.R
+
 
 ## Third step - case control tests
 thirdStep=${repo}/scripts/LDAK/run_ldak_on_all_phenos.sh
@@ -81,7 +86,12 @@ if [[ "$step1" == "yes" ]]; then
 $Rbin CMD BATCH --no-save --no-restore --release=${release} --rootODir=${rootODir} $firstStep cluster/R/step1.1_first_step.Rout
 sh $clean $rootODir $release
 $Rbin CMD BATCH --no-save --no-restore --release=${release} --rootODir=${rootODir} $filter cluster/R/step1.3.filter_snps.Rout
-$Rbin CMD BATCH --no-save --no-restore --release=${release} --rootODir=${rootODir} $pheno cluster/R/step1.4_pheno.Rout
+$Rbin CMD BATCH --no-save --no-restore --release=${release} --rootODir=${rootODir} $pca cluster/R/step1.4.pca.Rout
+sh $pca_extract $rootODir $release
+$Rbin CMD BATCH --no-save --no-restore --release=${release} --rootODir=${rootODir} $plot_pca cluster/R/step1.4.Plotpca.Rout
+
+
+$Rbin CMD BATCH --no-save --no-restore --release=${release} --rootODir=${rootODir} $pheno cluster/R/step1.5pheno.Rout
 
 " > $script
     
@@ -99,7 +109,7 @@ if [[ "$step2" == "yes" ]]; then
 #$ -S /bin/bash
 #$ -o cluster/out
 #$ -e cluster/error
-#$ -l h_vmem=15G,tmem=15G
+#$ -l h_vmem=25G,tmem=25G
 #$ -pe smp 1
 #$ -N step2_cian
 #$ -l h_rt=24:00:00
@@ -107,12 +117,13 @@ if [[ "$step2" == "yes" ]]; then
 
 #sh $secondStep $rootODir $release ## convert geno to missingNonMissing
 
-sh $makeKin $rootODir $release ### make kinships matrix
+#$Rbin CMD BATCH --no-save --no-restore --release=${release} --rootODir${rootODir} $DepthKin cluster/R/step2_depthKin.Rout
+
+sh $makeKin $rootODir $release ### make kinship matrices
 
 sh $checkKin $rootODir $release # check how much variance the kinships explained. 
 
 $Rbin CMD BATCH --no-save --no-restore --release=${release} --rootODir=${rootODir} $convertKin cluster/R/step2.Rout
-
 " > $script
 
     qsub $hold $script

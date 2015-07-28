@@ -10,10 +10,9 @@ script=cluster/submission/cian.sh
 # rootODir=/scratch2/vyp-scratch2/ciangene
 rootODir=/scratch2/vyp-scratch2/cian/
 
-step1=no
+step1=yes
 step2=yes
 step3=no 
 
-
-sh ${pipeline} --step1 ${step1} --step2 ${step2} --step3 ${step3} --rootODir ${rootODir} --release May2015
+sh ${pipeline} --step1 ${step1} --step2 ${step2} --step3 ${step3} --rootODir ${rootODir} --release June2015
 

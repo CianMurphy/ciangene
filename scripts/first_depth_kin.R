@@ -7,7 +7,7 @@ getArgs <- function() {
   names(myargs) <- lapply(myargs.list,function(x) x[1])
   return (myargs)
 }
-release <- 'February2015'
+release <- 'June2015'
 rootODir<-'/scratch2/vyp-scratch2/cian'
 
 myArgs <- getArgs()
@@ -18,7 +18,7 @@ if ('release' %in% names(myArgs))  release <- myArgs[[ "release" ]]
 
 ########################################
 
-files <- list.files(paste0("/cluster/project8/vyp/exome_sequencing_multisamples/mainset/GATK/mainset_", release,"/mainset_February2015_snpStats"), pattern = "snpStats", full.names=TRUE)
+files <- list.files(paste0("/cluster/project8/vyp/exome_sequencing_multisamples/mainset/GATK/mainset_", release,"/mainset_",release,"_snpStats"), pattern = "snpStats", full.names=TRUE)
 files <- files[order(as.numeric(gsub(gsub(basename(files), pattern ="chr", replacement =""), pattern = "_.*", replacement = "") ) )]
 oDir <- paste0(rootODir, "/UCLex_", release, "/read_depth/")
 

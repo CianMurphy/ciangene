@@ -13,7 +13,7 @@ echo $nbGroups "phenotypes for fastLMM to chew on"
 oFolder=$bDir"FastLMM_Single_Variant_all_phenos/"
 if [ ! -e $oFolder ]; then mkdir $oFolder; fi
 
-runSh='sh /cluster/project8/vyp/cian/scripts/bash/runBashCluster_large.sh'
+runSh='sh /cluster/project8/vyp/cian/scripts/bash/runBashCluster.sh'
 
 for pheno in $(seq 73 $nbGroups)
 do

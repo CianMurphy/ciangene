@@ -8,26 +8,22 @@ release=${2-$release}
 bDir=${rootODir}/UCLex_${release}/
 
 runSh='sh /cluster/project8/vyp/cian/scripts/bash/runBashCluster.sh'
-Groups=$bDir"GroupNames"
+Groups=${bDir}Phenotype_subset_groups
 nbGroups=$(wc -l  $Groups | awk '{print $1}') 
 #templateScript="/cluster/project8/vyp/cian/data/UCLex/UCLex_August/Scripts/ciangene/scripts/LDAK/ldak_techres_DepthKin.sh"
 templateScript=/cluster/project8/vyp/cian/data/UCLex/ciangene/scripts/LDAK/ldak_techres_DepthKin.sh
 variants=$bDir"/Clean_variants_func_rare"
 
-iPhenotype=$bDir"/NewPhenotypeFile"
-phenotype=/cluster/project8/vyp/cian/data/UCLex/UCLex_August/Scripts/ciangene/scripts/LDAK/Res_filt_phenotype_file
-oFolder=$bDir"/LDAK_gene_tests_all_phenos/"
+phenotype=/scratch2/vyp-scratch2/cian/UCLex_February2015/Clean_pheno_subset
+oFolder=$bDir"/LDAK_gene_tests_all_phenos_old/"
 if [ ! -e $oFolder ]; then mkdir $oFolder; fi
 
-head -1 $iPhenotype  > $bDir/tmp
-nbCols=$(wc $bDir/tmp | awk '{print $2}')
-nbGroups=$(expr $nbCols - 2)
-
-for pheno in $(seq 6 $nbGroups) 
+for pheno in $(seq 1 16) 
 #for pheno in {79,90,91,102} # skipping the first few random phenos
 do
-	tt=$(expr $pheno + 2)
-	batch=$(awk "{print \$$tt}" $bDir/tmp)
+	#tt=$(expr $pheno + 2)
+	#batch=$(awk "{print \$$tt}" $bDir/tmp)
+	batch=$(sed $pheno'q;d' $Groups)
 	for maf in {0.0000001,0.001}
 	do
 		for missing in {0.000001,9}

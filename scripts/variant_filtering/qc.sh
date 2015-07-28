@@ -21,9 +21,14 @@ $plink --noweb --allow-no-sex --bfile $data --freq --out $bDir/gstats
 $plink --noweb --allow-no-sex --bfile $data --missing --out $bDir/gstats
 $plink --noweb --allow-no-sex --bfile $data --hardy --out $bDir/gstats
  
+sed -i 's/ \+ /\t/g' gstats.imiss
+
 oFile=$bDir/plot.qc.R
 echo "dir<-'"$bDir"'" > $oFile
 echo '
+	library(plyr) 
+	library(ggplot2)
+
 	miss <- read.table(paste0(dir,"gstats.lmiss"),header=T )
 	frq <- read.table(paste0(dir,"gstats.frq"),header=T )
 
@@ -33,5 +38,14 @@ echo '
 		hist(frq$MAF, xlab="MAF", main = "UCLex_MAF", breaks=100, ylim=c(0,10000))
 	dev.off() 
 
+	file<-read.csv("gstats.imiss",header=T,sep="\t",row.names=NULL)
+	sample<-read.table("Sample.cohort",header=F,sep="\t")
+	plot.data<-data.frame(sample=sample[,1],cohort=sample[,2],Missingness=file[,ncol(file)]) 
+	dat<-ddply(plot.data,.(cohort),summarize,CallRate=1-mean(Missingness) ) 
+	pdf(paste0(dir, "callRate_cohort.pdf"))
+	print(qplot(cohort,CallRate,data=dat[70:nrow(dat),])+ theme(axis.text.x = element_text(angle = 45, hjust = 1)) )
+	dev.off()
 	' >> $oFile
 $Rbin CMD BATCH --no-save --no-restore $oFile
+
+

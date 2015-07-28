@@ -11,17 +11,17 @@ bDir=${rootODir}/UCLex_${release}/
 
 missingNonMissing=$bDir"/read_depth/Depth_Matrix"
 techOut=$bDir"/DepthKin"
-extract=$bDir"Clean_variants"
+extract=$bDir"Clean_variants_func_rare"
 ## Some basic parameters: 
 minObs=0		## SNP needs to be present in 90% samples to be included. 
-minMaf=0.000001			## SNP with MAF >= this are retained
-maxMaf=0.5				## SNP with MAF <= this are retained # for techKIN maf is missingness rate. 
+minMaf=0			## SNP with MAF >= this are retained
+#maxMaf=0.5				## SNP with MAF <= this are retained # for techKIN maf is missingness rate. 
 minVar=0.0000001			## SNP with variance >= this are retained? 
 ## maxTime=500			## Nb minutes calculation allowed run for.
 
 ######### Tech Kin
 $ldak --calc-kins-direct $techOut --sp $missingNonMissing --ignore-weights YES --kinship-raw YES \
- --minmaf $minMaf --maxmaf $maxMaf --minvar $minVar --minobs $minObs --extract $extract 
+ --minmaf $minMaf  --minvar $minVar --minobs $minObs --extract $extract 
 $ldak --pca $bDir"DepthPCs" --grm $techOut --extract $extract
 
 

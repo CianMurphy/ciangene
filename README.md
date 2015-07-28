@@ -17,13 +17,16 @@ ciangene
 
 * variant_filtering/filter_snps.R
 		filters by function - gene tests
-		Uex hwe filter
-	
+
+* PCA 
+		Identify UCLex sample ancestry by comparing to 1000G. Remove non Caucasians from further analyses. 
+
 * new_make_phenotype_file.R
 
 		Creates a large matrix of phenotypes, grouped by names basically.
-		Remove Uex - label as missing 
 		Fix sample groupings
+		For each phenotype, create external control set. Use for QC and for MAF filter. 
+		For each phenotype, remove confounding controls. 
 
 * convert_genotype_to_missingNonMissing.sh
 

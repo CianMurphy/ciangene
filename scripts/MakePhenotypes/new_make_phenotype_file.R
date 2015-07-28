@@ -1,4 +1,4 @@
-comp <- "mbp"
+comp <- "mbsp"
 if(comp == "mbp") options(width=170)
 
 getArgs <- function() {
@@ -74,9 +74,9 @@ for(i in 1:nb.groups)
 
 
 ## remove pheno for extCtrls
-extCtrls <- read.table(paste0(oDir, "ext_ctrl_samples"), header=F) ## made in first.step.R
-ex.ctrl.pheno <- pheno[,1] %in% unlist(extCtrls) 
-pheno[ex.ctrl.pheno,3:ncol(pheno)] <- 'NA'
+#extCtrls <- read.table(paste0(oDir, "ext_ctrl_samples"), header=F) ## made in first.step.R
+#ex.ctrl.pheno <- pheno[,1] %in% unlist(extCtrls) 
+#pheno[ex.ctrl.pheno,3:ncol(pheno)] <- 'NA'
 
 ## remove Lambiase family
 family <- c("UCLG569", "UCLG567", "LambiaseSD_UCLG594", "UCLG568", "UCLG570", "UCLG571", "UCLG572" )
@@ -91,6 +91,19 @@ cohort.summary <- data.frame(do.call(rbind, lapply(pheno[,3:ncol(pheno)], table)
 cohort.summary$Cohort <- rownames(cohort.summary) 
 colnames(cohort.summary) <- c("Nb.Ctrls", "Nb.cases", "Nb.ext.Ctrls", "Cohort") 
 head(cohort.summary)
+
+for(i in 1:nb.groups)
+{
+	cohort.breakdown<- data.frame(table(as.character(pheno[i,3:ncol(pheno)]) ) )
+	nb.ctrls<-grep(1,cohort.breakdown[,1])
+	nb.cases<-grep(2,cohort.breakdown[,1])
+	nb.nas<-grep('NA',cohort.breakdown[,1])
+
+	if(length(nb.ctrls)>0)cohort.summary$Nb.Ctrls[i]<-cohort.breakdown[nb.ctrls,2] 
+	if(length(nb.cases)>0)cohort.summary$Nb.cases[i]<-cohort.breakdown[nb.cases,2] 
+	if(length(nb.nas)>0)cohort.summary$Nb.ext.Ctrls[i]<-length(grep(pheno[i,1],pheno[,1])) 
+}
+
 
 write.table(groups.unique, paste0(oDir, "GroupNames"), col.names=F, row.names=F, quote=F, sep="\t")
 write.table(pheno, file = paste0(oDir, "Phenotypes"), col.names=F, row.names=F, quote=F, sep="\t") 
