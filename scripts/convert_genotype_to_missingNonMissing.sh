@@ -40,8 +40,8 @@ do
 	--out $oDir/$batch"_missing_""'$chr'" --pheno $phenFile"_fastlmm" --mpheno $pheno --pfilter 1e-3
 	done
 	" > $oFile
-	$runSh $oFile
-#	sh $oFile
+#	$runSh $oFile
+	sh $oFile
 done
 
 

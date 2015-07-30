@@ -5,7 +5,7 @@ getArgs <- function() {
   return (myargs)
 }
 
-release <- 'February2015'
+release <- 'June2015'
 rootODir<-'/scratch2/vyp-scratch2/cian'
 
 myArgs <- getArgs()

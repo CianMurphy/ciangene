@@ -5,7 +5,7 @@ getArgs <- function() {
   return (myargs)
 }
 
-release <- 'February2015'
+release <- 'June2015'
 rootODir<-'/scratch2/vyp-scratch2/cian'
 
 myArgs <- getArgs()
@@ -22,17 +22,33 @@ groups<-read.table( paste0(oDir, "cohort.summary"), header=T,sep="\t")
 #data<-'/scratch2/vyp-scratch2/cian/UCLex_February2015_bk/allChr_snpStats_out'
 
 pheno<-read.table(paste0(oDir,"Phenotypes"),header=F,sep="\t") 
-ancestry<-read.table(paste0(oDir,"UCLex_samples_ancestry",header=T,sep="\t")
-keep<-subset(ancestry,ancestry$Caucasian)
-pheno[pheno[,1]%in%keep[,1],3:ncol(pheno)]<-NA
-syrris<-removeConflictingControls(pheno,remove=c("Lambiase") ,cases=pheno[grep("Syrris",pheno[,1]),1]) 
-lambiase<-removeConflictingControls(syrris,remove=c("Syrris"),cases=pheno[grep("Lambiase",pheno[,1]),1]  ) 
 
-
-pheno<-lambiase  ## or last modified pheno file 
-for(i in 1:nrow(groups))
+remove.caucasians<-FALSE
+if(remove.caucasians)
 {
-	pheno<-makeExternalControls(pheno,cases=groups$Cohort[i],data=paste0(oDir,"/allChr_snpStats_out"),oBase=paste0(oDir,"/",groups$Cohort[i]) ) 
+	ancestry<-read.table(paste0(oDir,"UCLex_samples_ancestry"),header=T,sep="\t")
+	keep<-subset(ancestry,ancestry$Caucasian)
+	pheno[pheno[,1]%in%keep[,1],3:ncol(pheno)]<-NA
+}
+
+syrris<-removeConflictingControls(pheno,remove=c("Lambiase") ,cases=pheno[grep("Syrris",pheno[,1]),1],oDir=oDir) 
+lambiase<-removeConflictingControls(syrris,remove=c("Syrris"),cases=pheno[grep("Lambiase_",pheno[,1]),1] ,oDir=oDir ) 
+lambiaseSD<-removeConflictingControls(lambiase,remove=c("Syrris","Lambiase_"),cases=pheno[grep("LambiaseSD",pheno[,1]),1] ,oDir=oDir ) 
+lambiaseSD[c(3797:3824,grep("ambiase",lambiaseSD[,1]) ),c(1,92,93,104)] ## check, syrris should be NA in cols 92 93, lambiase  and syrris NA in 92 and 94 and SD only na in 104. 
+
+
+cohort.list<-c('Levine','Davina','Hardcastle','IoO','IoN','IoOFFS','IoONov2013','IoOPanos','Kelsell','LambiaseSD',
+'Lambiase','LayalKC','Manchester','Nejentsev','PrionUnit','Prionb2','Shamima','Sisodiya','Syrris','Vulliamy','WebsterURMD')
+
+if(!file.exists(paste0(oDir,"/External_Control_data/") ))dir.create(paste0(oDir,"/External_Control_data/") ) 
+pheno<-lambiaseSD  ## or last modified pheno file 
+for(i in 1:length(cohort.list))
+{
+	hit<-grep(cohort.list[i],groups$Cohort)
+	if(cohort.list[i] == "IoO")	hit<-grep('IoO$',groups$Cohort)
+	if(cohort.list[i] == "Lambiase") 	hit<-grep('Lambiase$',groups$Cohort)
+
+	pheno<-makeExternalControls(pheno,cases=groups$Cohort[hit],data=paste0(oDir,"/allChr_snpStats_out"),oBase=paste0(oDir,"/External_Control_data/",groups$Cohort[hit]) ) 
 }
 
 
