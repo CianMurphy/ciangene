@@ -83,12 +83,12 @@ if [[ "$step1" == "yes" ]]; then
 #$ -l h_rt=24:00:00
 #$ -cwd
 
-# $Rbin CMD BATCH --no-save --no-restore --release=${release} --rootODir=${rootODir} $firstStep cluster/R/step1.1_first_step.Rout
-#sh $clean $rootODir $release
-#$Rbin CMD BATCH --no-save --no-restore --release=${release} --rootODir=${rootODir} $filter cluster/R/step1.3.filter_snps.Rout
-#$Rbin CMD BATCH --no-save --no-restore --release=${release} --rootODir=${rootODir} $pca cluster/R/step1.4.pca.Rout
-#sh $pca_extract $rootODir $release
-#$Rbin CMD BATCH --no-save --no-restore --release=${release} --rootODir=${rootODir} $plot_pca cluster/R/step1.4.Plotpca.Rout
+$Rbin CMD BATCH --no-save --no-restore --release=${release} --rootODir=${rootODir} $firstStep cluster/R/step1.1_first_step.Rout
+sh $clean $rootODir $release
+$Rbin CMD BATCH --no-save --no-restore --release=${release} --rootODir=${rootODir} $filter cluster/R/step1.3.filter_snps.Rout
+$Rbin CMD BATCH --no-save --no-restore --release=${release} --rootODir=${rootODir} $pca cluster/R/step1.4.pca.Rout
+sh $pca_extract $rootODir $release
+$Rbin CMD BATCH --no-save --no-restore --release=${release} --rootODir=${rootODir} $plot_pca cluster/R/step1.4.Plotpca.Rout
 $Rbin CMD BATCH --no-save --no-restore --release=${release} --rootODir=${rootODir} $pheno cluster/R/step1.5pheno.Rout
 
 " > $script
@@ -113,7 +113,7 @@ if [[ "$step2" == "yes" ]]; then
 #$ -l h_rt=24:00:00
 #$ -cwd
 
-#sh $secondStep $rootODir $release ## convert geno to missingNonMissing
+sh $secondStep $rootODir $release ## convert geno to missingNonMissing
 
 $Rbin CMD BATCH --no-save --no-restore --release=${release} --rootODir${rootODir} $DepthKin cluster/R/step2_depthKin.Rout
 
