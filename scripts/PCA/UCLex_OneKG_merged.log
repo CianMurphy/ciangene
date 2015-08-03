@@ -1,0 +1,23 @@
+
+@----------------------------------------------------------@
+|        PLINK!       |     v1.07      |   10/Aug/2009     |
+|----------------------------------------------------------|
+|  (C) 2009 Shaun Purcell, GNU General Public License, v2  |
+|----------------------------------------------------------|
+|  For documentation, citation & bug-report instructions:  |
+|        http://pngu.mgh.harvard.edu/purcell/plink/        |
+@----------------------------------------------------------@
+
+Skipping web check... [ --noweb ] 
+Writing this text to log file [ UCLex_OneKG_merged.log ]
+Analysis started: Fri Jun 26 14:50:10 2015
+
+Options in effect:
+	--noweb
+	--bfile UCLexJune2015_pca_out
+	--bmerge OneKG_out.bed OneKG_out.bim OneKG_out.fam
+	--make-bed
+	--out UCLex_OneKG_merged
+
+
+ERROR: No file [ UCLexJune2015_pca_out.fam ] exists.
