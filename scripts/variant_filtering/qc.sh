@@ -1,4 +1,4 @@
-#!/bin/bash
+ 	#!/bin/bash
 
 ldak=/cluster/project8/vyp/cian/support/ldak/ldak
 Rbin=/cluster/project8/vyp/vincent/Software/R-3.1.2/bin/R
@@ -21,6 +21,7 @@ $plink --noweb --allow-no-sex --bfile $data --missing --out $bDir/gstats
 $plink --noweb --allow-no-sex --bfile $data --hardy --out $bDir/gstats
  
 sed -i 's/ \+ /\t/g' gstats.imiss
+tr -s " " < gstats.imiss > gstats.imiss_clean
 
 oFile=$bDir/plot.qc.R
 echo "dir<-'"$bDir"'" > $oFile
@@ -37,7 +38,7 @@ echo '
 		hist(frq$MAF, xlab="MAF", main = "UCLex_MAF", breaks=100, ylim=c(0,10000))
 	dev.off() 
 
-	file<-read.csv("gstats.imiss",header=T,sep="\t",row.names=NULL)
+	file<-read.table("gstats.imiss_clean",header=T,sep=" ") 
 	sample<-read.table("Sample.cohort",header=F,sep="\t")
 	plot.data<-data.frame(sample=sample[,1],cohort=sample[,2],Missingness=file[,ncol(file)]) 
 	dat<-ddply(plot.data,.(cohort),summarize,CallRate=1-mean(Missingness) ) 
@@ -47,4 +48,4 @@ echo '
 	' >> $oFile
 $Rbin CMD BATCH --no-save --no-restore $oFile
 
-
+		

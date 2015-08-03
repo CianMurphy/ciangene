@@ -149,6 +149,17 @@ return(dat)
 } # End of function 
 
 
+annotate<-function(data,genes)
+{
+	ensembl = useMart("ensembl",dataset="hsapiens_gene_ensembl")
+	filter="ensembl_gene_id"
+	attributes =  c("ensembl_gene_id", "external_gene_name",  "phenotype_description")
+	gene.data <- getBM(attributes= attributes , filters = filter , values = merged$Gene , mart = ensembl)
+	gene.data.uniq <- gene.data[!duplicated(gene.data$external_gene_name),]
+	anno<-merge(data,gene.data.uniq,by.x='Gene',by.y='ensembl_gene_id',all.x=T)
+	return(anno)
+}
+
 
 #########################################
 ######### Now run
@@ -156,27 +167,44 @@ return(dat)
 dataDir<-paste0("/scratch2/vyp-scratch2/cian/UCLex_",release,"/FastLMM_Single_Variant_all_phenos/") 
 files<-list.files(dataDir,pattern='final',full.names=T)
 names<-gsub(basename(files),pattern="_.*",replacement='')
-
+exit
 for(i in 1:length(files))
 {
 	print(paste("Reading in",names[i]))
 	file<-read.table(files[i],header=T,sep="\t",stringsAsFactors=F) 
 	file$TechKinPvalue<-as.numeric(file$TechKinPvalue)
+	file$Pvalue<-as.numeric(file$Pvalue)
 	filt<-variant.filter(file,pval=.000001) 
 	calls<-prepData(filt)
 	pvals<-doFisher(calls,cases=names[i]) 
-
+	## want to verify the significant techKin pvalues with fisher
 	merged<-merge(filt, pvals,by="SNP") 
-	ensembl = useMart("ensembl",dataset="hsapiens_gene_ensembl")
-	filter="ensembl_gene_id"
-	attributes =  c("ensembl_gene_id", "external_gene_name",  "phenotype_description")
-	gene.data <- getBM(attributes= attributes , filters = filter , values = merged$Gene , mart = ensembl)
-	gene.data.uniq <- gene.data[!duplicated(gene.data$external_gene_name),]
-
+	anno<-annotate(merged,merged$Gene) 
+	
 	anno<-merge(merged,gene.data.uniq,by.x='Gene',by.y='ensembl_gene_id')
 	anno<-anno[order(anno$FisherPvalue),]
 	anno$Pvalue<-as.numeric(as.character(anno$Pvalue))
 	anno$TechKinPvalue<-as.numeric(as.character(anno$TechKinPvalue))
 
-	write.table(anno, paste0(names[i],'_single_variant_vs_UCLex.csv'), col.names=T,row.names=F,quote=T,sep=",") 
+	write.table(anno, paste0(dataDir,names[i],'_single_variant_vs_UCLex.csv'), col.names=T,row.names=F,quote=T,sep=",") 
+
+	## the variants that are sig in base but fixed in techkin should be insig in fisher too? 
+
 }
+
+	file$Diff<-file$Pvalue-file$TechKinPvalue
+	tra<-subset(file,file$Pvalue<0.000001&file$C_A>5) 
+	tra<-tra[order(tra$Diff),]	
+	calls<-prepData(tra)
+	pvals<-doFisher(calls,cases=names[i]) 
+	merged<-merge(tra, pvals,by="SNP",all.x=T) 
+#	merged<-subset(merged,merged$FisherPvalue>0.001) 
+	merged<-merged[order(-merged$TechKinPvalue),]
+	anno<-annotate(merged,merged$Gene) 
+	write.table(anno$SNP,"Lambiase_snps",col.names=F,row.names=F,quote=F,sep="\t") 
+	source("check_Lambiase.R") 
+	keep<-subset(counts,counts$Case1.counts == counts$CaseCounts | counts$Case3.counts == counts$CaseCounts | counts$Case3.counts == counts$CaseCounts) 
+	keep<-subset(keep,keep$CaseCounts>0) 
+	keep<-merge(keep,anno,by="SNP",all.x=T) 
+
+/scratch2/vyp-scratch2/cian/UCLex_June2015/External_Control_data/

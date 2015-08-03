@@ -19,11 +19,11 @@ source("/cluster/project8/vyp/cian/data/UCLex/ciangene/scripts/MakePhenotypes/Ca
 
 groups<-read.table( paste0(oDir, "cohort.summary"), header=T,sep="\t")
 
-#data<-'/scratch2/vyp-scratch2/cian/UCLex_February2015_bk/allChr_snpStats_out'
+data=paste0(oDir,"/allChr_snpStats_out")
 inPheno<-paste0(oDir,"Phenotypes")
 pheno<-read.table(inPheno,header=F,sep="\t") 
 
-remove.caucasians<-FALSE
+remove.caucasians<-TRUE
 if(remove.caucasians)
 {
 	ancestry<-read.table(paste0(oDir,"UCLex_samples_ancestry"),header=T,sep="\t")
@@ -41,18 +41,24 @@ cohort.list<-c('Levine','Davina','Hardcastle','IoO','IoN','IoOFFS','IoONov2013',
 'Lambiase','LayalKC','Manchester','Nejentsev','PrionUnit','Prionb2','Shamima','Sisodiya','Syrris','Vulliamy','WebsterURMD')
 
 if(!file.exists(paste0(oDir,"/External_Control_data/") ))dir.create(paste0(oDir,"/External_Control_data/") ) 
-pheno<-lambiaseSD  ## or last modified pheno file 
+pheno<-lambiaseSD  ## or last modified pheno file
+plink<-'/share/apps/genomics/plink-1.07-x86_64/plink --noweb --allow-no-sex --bfile' 
 for(i in 1:length(cohort.list))
 {
 	hit<-grep(cohort.list[i],groups$Cohort)
 	if(cohort.list[i] == "IoO")	hit<-grep('IoO$',groups$Cohort)
 	if(cohort.list[i] == "Lambiase") 	hit<-grep('Lambiase$',groups$Cohort)
-
-	pheno<-makeExternalControls(pheno,cases=groups$Cohort[hit],data=paste0(oDir,"/allChr_snpStats_out"),oBase=paste0(oDir,"/External_Control_data/",groups$Cohort[hit]) ) 
+	pheno<-makeExternalControls(pheno,cases=groups$Cohort[hit],data=data,oBase=paste0(oDir,"/External_Control_data/",groups$Cohort[hit]) ) 
+	case.samples<-pheno[grep(cohort.list[i],pheno[,1]),1]
+	write.table(case.samples,  paste0(oDir,"/External_Control_data/",groups$Cohort[hit],"_case_samples")  ,col.names=F,row.names=F,quote=F,sep="\t") 
+	run<-paste(plink, data, '--missing --out', paste0(oDir,"/External_Control_data/",groups$Cohort[hit],"_case_qc") ) #
+	system(run) 
+	run<-paste(plink, data, '--freq --out', paste0(oDir,"/External_Control_data/",groups$Cohort[hit],"_case_maf") ) #
+	system(run) 
 }
 
-write.table(pheno,inPheno, col.names=F, row.names=F, quote=F, sep="\t")
 
+write.table(pheno,inPheno, col.names=F, row.names=F, quote=F, sep="\t")
 ## fastLMM wants missing as -9, so use separate pheno file. 
 pheno[is.na(pheno)] <- '-9'
 write.table(pheno,paste0(inPheno,"_fastlmm"), col.names=F, row.names=F, quote=F, sep="\t")

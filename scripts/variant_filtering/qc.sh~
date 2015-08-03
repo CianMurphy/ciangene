@@ -3,10 +3,9 @@
 ldak=/cluster/project8/vyp/cian/support/ldak/ldak
 Rbin=/cluster/project8/vyp/vincent/Software/R-3.1.2/bin/R
 plink=/share/apps/genomics/plink-1.07-x86_64/plink
-ldak=/cluster/project8/vyp/cian/support/ldak/ldak
 #rootODir=/scratch2/vyp-scratch2/ciangene
 rootODir=/scratch2/vyp-scratch2/cian/
-release=February2015
+release=June2015
 rootODir=${1-$rootODir}
 release=${2-$release}
 bDir=${rootODir}/UCLex_${release}/
@@ -14,7 +13,7 @@ bDir=${rootODir}/UCLex_${release}/
 iData=$bDir"allChr_snpStats"
 ln -s $bDir"UCLex_${release}.bim" $iData".bim"
 ln -s $bDir"UCLex_${release}.fam" $iData".fam"
-#$ldak --make-bed $iData --sp $iData
+$ldak --make-bed $iData --sp $iData
 
 data=$bDir"allChr_snpStats_out" 
 $plink --noweb --allow-no-sex --bfile $data --freq --out $bDir/gstats
@@ -48,10 +47,4 @@ echo '
 	' >> $oFile
 $Rbin CMD BATCH --no-save --no-restore $oFile
 
-vec<-read.table("TechPCs.vect",header=T,sep=" ")
-miss<-read.table("gstats.imiss",header=T,sep="\t",row.names=NULL)
-plot.data<-data.frame(PC1=vec[,3],PC2=vec[,4],CallRate=miss$F_MISS)
-pdf("TechPCS_and_CallRate.pdf")
-print(qplot(PC1,PC2,color=CallRate,data=plot.data,main="Technical PCs distinguish samples based on Missingness"))
-dev.off()
 
