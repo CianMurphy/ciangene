@@ -1,7 +1,7 @@
 #$ -S /bin/sh
-#$ -l h_vmem=18G
-#$ -l tmem=18G
-#$ -l h_rt=50:00:0
+#$ -l h_vmem=10G
+#$ -l tmem=10G
+#$ -l h_rt=5:00:0
 #$ -V
 #$ -R y
 #$ -pe smp 1

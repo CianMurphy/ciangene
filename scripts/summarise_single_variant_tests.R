@@ -2,24 +2,29 @@
 library(HardyWeinberg)
 library(biomaRt)
 ## Some data and links to start
+release<-'June2015'
 ldak<-'/cluster/project8/vyp/cian/support/ldak/ldak'
-bDir<-"/scratch2/vyp-scratch2/cian//UCLex_February2015/"
+bDir<-paste0("/scratch2/vyp-scratch2/cian//UCLex_",release,"/") 
 data<-paste0(bDir,'allChr_snpStats_out') 
-func <-  c("nonsynonymous SNV", "stopgain SNV", "nonframeshift insertion", "nonframeshift deletion", "frameshift deletion", "frameshift substitution", "frameshift insertion",  "nonframeshift substitution", "stoploss SNV")
-lof <-  c("frameshift deletion", "frameshift substitution", "frameshift insertion",  "stoploss SNV")
+func <- c("nonsynonymous SNV", "stopgain SNV", "nonframeshift insertion", "nonframeshift deletion", "frameshift deletion",
+                "frameshift substitution", "frameshift insertion",  "nonframeshift substitution", "stoploss SNV",'splicing','exonic;splicing')
+lof <-  c("frameshift deletion", "frameshift substitution", "frameshift insertion",  "stoploss SNV"
+                ,"stopgain SNV"
+                )
 
 
 ## Do initial filtering, by pvalue, quality, extCtrl maf and function/LOF status
-variant.filter<-function(dat,pval=0.0001,pval.col="Pvalue",func.filt=TRUE, lof.filt=FALSE,max.maf=0.001) 
+variant.filter<-function(dat,pval=0.0001,pval.col="TechKinPvalue",func.filt=TRUE, lof.filt=FALSE,max.maf=1) 
 {
 	message("Filtering data")
 	clean<-subset(dat, dat$FILTER=="PASS") 
 	pval.col.nb<-colnames(clean)%in%pval.col
 	sig<-subset(clean,clean[,pval.col.nb]<=pval) 
 	funcy<-sig[sig$ExonicFunc %in% func,]
-	rare<- funcy[funcy$ExtCtrl_MAF < max.maf,]
-	return(rare) 
-}
+#	rare<- funcy[funcy$ExtCtrl_MAF < max.maf,]
+	return(funcy)
+	#return(rare) 
+}#
 
 ## Get calls for variants that are left after filtering. 
 prepData<-function(file,snp.col="SNP")
@@ -57,6 +62,7 @@ doFisher<-function(data, cases="Syrris")
 	## calc fisher pvals
 	for(i in 1:nrow(data))
 	{
+	if(i%%50==0)message(paste(i, 'tests done'))
 	case.calls <-  t(as.matrix(calls[i,case.cols]))
 	ctrl.calls <- t(as.matrix(calls[i,ctrl.cols]) )
 
@@ -73,6 +79,9 @@ doFisher<-function(data, cases="Syrris")
 	ctrl.freqs <- c(ctrl.hom.major, ctrl.hets, number_Homs_ctrls)
 	ctrl.maf <- maf(ctrl.freqs)	
 
+	flip<-FALSE
+	if(flip) # doesnt work
+	{
 	if(number_Homs_cases>case.hom.major) ## fix minor allele switch. doesnt affect pvalue/maf calcs but looks stupid
 	{
 	tmp<-case.hom.major
@@ -90,6 +99,7 @@ doFisher<-function(data, cases="Syrris")
 	ctrl.calls[which(unlist(ctrl.calls) == 2)]<-3
 	ctrl.calls[which(unlist(ctrl.calls) == 0)]<-2
 	ctrl.calls[which(unlist(ctrl.calls) == 3)]<-0
+	}	
 	}
 
 	number_mutations_cases <- sum( case.calls , na.rm=T )
@@ -133,7 +143,7 @@ doFisher<-function(data, cases="Syrris")
 
 colnames(dat)<-gsub(colnames(dat), pattern="HCM", replacement=cases) 
 colnames(dat)<-gsub(colnames(dat), pattern="ARVC", replacement="ctrls") 
-dat<-dat[order(dat$"FisherPvalue"),]
+dat<-dat[order(dat$FisherPvalue),]
 message("Finished Fisher tests")
 return(dat)
 } # End of function 
@@ -143,30 +153,30 @@ return(dat)
 #########################################
 ######### Now run
 #########################################
+dataDir<-paste0("/scratch2/vyp-scratch2/cian/UCLex_",release,"/FastLMM_Single_Variant_all_phenos/") 
+files<-list.files(dataDir,pattern='final',full.names=T)
+names<-gsub(basename(files),pattern="_.*",replacement='')
 
-setwd("/scratch2/vyp-scratch2/cian/UCLex_February2015/FastLMM_Single_Variant_all_phenos/") 
-file<-read.table("Syrris_final",header=T,sep="\t",stringsAsFactors=F) 
-file$Pvalue<-as.numeric(file$Pvalue)
-filt<-variant.filter(file,pval=1) 
-calls<-prepData(filt)
-pvals<-doFisher(calls) 
+for(i in 1:length(files))
+{
+	print(paste("Reading in",names[i]))
+	file<-read.table(files[i],header=T,sep="\t",stringsAsFactors=F) 
+	file$TechKinPvalue<-as.numeric(file$TechKinPvalue)
+	filt<-variant.filter(file,pval=.000001) 
+	calls<-prepData(filt)
+	pvals<-doFisher(calls,cases=names[i]) 
 
-merged<-merge(filt, pvals,by="SNP") 
+	merged<-merge(filt, pvals,by="SNP") 
+	ensembl = useMart("ensembl",dataset="hsapiens_gene_ensembl")
+	filter="ensembl_gene_id"
+	attributes =  c("ensembl_gene_id", "external_gene_name",  "phenotype_description")
+	gene.data <- getBM(attributes= attributes , filters = filter , values = merged$Gene , mart = ensembl)
+	gene.data.uniq <- gene.data[!duplicated(gene.data$external_gene_name),]
 
-ensembl = useMart("ensembl",dataset="hsapiens_gene_ensembl")
-filter="ensembl_gene_id"
-attributes =  c("ensembl_gene_id", "external_gene_name",  "phenotype_description")
-gene.data <- getBM(attributes= attributes , filters = filter , values = merged$Gene , mart = ensembl)
-gene.data.uniq <- gene.data[!duplicated(gene.data$external_gene_name),]
+	anno<-merge(merged,gene.data.uniq,by.x='Gene',by.y='ensembl_gene_id')
+	anno<-anno[order(anno$FisherPvalue),]
+	anno$Pvalue<-as.numeric(as.character(anno$Pvalue))
+	anno$TechKinPvalue<-as.numeric(as.character(anno$TechKinPvalue))
 
-anno<-merge(merged,gene.data.uniq,by.x='Gene',by.y='ensembl_gene_id')
-
-dat.small<-data.frame(anno$SNP, anno$ExonicFunc,anno$external_gene_name, anno$Gene, anno$FisherPvalue,anno$OR, anno$nb.mutations.Syrris,anno$nb.mutations.ctrls,
-	anno$nb.Syrris,anno$nb.ctrls,anno$Syrris.maf,anno$ctrls.maf,anno$nb.Homs.Syrris,anno$nb.Homs.ctrls,
-	anno$nb.Hets.Syrris,anno$nb.Hets.ctrls,anno$nb.NAs.Syrris,anno$nb.NAs.ctrls,anno$phenotype_description) 
-colnames(dat.small)<-gsub(colnames(dat.small),pattern="anno.",replacement="")
-dat.sig<-subset(dat.small,dat.small$FisherPvalue<=0.001)
-dat.sig<-dat.sig[order(dat.sig$FisherPvalue),]
-	
-write.table(dat.sig, "Syrris_ARVC_vs_UCLex.csv", col.names=T,row.names=F,quote=T,sep=",") 
-
+	write.table(anno, paste0(names[i],'_single_variant_vs_UCLex.csv'), col.names=T,row.names=F,quote=T,sep=",") 
+}

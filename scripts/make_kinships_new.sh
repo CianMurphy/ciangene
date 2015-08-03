@@ -1,10 +1,11 @@
 #!/bin/bash
 
 ldak=/cluster/project8/vyp/cian/support/ldak/ldak
+ldak=/scratch2/vyp-scratch2/cian/ldak.5.98
 R=/share/apps/R-3.1.0/bin/R
 #rootODir=/scratch2/vyp-scratch2/ciangene
 rootODir=/scratch2/vyp-scratch2/cian/
-release=February2015
+release=June2015
 rootODir=${1-$rootODir}
 release=${2-$release}
 bDir=${rootODir}/UCLex_${release}/
@@ -25,6 +26,7 @@ minVar=0.0000001			## SNP with variance >= this are retained?
 ######### Tech Kin
 $ldak --calc-kins-direct $techOut --bfile $missingNonMissing --ignore-weights YES --kinship-raw YES \
  --minmaf $minMaf --maxmaf $maxMaf --minvar $minVar --minobs $minObs --extract $extract 
+
 $ldak --pca $bDir"TechPCs" --grm $techOut --extract $extract
 
 
@@ -132,8 +134,10 @@ $R CMD BATCH --no-save --no-restore $oFile
 
 
 ######### Depth Kin
+DepthOut=$bDir"/DepthKin"
 $ldak --calc-kins-direct $DepthOut --sp $Depth --ignore-weights YES --kinship-raw YES \
- --extract $extract $ldak --pca $bDir"DepthPCs" --grm $techOut --extract $extract
+--minmaf $minMaf --maxmaf $maxMaf --minvar $minVar --minobs $minObs  --extract $extract 
+$ldak --pca $bDir"DepthPCs" --grm $DepthOut --extract $extract
 
 
 oFile=$bDir/plot.Depthpca.R

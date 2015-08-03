@@ -2,7 +2,7 @@
 
 #rootODir=/scratch2/vyp-scratch2/ciangene
 rootODir=/scratch2/vyp-scratch2/cian/
-release=February2015
+release=June2015
 rootODir=${1-$rootODir}
 release=${2-$release}
 bDir=${rootODir}/UCLex_${release}/
@@ -12,10 +12,10 @@ Groups=${bDir}Phenotype_subset_groups
 nbGroups=$(wc -l  $Groups | awk '{print $1}') 
 #templateScript="/cluster/project8/vyp/cian/data/UCLex/UCLex_August/Scripts/ciangene/scripts/LDAK/ldak_techres_DepthKin.sh"
 templateScript=/cluster/project8/vyp/cian/data/UCLex/ciangene/scripts/LDAK/ldak_techres_DepthKin.sh
-variants=$bDir"/Clean_variants_func_rare"
+variants=${bDir}External_Control_data/
 
-phenotype=/scratch2/vyp-scratch2/cian/UCLex_February2015/Clean_pheno_subset
-oFolder=$bDir"/LDAK_gene_tests_all_phenos_old/"
+phenotype=/scratch2/vyp-scratch2/cian/UCLex_June2015/Clean_pheno_subset
+oFolder=$bDir"/LDAK_gene_tests_all_phenos/"
 if [ ! -e $oFolder ]; then mkdir $oFolder; fi
 
 for pheno in $(seq 1 16) 
@@ -33,9 +33,9 @@ do
 			echo "minMaf='$maf' ; "'minMaf=$(echo $minMaf/10|bc -l)'"; "'minMaf=$(echo $minMaf | sed 's/0*$//')'" " > $target	
 			echo "missing='$missing' ; "'missing=$(echo $missing/10|bc -l)'"; "'missing=$(echo $missing | sed 's/0*$//')'"" >> $target	
 			echo "phenotypes='$phenotype' ; mPheno=$pheno ; pheno='$batch'"  >> $target
-			echo "extract='$variants' ; role='Func'" >> $target
+			echo "extract=${variants}${batch}_rare_func_variants ; role='Func'" >> $target
 			cat $templateScript >> $target
-			cd $oFolder ; $runSh $oFile ; cd ..
+			#cd $oFolder ; $runSh $oFile ; cd ..
 			#sh $target
 			done
 	done

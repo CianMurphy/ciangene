@@ -20,8 +20,8 @@ source("/cluster/project8/vyp/cian/data/UCLex/ciangene/scripts/MakePhenotypes/Ca
 groups<-read.table( paste0(oDir, "cohort.summary"), header=T,sep="\t")
 
 #data<-'/scratch2/vyp-scratch2/cian/UCLex_February2015_bk/allChr_snpStats_out'
-
-pheno<-read.table(paste0(oDir,"Phenotypes"),header=F,sep="\t") 
+inPheno<-paste0(oDir,"Phenotypes")
+pheno<-read.table(inPheno,header=F,sep="\t") 
 
 remove.caucasians<-FALSE
 if(remove.caucasians)
@@ -51,6 +51,7 @@ for(i in 1:length(cohort.list))
 	pheno<-makeExternalControls(pheno,cases=groups$Cohort[hit],data=paste0(oDir,"/allChr_snpStats_out"),oBase=paste0(oDir,"/External_Control_data/",groups$Cohort[hit]) ) 
 }
 
+write.table(pheno,inPheno, col.names=F, row.names=F, quote=F, sep="\t")
 
 ## fastLMM wants missing as -9, so use separate pheno file. 
 pheno[is.na(pheno)] <- '-9'
