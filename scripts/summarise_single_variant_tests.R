@@ -1,5 +1,6 @@
 ## Run after plot_singleVariant_results.R to get more detailed stats about interesting variants. 
 library(HardyWeinberg)
+library(snpStats) 
 library(biomaRt)
 ## Some data and links to start
 release<-'June2015'
@@ -154,7 +155,7 @@ annotate<-function(data,genes)
 	ensembl = useMart("ensembl",dataset="hsapiens_gene_ensembl")
 	filter="ensembl_gene_id"
 	attributes =  c("ensembl_gene_id", "external_gene_name",  "phenotype_description")
-	gene.data <- getBM(attributes= attributes , filters = filter , values = merged$Gene , mart = ensembl)
+	gene.data <- getBM(attributes= attributes , filters = filter , values=data$Gene , mart = ensembl)
 	gene.data.uniq <- gene.data[!duplicated(gene.data$external_gene_name),]
 	anno<-merge(data,gene.data.uniq,by.x='Gene',by.y='ensembl_gene_id',all.x=T)
 	return(anno)
@@ -167,31 +168,37 @@ annotate<-function(data,genes)
 dataDir<-paste0("/scratch2/vyp-scratch2/cian/UCLex_",release,"/FastLMM_Single_Variant_all_phenos/") 
 files<-list.files(dataDir,pattern='final',full.names=T)
 names<-gsub(basename(files),pattern="_.*",replacement='')
-exit
+mafs<-c(0,0.00001,0.0001,0.001,0.01,0.1) 
+pdf(paste0(dataDir,"Single.variant_ex_ctrl_maf_filter.pdf") ) 
+par(mfrow=c(2,2)) 
 for(i in 1:length(files))
 {
 	print(paste("Reading in",names[i]))
 	file<-read.table(files[i],header=T,sep="\t",stringsAsFactors=F) 
 	file$TechKinPvalue<-as.numeric(file$TechKinPvalue)
 	file$Pvalue<-as.numeric(file$Pvalue)
+	for(maf in 1:length(mafs))
+	{
+	dat<-subset(file,file$ExtCtrl_MAF>=mafs[maf]) 
+	qq.chisq(-2*log(dat$Pvalue),df=2,x.max=30,main=paste("uncorrected pvalues -",nrow(dat),"SNPS"),pvals=T) 
+	qq.chisq(-2*log(dat$TechKinPvalue),df=2,x.max=30,main=paste("TKRD pvalues - maf",mafs[maf]),pvals=T) 
+	}
 	filt<-variant.filter(file,pval=.000001) 
 	calls<-prepData(filt)
 	pvals<-doFisher(calls,cases=names[i]) 
 	## want to verify the significant techKin pvalues with fisher
 	merged<-merge(filt, pvals,by="SNP") 
-	anno<-annotate(merged,merged$Gene) 
-	
-	anno<-merge(merged,gene.data.uniq,by.x='Gene',by.y='ensembl_gene_id')
+#	anno<-annotate(merged,merged$Gene) 
+	anno<-merged ## annotated in first script now. 	
 	anno<-anno[order(anno$FisherPvalue),]
 	anno$Pvalue<-as.numeric(as.character(anno$Pvalue))
 	anno$TechKinPvalue<-as.numeric(as.character(anno$TechKinPvalue))
-
 	write.table(anno, paste0(dataDir,names[i],'_single_variant_vs_UCLex.csv'), col.names=T,row.names=F,quote=T,sep=",") 
+}
+dev.off() 
+exit
 
 	## the variants that are sig in base but fixed in techkin should be insig in fisher too? 
-
-}
-
 	file$Diff<-file$Pvalue-file$TechKinPvalue
 	tra<-subset(file,file$Pvalue<0.000001&file$C_A>5) 
 	tra<-tra[order(tra$Diff),]	

@@ -27,7 +27,7 @@ minVar=0.0000001			## SNP with variance >= this are retained?
 $ldak --calc-kins-direct $techOut --bfile $missingNonMissing --ignore-weights YES --kinship-raw YES \
  --minmaf $minMaf --maxmaf $maxMaf --minvar $minVar --minobs $minObs --extract $extract 
 
-$ldak --pca $bDir"TechPCs" --grm $techOut --extract $extract
+$ldak --pca $bDir"TechPCs" --grm $techOut 
 
 
 oFile=$bDir/plot.techpca.R
@@ -87,7 +87,7 @@ techOut=$bDir"/PopKin"
 
 $ldak --calc-kins-direct $techOut --bfile $missingNonMissing --ignore-weights YES --kinship-raw YES \
 --minmaf $minMaf --maxmaf $maxMaf --minvar $minVar --minobs $minObs  --extract $extract 
-$ldak --pca $bDir"popPCs" --grm $techOut  --extract $extract
+$ldak --pca $bDir"popPCs" --grm $techOut  
 
 
 oFile=$bDir/plot.popPca.R
@@ -137,7 +137,7 @@ $R CMD BATCH --no-save --no-restore $oFile
 DepthOut=$bDir"/DepthKin"
 $ldak --calc-kins-direct $DepthOut --sp $Depth --ignore-weights YES --kinship-raw YES \
 --minmaf $minMaf --maxmaf $maxMaf --minvar $minVar --minobs $minObs  --extract $extract 
-$ldak --pca $bDir"DepthPCs" --grm $DepthOut --extract $extract
+$ldak --pca $bDir"DepthPCs" --grm $DepthOut 
 
 
 oFile=$bDir/plot.Depthpca.R
@@ -153,7 +153,8 @@ echo '
 	xmax <- max(file[,3]) + buffer
 	ymin <- min(file[,4]) - buffer
 	ymax <- max(file[,4]) + buffer
-
+	cohort.list<-c("Levine","Davina","Hardcastle","IoO","IoN","IoOFFS","IoONov2013","IoOPanos","Kelsell","LambiaseSD",
+	"Lambiase","LayalKC","Manchester","Nejentsev","PrionUnit","Prionb2","Shamima","Sisodiya","Syrris","Vulliamy","WebsterURMD")
 	pdf(paste0(dir, "/DepthPCA.pdf") ) 
 	for(i in 1:nb.groups)
 #	for(i in 72:nb.groups)

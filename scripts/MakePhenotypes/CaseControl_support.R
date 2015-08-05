@@ -29,7 +29,8 @@ makeExternalControls<-function(pheno,cases,data,oBase,percent=10)
 	# list of case names
 	# percent is what percent of controls i want to use as my external control set. 
 	# data is stem for bam file 
-
+	out<- paste0(oBase,"_ex_ctrls")
+	
 	case.rows<-pheno[pheno[,1]%in% cases,]
 	case.col<-which(case.rows[1,3:ncol(case.rows)]==2)+2
 	duds<-pheno[is.na(pheno[,case.col]),1]
@@ -37,16 +38,26 @@ makeExternalControls<-function(pheno,cases,data,oBase,percent=10)
 	if(length(duds)>0)ctrls<-ctrls[!ctrls%in%duds]
 	ctrls<- ctrls[!is.na(ctrls)]
 	ctrls<-ctrls[-grep("One",ctrls)]
-	nb.ex.ctrl<-round(length(ctrls)/percent) 
-	ex.ctrls<-ctrls[sample(1:length(ctrls),nb.ex.ctrl)]	
-	pheno[ pheno[,1]%in%ex.ctrls , case.col] <- NA
 
-	out<- paste0(oBase,"_ex_ctrls")
-	write.table(data.frame(ex.ctrls,ex.ctrls),out,col.names=F,row.names=F,quote=F)
-	run<-paste( plink,data, '--freq --out', out ,'--keep', out) 
-	system(run)
-	run<-paste( plink,data, '--hardy --out',out ,'--keep', out ) 
-	system(run)
+	if(file.exists(out))
+	{
+		print("External Controls already exist, so just fixing phenotype file directly") 
+		ex.ctrls<-read.table(out,header=T,sep='\t') 
+		pheno[ pheno[,1]%in%ex.ctrls , case.col] <- NA
+	} else
+	{
+		nb.ex.ctrl<-round(length(ctrls)/percent) 
+		ex.ctrls<-ctrls[sample(1:length(ctrls),nb.ex.ctrl)]	
+		pheno[ pheno[,1]%in%ex.ctrls , case.col] <- NA
+
+		write.table(data.frame(ex.ctrls,ex.ctrls),out,col.names=F,row.names=F,quote=F)
+		run<-paste( plink,data, '--freq --out', out ,'--keep', out) 
+		system(run)
+		run<-paste( plink,data, '--hardy --out',out ,'--keep', out ) 
+		system(run)
+		run<-paste( plink,data, '--missing --out',out ,'--keep', out ) 
+		system(run)
+	}
 	return(pheno)
 }
 

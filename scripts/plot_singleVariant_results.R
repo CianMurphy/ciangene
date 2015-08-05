@@ -53,9 +53,9 @@ Collate<-function(group,model)
 groups <- gsub(basename(AllFiles[grep("base",AllFiles)]), pattern = "_.*", replacement = "")
 uniq.groups <- unique(groups)
 start.group <- 1
-end.group<-7
+end.group<-length(uniq.groups) 
 
-prep<-FALSE
+prep<-TRUE
 if(prep)
 {
 	for(i in start.group:end.group) 
@@ -164,3 +164,4 @@ for(i in 1:length(uniq.groups))
 } else message("Skipping " , uniq.groups[i]) # file.exists(inputs)
 }
 dev.off()
+source("summarise_single_variant_tests.R") 

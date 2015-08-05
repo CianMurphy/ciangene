@@ -4,11 +4,11 @@ ciangene
 [![Join the chat at https://gitter.im/CianMurphy/ciangene](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/CianMurphy/ciangene?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 # Order of scripts: 
 
-
 * first.step.R
 
 		Takes the snpStats files from the data release and turn into a numeric matrix
 		Establishes UCLex External Controls (Uex) and calculates their summary stats
+		Creates ReadDepth.sp
 
 * variant_filtering/qc.sh 
 		
@@ -20,7 +20,6 @@ ciangene
 		filters by function - gene tests
 
 * PCA 
-
 		Identify UCLex sample ancestry by comparing to 1000G. Remove non Caucasians from further analyses. 
 
 * new_make_phenotype_file.R
@@ -30,11 +29,14 @@ ciangene
 		For each phenotype, create external control set. Use for QC and for MAF filter. 
 		For each phenotype, remove confounding controls. 
 
+* Case control missingness
+
+		For every selected phenotype, identify variants that have a significantly different missingness rate between cases and controls. Useful for subsequent QC. 
+
 * convert_genotype_to_missingNonMissing.sh
 
 		turns NA/non NA into 0-1 for LDAK/plink use
 		Makes TK bed 
-		Case control missingness
 
 * make_kinships_new.sh
 

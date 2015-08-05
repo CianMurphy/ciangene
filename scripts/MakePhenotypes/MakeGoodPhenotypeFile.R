@@ -1,4 +1,4 @@
-dir<-'/scratch2/vyp-scratch2/cian/UCLex_June2015/'
+dir<-'/scratch2/vyp-scratch2/cian/UCLex_July2015/'
 base<-read.table(paste0(dir,'Phenotypes'),header=F)
 base.groups<-read.table(paste0(dir,'GroupNames'),header=F)
 fam<-read.table(paste0(dir,'allChr_snpStats_out.fam'),header=F)
@@ -40,6 +40,12 @@ for(i in 1:length(cohort.list))
 	nb.cases<-length(grep(1,dat[,i+2]))
 	perm[sample(1:nrow(perm),nb.cases),i+2]<-1
 }
+
+ancestry<-read.table(paste0(dir,"UCLex_samples_ancestry"),header=T) 
+caucasian<-ancestry[ancestry$Caucasian,1]
+dat[!dat[,1]%in%caucasian,3:ncol(dat)]<-NA
+perm[!perm[,1]%in%caucasian,3:ncol(perm)]<-NA
+residuals[!residuals[,1]%in%caucasian,3:ncol(residuals)]<-NA
 
 write.table(dat,paste0(dir,'Clean_pheno_subset'),col.names=F,row.names=F,quote=F,sep="\t")
 write.table(perm,paste0(dir,'Clean_pheno_subset_permuted'),col.names=F,row.names=F,quote=F,sep="\t")

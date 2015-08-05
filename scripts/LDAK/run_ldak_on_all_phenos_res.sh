@@ -14,9 +14,9 @@ nbGroups=$(wc -l  $Groups | awk '{print $1}')
 templateScript=/cluster/project8/vyp/cian/data/UCLex/ciangene/scripts/LDAK/ldak_techres_DepthKin.sh
 variants=${bDir}External_Control_data/
 
-phenotype=/scratch2/vyp-scratch2/cian/UCLex_June2015/Clean_pheno_subset
+phenotype=/scratch2/vyp-scratch2/cian/UCLex_${release}/Clean_pheno_subset
 oFolder=$bDir"/LDAK_gene_tests_all_phenos/"
-if [ ! -e $oFolder ]; then mkdir $oFolder; fi
+if [ -e $oFolder ]; then rm -fr $oFolder ; fi ; mkdir $oFolder
 
 for pheno in $(seq 1 16) 
 #for pheno in {79,90,91,102} # skipping the first few random phenos
@@ -28,14 +28,14 @@ do
 	do
 		for missing in {0.000001,9}
 		do
-			oFile=LDAK_${batch}_${maf}_${missing}.res.sh
+			oFile=LDAK_${batch}_${maf}_${missing}.sh
 			target=$oFolder/$oFile
 			echo "minMaf='$maf' ; "'minMaf=$(echo $minMaf/10|bc -l)'"; "'minMaf=$(echo $minMaf | sed 's/0*$//')'" " > $target	
 			echo "missing='$missing' ; "'missing=$(echo $missing/10|bc -l)'"; "'missing=$(echo $missing | sed 's/0*$//')'"" >> $target	
 			echo "phenotypes='$phenotype' ; mPheno=$pheno ; pheno='$batch'"  >> $target
 			echo "extract=${variants}${batch}_rare_func_variants ; role='Func'" >> $target
 			cat $templateScript >> $target
-			#cd $oFolder ; $runSh $oFile ; cd ..
+			cd $oFolder ; $runSh $oFile ; cd ..
 			#sh $target
 			done
 	done
