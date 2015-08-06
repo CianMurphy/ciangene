@@ -168,7 +168,9 @@ annotate<-function(data,genes)
 dataDir<-paste0("/scratch2/vyp-scratch2/cian/UCLex_",release,"/FastLMM_Single_Variant_all_phenos/") 
 files<-list.files(dataDir,pattern='final',full.names=T)
 names<-gsub(basename(files),pattern="_.*",replacement='')
+source("LDAK/qqchisq.R")
 mafs<-c(0,0.00001,0.0001,0.001,0.01,0.1) 
+process<-FALSE
 pdf(paste0(dataDir,"Single.variant_ex_ctrl_maf_filter.pdf") ) 
 par(mfrow=c(2,2)) 
 for(i in 1:length(files))
@@ -180,9 +182,11 @@ for(i in 1:length(files))
 	for(maf in 1:length(mafs))
 	{
 	dat<-subset(file,file$ExtCtrl_MAF>=mafs[maf]) 
-	qq.chisq(-2*log(dat$Pvalue),df=2,x.max=30,main=paste("uncorrected pvalues -",nrow(dat),"SNPS"),pvals=T) 
-	qq.chisq(-2*log(dat$TechKinPvalue),df=2,x.max=30,main=paste("TKRD pvalues - maf",mafs[maf]),pvals=T) 
+	qq.chisq(-2*log(dat$Pvalue),df=2,x.max=30,main=paste(names[i],"uncorrected pvalues -",nrow(dat),"SNPS"),pvals=T,cex.main=.8) 
+	qq.chisq(-2*log(dat$TechKinPvalue),df=2,x.max=30,main=paste(names[i],"TKRD pvalues - maf",mafs[maf]),pvals=T,cex.main=.8) 
 	}
+	if(process)
+	{
 	filt<-variant.filter(file,pval=.000001) 
 	calls<-prepData(filt)
 	pvals<-doFisher(calls,cases=names[i]) 
@@ -194,8 +198,10 @@ for(i in 1:length(files))
 	anno$Pvalue<-as.numeric(as.character(anno$Pvalue))
 	anno$TechKinPvalue<-as.numeric(as.character(anno$TechKinPvalue))
 	write.table(anno, paste0(dataDir,names[i],'_single_variant_vs_UCLex.csv'), col.names=T,row.names=F,quote=T,sep=",") 
+	} # process
 }
 dev.off() 
+print("Finsihed first step")
 exit
 
 	## the variants that are sig in base but fixed in techkin should be insig in fisher too? 
