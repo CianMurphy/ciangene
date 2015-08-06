@@ -5,7 +5,7 @@ fam<-read.table(paste0(dir,'allChr_snpStats_out.fam'),header=F)
 
 
 cohort.list<-c('Levine','Hardcastle','IoO','IoN','Kelsell','LambiaseSD','Lambiase','LayalKC','Nejentsev','PrionUnit','Prionb2','Shamima','Sisodiya','Syrris','Vulliamy','WebsterURMD')
-
+write.table(cohort.list,paste0(dir,"cohort.list"),col.names=F,row.names=F,quote=F,sep="\t") 
 res<-list.files(paste0(dir,'KinshipDecomposition_combined_SNP_TK_RD'),pattern="\\.res",full.names=T)
 
 

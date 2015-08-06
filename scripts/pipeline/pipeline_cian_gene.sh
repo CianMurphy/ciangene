@@ -15,6 +15,7 @@ pheno=${repo}/scripts/MakePhenotypes/prepare_all_phenos.R ## step 2.1
 MissingNess=${repo}/scripts/CaseControlMissingness.R ##step 2.2
 
 ## Third step - creating and validating the technical Kinship
+VariantLists=${repo}/scripts/LDAK/make_list_of_variants_for_gene_tests.R
 secondStep=${repo}/scripts/convert_genotype_to_missingNonMissing.sh  ## step2
 makeKin=${repo}/scripts/make_kinships_new.sh # step 2.1
 checkKin=${repo}/scripts/check_tk_residuals.sh # step 2.2
@@ -146,6 +147,7 @@ if [[ "$step3" == "yes" ]]; then
 #$ -l h_rt=24:00:00
 #$ -cwd
 
+$Rbin CMD BATCH --no-save --no-restore --release=${release} --rootODir=${rootODir} $VariantLists cluster/R/step3.1.variant.lists.Rout
 sh $secondStep $rootODir $release ## convert geno to missingNonMissing
 sh $makeKin $rootODir $release ### make kinship matrices
 sh $checkKin $rootODir $release # check how much variance the kinships explained. 

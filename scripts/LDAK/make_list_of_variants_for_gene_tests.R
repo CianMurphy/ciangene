@@ -5,7 +5,7 @@ getArgs <- function() {
   return (myargs)
 }
 
-release <- 'February2015'
+release <- 'July2015'
 rootODir<-'/scratch2/vyp-scratch2/cian'
 
 myArgs <- getArgs()
@@ -20,8 +20,8 @@ maxMaf<-.5
 maxMiss<-2
 hwe.pval<-0.00001 
 
-annotations<-read.csv(paste0(bDir,'annotations.snpStat'),header=T,sep="\t")
-ex.ctrl<-list.files(paste0(bDir,"External_Control_data/"),pattern='ctrls.frq_clean',full.names=T)
+#annotations<-read.csv(paste0(bDir,'annotations.snpStat'),header=T,sep="\t")
+ex.ctrl<-list.files(paste0(bDir,"External_Control_data/"),pattern='ctrls.frq',full.names=T)
 ex.ctrl.hwe<-list.files(paste0(bDir,"External_Control_data/"),pattern='hwe',full.names=T)
 ex.ctrl.case<-list.files(paste0(bDir,"External_Control_data/"),pattern='case_qc.lmiss',full.names=T)
 names<-gsub(basename(ex.ctrl),pattern="_.*",replacement="")
@@ -40,7 +40,9 @@ clean<-subset(annotations,annotations$FILTER=='PASS'&annotations$isFunc & annota
 
 for(i in 1:length(ex.ctrl))
 {
-	file<-read.table(ex.ctrl[i],header=T)
+	print(ex.ctrl[i])
+	system(paste('tr -s " " < ', ex.ctrl[i],'>', paste0(ex.ctrl[i],"_clean") ) ) 
+	file<-read.table(paste0(ex.ctrl[i],"_clean"),header=T)
 	system(paste('tr -s " " < ', ex.ctrl.case[i],'>', paste0(ex.ctrl.case[i],"_clean") ) ) 
 	hwe<-read.table(ex.ctrl.hwe[i],header=T) 
 	hwe<-subset(hwe,hwe$TEST=="ALL")

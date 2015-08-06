@@ -1,19 +1,19 @@
-#!/bin/bash
+##!/bin/bash
 shopt -s expand_aliases
 source ~/.bashrc
 
 R=/share/apps/R-3.1.0/bin/R
-runSh='sh /cluster/project8/vyp/cian/scripts/bash/runBashCluster.sh'
+runSh='sh /cluster/project8/vyp/cian/scripts/bash/runBashCluster_large.sh'
 rootODir=$1
 release=$2
 #rootODir=/scratch2/vyp-scratch2/ciangene
 rootODir=/scratch2/vyp-scratch2/cian
-release=June2015
+release=July2015
 rootODir=${1-$rootODir}
 release=${2-$release}
 bDir=${rootODir}/UCLex_${release}/
 
-Groups=${bDir}Phenotype_subset_groups
+Groups=${bDir}cohort.list
 nbGroups=$(wc -l  $Groups | awk '{print $1}') 
 data=$bDir"allChr_snpStats_out"
 Pheno=${bDir}Clean_pheno_subset_plink

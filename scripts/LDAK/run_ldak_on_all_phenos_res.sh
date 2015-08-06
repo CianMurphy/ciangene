@@ -2,13 +2,13 @@
 
 #rootODir=/scratch2/vyp-scratch2/ciangene
 rootODir=/scratch2/vyp-scratch2/cian/
-release=June2015
+release=July2015
 rootODir=${1-$rootODir}
 release=${2-$release}
 bDir=${rootODir}/UCLex_${release}/
 
 runSh='sh /cluster/project8/vyp/cian/scripts/bash/runBashCluster.sh'
-Groups=${bDir}Phenotype_subset_groups
+Groups=${bDir}cohort.list
 nbGroups=$(wc -l  $Groups | awk '{print $1}') 
 #templateScript="/cluster/project8/vyp/cian/data/UCLex/UCLex_August/Scripts/ciangene/scripts/LDAK/ldak_techres_DepthKin.sh"
 templateScript=/cluster/project8/vyp/cian/data/UCLex/ciangene/scripts/LDAK/ldak_techres_DepthKin.sh

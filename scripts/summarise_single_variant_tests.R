@@ -3,7 +3,7 @@ library(HardyWeinberg)
 library(snpStats) 
 library(biomaRt)
 ## Some data and links to start
-release<-'June2015'
+release<-'July2015'
 ldak<-'/cluster/project8/vyp/cian/support/ldak/ldak'
 bDir<-paste0("/scratch2/vyp-scratch2/cian//UCLex_",release,"/") 
 data<-paste0(bDir,'allChr_snpStats_out') 
