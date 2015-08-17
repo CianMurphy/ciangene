@@ -13,18 +13,20 @@ lof <-  c("frameshift deletion", "frameshift substitution", "frameshift insertio
                 ,"stopgain SNV"
                 )
 
-
+pheno<-read.table(paste0(bDir,'Clean_pheno_subset'))
+cohorts<-read.table(paste0(bDir,'cohort.list'))
+colnames(pheno)<-c(rep("Samples",2),cohorts[,1])
 ## Do initial filtering, by pvalue, quality, extCtrl maf and function/LOF status
-variant.filter<-function(dat,pval=0.0001,pval.col="TechKinPvalue",func.filt=TRUE, lof.filt=FALSE,max.maf=1) 
+variant.filter<-function(dat,pval=0.0001,pval.col="TechKinPvalue",func.filt=TRUE, lof.filt=FALSE,max.maf=.01) 
 {
 	message("Filtering data")
 	clean<-subset(dat, dat$FILTER=="PASS") 
 	pval.col.nb<-colnames(clean)%in%pval.col
 	sig<-subset(clean,clean[,pval.col.nb]<=pval) 
-	funcy<-sig[sig$ExonicFunc %in% func,]
-#	rare<- funcy[funcy$ExtCtrl_MAF < max.maf,]
-	return(funcy)
-	#return(rare) 
+	funcy<-sig[sig$ExonicFunc %in% func | sig$Func %in% func,]
+	rare<- funcy[funcy$ExtCtrl_MAF < max.maf & funcy$ESP6500si_ALL < max.maf,]
+#	return(funcy)
+	return(rare) 
 }#
 
 ## Get calls for variants that are left after filtering. 
@@ -32,7 +34,7 @@ prepData<-function(file,snp.col="SNP")
 {
 	snps<-file[,colnames(file)%in%snp.col]
 	write.table(snps,paste0(bDir,"tmp"),col.names=F,row.names=F,quote=F,sep="\t") 
-	message("Extracting variants from full file") 
+	message(paste("Extracting",length(snps)," variants from full file") ) 
 	system( paste(ldak, "--make-sp tmp --bfile", data, "--extract", paste0(bDir,"tmp") )) 
 	message("Reading variants into R session") 
 	calls<-read.table("tmp_out.sp",header=F)
@@ -80,10 +82,10 @@ doFisher<-function(data, cases="Syrris")
 	ctrl.freqs <- c(ctrl.hom.major, ctrl.hets, number_Homs_ctrls)
 	ctrl.maf <- maf(ctrl.freqs)	
 
-	flip<-FALSE
-	if(flip) # doesnt work
+	flip<-TRUE
+	if(flip) 
 	{
-	if(number_Homs_cases>case.hom.major) ## fix minor allele switch. doesnt affect pvalue/maf calcs but looks stupid
+	if(number_Homs_cases>case.hom.major) ## fix minor allele switch. 
 	{
 	tmp<-case.hom.major
 	case.hom.major<-number_Homs_cases
@@ -170,13 +172,15 @@ files<-list.files(dataDir,pattern='final',full.names=T)
 names<-gsub(basename(files),pattern="_.*",replacement='')
 source("LDAK/qqchisq.R")
 mafs<-c(0,0.00001,0.0001,0.001,0.01,0.1) 
-process<-FALSE
+
+process<-TRUE
 pdf(paste0(dataDir,"Single.variant_ex_ctrl_maf_filter.pdf") ) 
 par(mfrow=c(2,2)) 
+
 for(i in 1:length(files))
 {
 	print(paste("Reading in",names[i]))
-	file<-read.table(files[i],header=T,sep="\t",stringsAsFactors=F) 
+	file<-read.csv(files[i],header=T,sep="\t",stringsAsFactors=F) 
 	file$TechKinPvalue<-as.numeric(file$TechKinPvalue)
 	file$Pvalue<-as.numeric(file$Pvalue)
 	for(maf in 1:length(mafs))
@@ -185,13 +189,13 @@ for(i in 1:length(files))
 	qq.chisq(-2*log(dat$Pvalue),df=2,x.max=30,main=paste(names[i],"uncorrected pvalues -",nrow(dat),"SNPS"),pvals=T,cex.main=.8) 
 	qq.chisq(-2*log(dat$TechKinPvalue),df=2,x.max=30,main=paste(names[i],"TKRD pvalues - maf",mafs[maf]),pvals=T,cex.main=.8) 
 	}
-	if(process)
+	if(process)   ###########################################################
 	{
-	filt<-variant.filter(file,pval=.000001) 
+	filt<-variant.filter(file,pval=.0001) 
 	calls<-prepData(filt)
 	pvals<-doFisher(calls,cases=names[i]) 
 	## want to verify the significant techKin pvalues with fisher
-	merged<-merge(filt, pvals,by="SNP") 
+	merged<-merge(filt, pvals,by="SNP",all=T) 
 #	anno<-annotate(merged,merged$Gene) 
 	anno<-merged ## annotated in first script now. 	
 	anno<-anno[order(anno$FisherPvalue),]
@@ -203,6 +207,19 @@ for(i in 1:length(files))
 dev.off() 
 print("Finsihed first step")
 exit
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	## the variants that are sig in base but fixed in techkin should be insig in fisher too? 
 	file$Diff<-file$Pvalue-file$TechKinPvalue
@@ -220,4 +237,4 @@ exit
 	keep<-subset(keep,keep$CaseCounts>0) 
 	keep<-merge(keep,anno,by="SNP",all.x=T) 
 
-/scratch2/vyp-scratch2/cian/UCLex_June2015/External_Control_data/
+#/scratch2/vyp-scratch2/cian/UCLex_June2015/External_Control_data/

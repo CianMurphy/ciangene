@@ -109,7 +109,7 @@ for(i in 1:length(uniq.groups))
 		results.merged2 <- merge(base, tech.small, by = "SNP",all=T)
 #		results.merged2<-merge(results.merged, res.small, by = "SNP")
 		results.merged3 <- merge(results.merged2,perm.small,by='SNP',all=T)
-		results.merged.anno2 <- merge(results.merged2, annotations, by.x = "SNP", by.y ="clean.signature",all=T)
+		results.merged.anno2 <- merge(results.merged3, annotations, by.x = "SNP", by.y ="clean.signature",all=T)
 
 	#	noCov <- read.table(iCovar, header=T, stringsAsFactors=F)
 	#	noCov.small<-data.frame(SNP=noCov$SNP, noCov$UNADJ)

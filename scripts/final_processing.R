@@ -18,7 +18,7 @@ library(data.table)
 oDir <- paste0(rootODir, "/UCLex_", release, "/")
 
 singles<-list.files(paste0(oDir,'FastLMM_Single_Variant_all_phenos/'),pattern="csv",full.names=T)
-genes<-list.files(paste0(oDir,'LDAK_gene_tests_all_phenos/'),full.names=T,recursive=T,pattern="regressALL") 
+genes<-list.files(paste0(oDir,'LDAK_gene_tests_all_phenos_good/'),full.names=T,recursive=T,pattern="regressALL") 
 genes<-genes[grep("0000001_.00000001",genes)]
 base<-genes[grep("base",genes)]
 base.list<-base[-grep("perm",base)]

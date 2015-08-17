@@ -37,7 +37,6 @@ lambiase<-removeConflictingControls(syrris,remove=c("Syrris"),cases=pheno[grep("
 lambiaseSD<-removeConflictingControls(lambiase,remove=c("Syrris","Lambiase_"),cases=pheno[grep("LambiaseSD",pheno[,1]),1] ,oDir=oDir ) 
 ##lambiaseSD[c(grep("yrris",lambiaseSD[,1]),grep("ambiase",lambiaseSD[,1]) ),c(1,94,95,105)] ## check, syrris should be NA in cols 92 93, lambiase  and syrris NA in 92 and 94 and SD only na in 104. 
 rows<-c(grep("ambiase",pheno[,1]),grep("yrris",pheno[,1]))
-data.frame( pheno[rows,1], pheno$Lambiase[rows],pheno$LambiaseSD[rows],pheno$Syrris[rows] ) 
 
 runSh='sh /cluster/project8/vyp/cian/scripts/bash/runBashCluster.sh'
 
@@ -46,6 +45,8 @@ cohort.list<-c('Levine','Davina','Hardcastle','IoO','IoN','IoOFFS','IoONov2013',
 
 if(!file.exists(paste0(oDir,"/External_Control_data/") ))dir.create(paste0(oDir,"/External_Control_data/") ) 
 pheno<-lambiaseSD  ## or last modified pheno file
+data.frame( pheno[rows,1], pheno$Lambiase[rows],pheno$LambiaseSD[rows],pheno$Syrris[rows] ) 
+
 plink<-'/share/apps/genomics/plink-1.07-x86_64/plink --noweb --allow-no-sex --bfile' 
 for(i in 1:length(cohort.list))
 {

@@ -31,14 +31,15 @@ makeExternalControls<-function(pheno,cases,data,oBase,percent=10)
 	# data is stem for bam file 
 	out<- paste0(oBase,"_ex_ctrls")
 	
-	case.rows<-pheno[pheno[,1]%in% cases,]
-	case.col<-which(case.rows[1,3:ncol(case.rows)]==2)+2
-	duds<-pheno[is.na(pheno[,case.col]),1]
+	case.rows<-pheno[grep(cases, pheno[,1] ),]
+	case.col<-colnames(pheno)%in%cases 
+
+	duds<-which(is.na(pheno[,case.col]))
 	ctrls<- pheno[!pheno[,1] %in% case.rows[,1] ,1]
-	if(length(duds)>0)ctrls<-ctrls[!ctrls%in%duds]
+	if(length(duds)>0)ctrls<-ctrls[!ctrls%in%pheno[duds,1]] ; print(paste(cases, 'has', length(duds), 'missing samples') ) 
 	ctrls<- ctrls[!is.na(ctrls)]
 	ctrls<-ctrls[-grep("One",ctrls)]
-
+	
 	if(file.exists(out))
 	{
 		print("External Controls already exist, so just fixing phenotype file directly") 
@@ -52,11 +53,27 @@ makeExternalControls<-function(pheno,cases,data,oBase,percent=10)
 
 		write.table(data.frame(ex.ctrls,ex.ctrls),out,col.names=F,row.names=F,quote=F)
 		run<-paste( plink,data, '--freq --out', out ,'--keep', out) 
-		system(run)
-		run<-paste( plink,data, '--hardy --out',out ,'--keep', out ) 
-		system(run)
-		run<-paste( plink,data, '--missing --out',out ,'--keep', out ) 
-		system(run)
+		#system(run)
+		run2<-paste( plink,data, '--hardy --out',out ,'--keep', out ) 
+		#system(run)
+		run3<-paste( plink,data, '--missing --out',out ,'--keep', out ) 
+		#system(run)
+		runs<-c(run,run2,run3)
+		mclapply(runs,function(x)system(x),mc.cores=3)
+	}
+	out<-paste0(oBase,'_CC_controls')
+	if(!file.exists(out))
+	{
+		ctrls<-ctrls[!ctrls %in% ex.ctrls]
+		write.table(data.frame(ctrls,ctrls),out,col.names=F,row.names=F,quote=F)
+		run<-paste( plink,data, '--freq --out', out ,'--keep', out) 
+		#system(run)
+		run2<-paste( plink,data, '--hardy --out',out ,'--keep', out ) 
+		#system(run)
+		run3<-paste( plink,data, '--missing --out',out ,'--keep', out ) 
+		#system(run)
+		runs<-c(run,run2,run3)
+		mclapply(runs,function(x)system(x),mc.cores=3)
 	}
 	return(pheno)
 }
