@@ -31,7 +31,6 @@ do
 	oFile=$oDir"/run_${batch}.sh"
 	echo "
 	plink --noweb  --bfile $data --assoc --counts --allow-no-sex  --pheno $Pheno \
-	--filter-controls --update-alleles $oDir$batch"_allele_fix"\
 	--adjust --mpheno $pheno --out $oDir$batch"_counts_assoc"
 	#plink --noweb  --bfile $data --fisher --allow-no-sex  --pheno $Pheno --adjust --mpheno $pheno --out $oDir$batch"_fisher"
 	#plink --noweb  --bfile $data --logistic --allow-no-sex --pheno $Pheno --adjust --mpheno $pheno --out $oDir$batch"_logistic_tk_depth"

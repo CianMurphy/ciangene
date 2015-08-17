@@ -20,6 +20,7 @@ ciangene
 		filters by function - gene tests
 
 * PCA 
+
 		Identify UCLex sample ancestry by comparing to 1000G. Remove non Caucasians from further analyses. 
 
 * new_make_phenotype_file.R
