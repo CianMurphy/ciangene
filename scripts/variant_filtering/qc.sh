@@ -19,6 +19,9 @@ data=$bDir"allChr_snpStats_out"
 $plink --noweb --allow-no-sex --bfile $data --freq --out $bDir/gstats
 $plink --noweb --allow-no-sex --bfile $data --missing --out $bDir/gstats
 $plink --noweb --allow-no-sex --bfile $data --hardy --out $bDir/gstats
+$plink --noweb --bfile $data  --impute-sex --out $bDir/gstats
+
+
  
 sed -i 's/ \+ /\t/g' gstats.imiss
 tr -s " " < ${bDir}gstats.imiss > ${bDir}gstats.imiss_clean

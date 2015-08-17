@@ -3,7 +3,6 @@ base<-read.table(paste0(dir,'Phenotypes'),header=F)
 base.groups<-read.table(paste0(dir,'GroupNames'),header=F)
 fam<-read.table(paste0(dir,'allChr_snpStats_out.fam'),header=F)
 
-
 cohort.list<-c('Levine','Hardcastle','IoO','IoN','Kelsell','LambiaseSD','Lambiase','LayalKC','Nejentsev','PrionUnit','Prionb2','Shamima','Sisodiya','Syrris','Vulliamy','WebsterURMD')
 write.table(cohort.list,paste0(dir,"cohort.list"),col.names=F,row.names=F,quote=F,sep="\t") 
 res<-list.files(paste0(dir,'KinshipDecomposition_combined_SNP_TK_RD'),pattern="\\.res",full.names=T)
@@ -46,6 +45,8 @@ caucasian<-ancestry[ancestry$Caucasian,1]
 dat[!dat[,1]%in%caucasian,3:ncol(dat)]<-NA
 perm[!perm[,1]%in%caucasian,3:ncol(perm)]<-NA
 residuals[!residuals[,1]%in%caucasian,3:ncol(residuals)]<-NA
+
+#dat<-data.frame(base[,1:2],
 
 write.table(dat,paste0(dir,'Clean_pheno_subset'),col.names=F,row.names=F,quote=F,sep="\t")
 write.table(perm,paste0(dir,'Clean_pheno_subset_permuted'),col.names=F,row.names=F,quote=F,sep="\t")

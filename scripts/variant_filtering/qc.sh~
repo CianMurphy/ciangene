@@ -12,6 +12,7 @@ bDir=${rootODir}/UCLex_${release}/
 iData=$bDir"allChr_snpStats"
 ln -s $bDir"UCLex_${release}.bim" $iData".bim"
 ln -s $bDir"UCLex_${release}.fam" $iData".fam"
+
 $ldak --make-bed $iData --sp $iData
 
 data=$bDir"allChr_snpStats_out" 

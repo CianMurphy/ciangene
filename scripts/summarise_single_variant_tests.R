@@ -14,6 +14,7 @@ lof <-  c("frameshift deletion", "frameshift substitution", "frameshift insertio
                 )
 
 pheno<-read.table(paste0(bDir,'Clean_pheno_subset'))
+fam<-read.table(paste0(bDir,'allChr_snpStats_out.fam'))
 cohorts<-read.table(paste0(bDir,'cohort.list'))
 colnames(pheno)<-c(rep("Samples",2),cohorts[,1])
 ## Do initial filtering, by pvalue, quality, extCtrl maf and function/LOF status
@@ -50,6 +51,11 @@ prepData<-function(file,snp.col="SNP")
 ## data is the data.frame/matrix of calls, rows are variants. cases is the character vector of phenotype to be treated as cases. 
 doFisher<-function(data, cases="Syrris")
 {
+	data<-data[,colnames(data)%in%pheno[,1] ]
+	cc.col<-colnames(pheno)%in%cases
+	remove<-pheno[is.na(pheno[,cc.col]) ,1]
+	data<-data[,!colnames(data)%in%remove ]
+
 	case.cols<-grep(cases, colnames(data)) 
 	ctrl.cols<-which(!grepl(cases, colnames(data)) )
 
@@ -66,8 +72,20 @@ doFisher<-function(data, cases="Syrris")
 	for(i in 1:nrow(data))
 	{
 	if(i%%50==0)message(paste(i, 'tests done'))
-	case.calls <-  t(as.matrix(calls[i,case.cols]))
-	ctrl.calls <- t(as.matrix(calls[i,ctrl.cols]) )
+	case.calls <-  t(as.matrix(calls[i,colnames(calls)%in%colnames(data)[case.cols]]))
+	ctrl.calls <- t(as.matrix(calls[i,colnames(calls)%in%colnames(data)[ctrl.cols]]))
+
+	chr<-gsub(rownames(data[i,]),pattern="_.*",replacement="")
+	if(chr=="X"|chr==23) 
+	{
+		case.gender<-fam[fam[,1]%in%rownames(case.calls),]
+		males<-case.gender[case.gender[,5]==1,1]
+		case.calls[ rownames(case.calls) %in% males & case.calls[,1] == 2 & is.finite(case.calls[,1]),1]  <- 1
+
+		ctrl.gender<-fam[fam[,1]%in%rownames(ctrl.calls),]
+		males<-ctrl.gender[ctrl.gender[,5]==1,1]
+		ctrl.calls[ rownames(ctrl.calls) %in% males & ctrl.calls[,1] == 2 & is.finite(ctrl.calls[,1]),1]  <- 1
+	}
 
 	number_Homs_cases <- length(which(unlist(case.calls) == 2))
 	number_Homs_ctrls <- length(which(unlist(ctrl.calls) == 2))
@@ -170,9 +188,12 @@ annotate<-function(data,genes)
 dataDir<-paste0("/scratch2/vyp-scratch2/cian/UCLex_",release,"/FastLMM_Single_Variant_all_phenos/") 
 files<-list.files(dataDir,pattern='final',full.names=T)
 names<-gsub(basename(files),pattern="_.*",replacement='')
+extCtrlDir<-paste0("/scratch2/vyp-scratch2/cian/UCLex_",release,"/External_Control_data/") 
+extCtrlFiles<-list.files(extCtrlDir,pattern='lmiss',full.names=T)
+extCtrlnames<-gsub(basename(extCtrlFiles),pattern="_.*",replacement='')
+#exit
 source("LDAK/qqchisq.R")
 mafs<-c(0,0.00001,0.0001,0.001,0.01,0.1) 
-
 process<-TRUE
 pdf(paste0(dataDir,"Single.variant_ex_ctrl_maf_filter.pdf") ) 
 par(mfrow=c(2,2)) 
@@ -198,6 +219,19 @@ for(i in 1:length(files))
 	merged<-merge(filt, pvals,by="SNP",all=T) 
 #	anno<-annotate(merged,merged$Gene) 
 	anno<-merged ## annotated in first script now. 	
+
+	ex.ctrl<-extCtrlFiles[extCtrlnames %in% names[i] ]
+	ex.case<-ex.ctrl[grep('case',ex.ctrl)]
+	ex.ctrl<-ex.ctrl[grep('CC',ex.ctrl)]
+	if(length(ex.case)>0&length(ex.ctrl)>0) 
+	{
+		system( paste('tr -s " " <',ex.case , '>', paste0(ex.case,'_clean') ) [1])
+		system( paste('tr -s " " <',ex.ctrl, '>', paste0(ex.ctrl,'_clean') ) [1] )
+		ex.case<-read.table( paste0(ex.case,'_clean')[1],header=T,sep=" ") 
+		ex.ctrl<-read.table( paste0(ex.ctrl,'_clean')[1],header=T,sep=" ") 
+		callrates=data.frame(SNP=ex.ctrl$SNP,CaseCallRate=ex.case$F_MISS,CtrlCallRate=ex.ctrl$F_MISS) 
+		anno<-merge(anno,callrates,by='SNP',all.x=T) 
+	}
 	anno<-anno[order(anno$FisherPvalue),]
 	anno$Pvalue<-as.numeric(as.character(anno$Pvalue))
 	anno$TechKinPvalue<-as.numeric(as.character(anno$TechKinPvalue))
