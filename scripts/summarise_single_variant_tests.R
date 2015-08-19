@@ -2,45 +2,55 @@
 library(HardyWeinberg)
 library(snpStats) 
 library(biomaRt)
+library(foreach) 
+library(doMC)
+registerDoMC(4) ## Run across 4 cores cos this script is slow AS
+
+
 ## Some data and links to start
 release<-'July2015'
 ldak<-'/cluster/project8/vyp/cian/support/ldak/ldak'
 bDir<-paste0("/scratch2/vyp-scratch2/cian//UCLex_",release,"/") 
 data<-paste0(bDir,'allChr_snpStats_out') 
-func <- c("nonsynonymous SNV", "stopgain SNV", "nonframeshift insertion", "nonframeshift deletion", "frameshift deletion",
-                "frameshift substitution", "frameshift insertion",  "nonframeshift substitution", "stoploss SNV",'splicing','exonic;splicing')
-lof <-  c("frameshift deletion", "frameshift substitution", "frameshift insertion",  "stoploss SNV"
-                ,"stopgain SNV"
-                )
+func <- c("nonsynonymous SNV", "stopgain SNV", "nonframeshift insertion", "nonframeshift deletion", "frameshift deletion", 
+		"frameshift substitution", "frameshift insertion",  "nonframeshift substitution", "stoploss SNV", "splicing"
+		,"exonic;splicing")
+lof <-  c("frameshift deletion", "frameshift substitution", "frameshift insertion",  "stoploss SNV", "splicing"
+		,"stopgain SNV","exonic;splicing"
+		)
+
 
 pheno<-read.table(paste0(bDir,'Clean_pheno_subset'))
 fam<-read.table(paste0(bDir,'allChr_snpStats_out.fam'))
 cohorts<-read.table(paste0(bDir,'cohort.list'))
 colnames(pheno)<-c(rep("Samples",2),cohorts[,1])
 ## Do initial filtering, by pvalue, quality, extCtrl maf and function/LOF status
-variant.filter<-function(dat,pval=0.0001,pval.col="TechKinPvalue",func.filt=TRUE, lof.filt=FALSE,max.maf=.01) 
+variant.filter<-function(dat,pval=0.0001,pval.col="TechKinPvalue",func.filt=TRUE, lof.filt=FALSE,max.maf=.05) 
 {
 	message("Filtering data")
-	clean<-subset(dat, dat$FILTER=="PASS") 
-	pval.col.nb<-colnames(clean)%in%pval.col
-	sig<-subset(clean,clean[,pval.col.nb]<=pval) 
+#	clean<-subset(dat, dat$FILTER=="PASS") 
+#	pval.col.nb<-colnames(clean)%in%pval.col
+#	sig<-subset(clean,clean[,pval.col.nb]<=pval) 
+	sig<-subset(dat,dat$Pvalue<=pval|dat$TechKinPvalue<=pval) 
 	funcy<-sig[sig$ExonicFunc %in% func | sig$Func %in% func,]
-	rare<- funcy[funcy$ExtCtrl_MAF < max.maf & funcy$ESP6500si_ALL < max.maf,]
+	funcy$ESP6500si_ALL[is.na(funcy$ESP6500si_ALL)]<-0
+	funcy$ExtCtrl_MAF[is.na(funcy$ExtCtrl_MAF)]<-0
+	rare<- subset(funcy,funcy$ExtCtrl_MAF < max.maf & funcy$ESP6500si_ALL < max.maf) 
 #	return(funcy)
 	return(rare) 
 }#
 
 ## Get calls for variants that are left after filtering. 
-prepData<-function(file,snp.col="SNP")
+prepData<-function(file,snp.col="SNP", cases="Syrris")
 {
 	snps<-file[,colnames(file)%in%snp.col]
-	write.table(snps,paste0(bDir,"tmp"),col.names=F,row.names=F,quote=F,sep="\t") 
+	write.table(snps,paste0(bDir,cases),col.names=F,row.names=F,quote=F,sep="\t") 
 	message(paste("Extracting",length(snps)," variants from full file") ) 
-	system( paste(ldak, "--make-sp tmp --bfile", data, "--extract", paste0(bDir,"tmp") )) 
+	system( paste(ldak, "--make-sp", cases,"--bfile", data, "--extract", paste0(bDir,cases) )) 
 	message("Reading variants into R session") 
-	calls<-read.table("tmp_out.sp",header=F)
-	fam<-read.table("tmp_out.fam",header=F)
-	bim<-read.table("tmp_out.bim",header=F) 
+	calls<-read.table(paste0(cases,"_out.sp"),header=F)
+	fam<-read.table(paste0(cases,"_out.fam"),header=F)
+	bim<-read.table(paste0(cases,"_out.bim"),header=F) 
 	rownames(calls)<-bim[,2]
 	colnames(calls)<-fam[,1]
 	return(calls)
@@ -191,17 +201,19 @@ names<-gsub(basename(files),pattern="_.*",replacement='')
 extCtrlDir<-paste0("/scratch2/vyp-scratch2/cian/UCLex_",release,"/External_Control_data/") 
 extCtrlFiles<-list.files(extCtrlDir,pattern='lmiss',full.names=T)
 extCtrlnames<-gsub(basename(extCtrlFiles),pattern="_.*",replacement='')
-#exit
+exit
 source("LDAK/qqchisq.R")
 mafs<-c(0,0.00001,0.0001,0.001,0.01,0.1) 
 process<-TRUE
 pdf(paste0(dataDir,"Single.variant_ex_ctrl_maf_filter.pdf") ) 
 par(mfrow=c(2,2)) 
 
-for(i in 1:length(files))
+variables<-ls() 
+#foreach(i=1:length(files), .export=variables, .packages=c("biomaRt",'HardyWeinberg','snpStats')  ) %dopar%
+ for(i in 1:length(files))
 {
 	print(paste("Reading in",names[i]))
-	file<-read.csv(files[i],header=T,sep="\t",stringsAsFactors=F) 
+	file<-read.csv(files[i],header=T,sep="\t",quote = "",stringsAsFactors=F) 
 	file$TechKinPvalue<-as.numeric(file$TechKinPvalue)
 	file$Pvalue<-as.numeric(file$Pvalue)
 	for(maf in 1:length(mafs))
@@ -213,7 +225,7 @@ for(i in 1:length(files))
 	if(process)   ###########################################################
 	{
 	filt<-variant.filter(file,pval=.0001) 
-	calls<-prepData(filt)
+	calls<-prepData(filt,cases=names[i]) 
 	pvals<-doFisher(calls,cases=names[i]) 
 	## want to verify the significant techKin pvalues with fisher
 	merged<-merge(filt, pvals,by="SNP",all=T) 
@@ -239,36 +251,3 @@ for(i in 1:length(files))
 	} # process
 }
 dev.off() 
-print("Finsihed first step")
-exit
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	## the variants that are sig in base but fixed in techkin should be insig in fisher too? 
-	file$Diff<-file$Pvalue-file$TechKinPvalue
-	tra<-subset(file,file$Pvalue<0.000001&file$C_A>5) 
-	tra<-tra[order(tra$Diff),]	
-	calls<-prepData(tra)
-	pvals<-doFisher(calls,cases=names[i]) 
-	merged<-merge(tra, pvals,by="SNP",all.x=T) 
-#	merged<-subset(merged,merged$FisherPvalue>0.001) 
-	merged<-merged[order(-merged$TechKinPvalue),]
-	anno<-annotate(merged,merged$Gene) 
-	write.table(anno$SNP,"Lambiase_snps",col.names=F,row.names=F,quote=F,sep="\t") 
-	source("check_Lambiase.R") 
-	keep<-subset(counts,counts$Case1.counts == counts$CaseCounts | counts$Case3.counts == counts$CaseCounts | counts$Case3.counts == counts$CaseCounts) 
-	keep<-subset(keep,keep$CaseCounts>0) 
-	keep<-merge(keep,anno,by="SNP",all.x=T) 
-
-#/scratch2/vyp-scratch2/cian/UCLex_June2015/External_Control_data/
