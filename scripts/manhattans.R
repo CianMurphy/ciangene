@@ -1,5 +1,6 @@
 source("/cluster/project8/vyp/cian/scripts/r/manhattan.R") 
-dir<-"/scratch2/vyp-scratch2/cian/UCLex_July2015/FastLMM_Single_Variant_all_phenos/"
+bDir<-paste0("/scratch2/vyp-scratch2/cian/UCLex_",release,'/')
+dir<-paste0(bDir,"FastLMM_Single_Variant_all_phenos/") 
 files<-list.files(dir,pattern="final",full.names=T) 
 names<-gsub(basename(files),pattern="_.*",replacement="") 
 
@@ -14,7 +15,7 @@ for( i in 1:length(names))
 	dat$CHR[grep("X",dat$CHR)]<-23
 	dat$CHR<-as.numeric(dat$CHR) 
 	
-	oFile<-paste0(names[i],"_manhattan.png") 	
+	oFile<-paste0(bDir,names[i],"_manhattan.png") 	
 	png(oFile) 
 	manhattan(dat,main=names[i]) 
 	dev.off()

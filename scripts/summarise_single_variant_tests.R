@@ -204,6 +204,7 @@ extCtrlnames<-gsub(basename(extCtrlFiles),pattern="_.*",replacement='')
 exit
 source("LDAK/qqchisq.R")
 mafs<-c(0,0.00001,0.0001,0.001,0.01,0.1) 
+exit
 process<-TRUE
 pdf(paste0(dataDir,"Single.variant_ex_ctrl_maf_filter.pdf") ) 
 par(mfrow=c(2,2)) 

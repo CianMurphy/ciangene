@@ -2,7 +2,8 @@ library(GenABEL)
 library(ggplot2)
 library(reshape) 
 
-dir<-"/scratch2/vyp-scratch2/cian/UCLex_July2015/FastLMM_Single_Variant_all_phenos/"
+bDir<-paste0("/scratch2/vyp-scratch2/cian/UCLex_",release,'/')
+dir<-paste0(bDir,"FastLMM_Single_Variant_all_phenos/") 
 files<-list.files(dir,pattern="final",full.names=T) 
 names<-gsub(basename(files),pattern="_.*",replacement="") 
 
@@ -49,7 +50,7 @@ for( i in 1:length(names))
 	if(i>1)inflation<-data.frame(rbind(gis,inflation) ) 
 }
 
-write.table(inflation,"inflation",col.names=T,row.names=F,quote=F,sep="\t") 
+write.table(inflation,paste0(bDir,"CaseControlResults/inflation") ,col.names=T,row.names=F,quote=F,sep="\t") 
 
 data <- melt(inflation, id=c("Group","MAF"))
 byModel<-aggregate(value~MAF+variable,data=tra,mean ) 
@@ -57,7 +58,7 @@ colnames(byModel)[grep("value",colnames(byModel))]<-"Inflation"
 p <- ggplot(byModel, aes(x=MAF, y=Inflation,colour=variable)) 
 p<-p + geom_line()
 p<-p+ ggtitle("Genomic Inflation across UCLex Cohorts by Model")
-pdf("Model_genomic_control_lambdas.pdf") 
+pdf(paste0(bDir,"CaseControlResults/Model_genomic_control_lambdas.pdf") ) 
 print(p)
 dev.off() 
 

@@ -1,5 +1,6 @@
 library(ggplot2) 
 library(gridExtra)
+library(grid)
 release<-"July2015"
 bDir<-paste0('/scratch2/vyp-scratch2/cian/UCLex_',release,"/") 
 #source("multiplot.R") 
@@ -30,21 +31,16 @@ prepData<-function(pcs)
 	return(data) 
 }
 	 
-techPCs<-read.table(paste0(bDir,"TechPCs.vect",header=F)
-depthPCs<-read.table(paste0(bDir,"/DepthPCs.vect",header=F)
+techPCs<-read.table(paste0(bDir,"TechPCs.vect"),header=F)
+depthPCs<-read.table(paste0(bDir,"/DepthPCs.vect"),header=F)
+tech.short<-data.frame(techPCs[,1:4])
+depth.short<-data.frame(depthPCs[,1:4])
+colnames(tech.short)<-c('Sample1','Sample2','PC1','PC2') 
+colnames(depth.short)<-c('Sample1','Sample2','PC1','PC2') 
 
-techPCA<-prepData(techPCs) 
-depthPCA<-prepData(depthPCs) 
+techPCA<-merge(tech.short,file,by.x='Sample1',by.y='sample')
+depthPCA<-merge(depth.short,file,by.x='Sample1',by.y='sample')
 
-tech<-qplot(PC1,PC2,colour=Kit,data=techPCA,main="Missingness PCA")
-depth<-qplot(PC1,PC2,colour=Kit,data=depthPCA,main="Depth PCA")
-
-pdf(paste0(bDir,"identifying_capture_tech_by_pca.pdf"), onefile = TRUE)
-#print(multiplot(tech,depth,col=1) ) 
-top.plot <- qplot(PC1,PC2,colour=Kit,data=techPCA,main="Missingness PCA") 
-bottom.plot <- qplot(PC1,PC2,colour=Kit,data=depthPCA,main="Depth PCA")
-grid.arrange(top.plot, bottom.plot,ncol=3) #layout_matrix=rbind(c(1,2))) 
-dev.off()
 
 grid_arrange_shared_legend <- function(...) {
     plots <- list(...)
@@ -67,4 +63,23 @@ dev.off()
 exit
 dat<-data.frame(sample=techPCA[,1],kit=techPCA$Kit) 
 tra<-merge(file,dat,by="sample") 
+
+
+
+#techPCA<-prepData(techPCs) 
+#depthPCA<-prepData(depthPCs) 
+
+old<-FALSE
+if(old)
+{
+tech<-qplot(PC1,PC2,colour=sequencing.platform,data=techPCA,main="Missingness PCA")
+depth<-qplot(PC1,PC2,colour=sequencing.platform,data=depthPCA,main="Depth PCA")
+
+pdf(paste0(bDir,"identifying_capture_tech_by_pca.pdf"), onefile = TRUE)
+#print(multiplot(tech,depth,col=1) ) 
+top.plot <- qplot(PC1,PC2,colour=sequencing.platform,data=techPCA,main="Missingness PCA") 
+bottom.plot <- qplot(PC1,PC2,colour=sequencing.platform,data=depthPCA,main="Depth PCA")
+grid.arrange(top.plot, bottom.plot,ncol=3) #layout_matrix=rbind(c(1,2))) 
+dev.off()
+}
 
