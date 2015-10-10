@@ -24,7 +24,7 @@ hwe2 <- subset(hwe$SNP, hwe$TEST == "ALL" & hwe$P >= hwe.pval )
 
 ## some parameters
 missingness.threshold <- 0 # snps higher than this are kept. 
-min.maf <- 0
+min.maf <- 0.01
 max.maf <- 0.5
 
 clean.variants <- subset(extCtrl.var, extCtrl.var$Call.rate >= missingness.threshold) 

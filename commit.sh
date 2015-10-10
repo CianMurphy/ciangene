@@ -1,4 +1,4 @@
 git add -u
-git commit -m "Plotting scripts"
+git commit -m "Small Changes"
 git push -u origin master
 

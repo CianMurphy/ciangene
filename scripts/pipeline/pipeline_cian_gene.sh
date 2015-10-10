@@ -2,7 +2,6 @@ Rbin=/cluster/project8/vyp/vincent/Software/R-3.1.2/bin/R
 
 ## First step - genotype matrix and initial filtering
 firstStep=${repo}/scripts/first.step.R  ##step 1.1
-DepthKin=${repo}/scripts/first_depth_kin.R
 clean=${repo}/scripts/variant_filtering/qc.sh   ##step 1.2
 filter=${repo}/scripts/variant_filtering/filter_snps.R   ##step 1.3
 pca=${repo}/scripts/PCA/ancestry_pca.R  ## step 1.4
@@ -91,11 +90,11 @@ if [[ "$step1" == "yes" ]]; then
 #$ -cwd
 
 $Rbin CMD BATCH --no-save --no-restore --release=${release} --rootODir=${rootODir} $firstStep cluster/R/step1.1_first_step.Rout
-#sh $clean $rootODir $release
-#$Rbin CMD BATCH --no-save --no-restore --release=${release} --rootODir=${rootODir} $filter cluster/R/step1.3.filter_snps.Rout
-#$Rbin CMD BATCH --no-save --no-restore --release=${release} --rootODir=${rootODir} $pca cluster/R/step1.4.pca.Rout
-#sh $pca_extract $rootODir $release
-#$Rbin CMD BATCH --no-save --no-restore --release=${release} --rootODir=${rootODir} $plot_pca cluster/R/step1.4.Plotpca.Rout
+sh $clean $rootODir $release
+$Rbin CMD BATCH --no-save --no-restore --release=${release} --rootODir=${rootODir} $filter cluster/R/step1.3.filter_snps.Rout
+$Rbin CMD BATCH --no-save --no-restore --release=${release} --rootODir=${rootODir} $pca cluster/R/step1.4.pca.Rout
+sh $pca_extract $rootODir $release
+$Rbin CMD BATCH --no-save --no-restore --release=${release} --rootODir=${rootODir} $plot_pca cluster/R/step1.4.Plotpca.Rout
 
 
 " > $script

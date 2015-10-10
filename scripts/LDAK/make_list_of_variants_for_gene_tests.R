@@ -16,6 +16,7 @@ if ('release' %in% names(myArgs))  release <- myArgs[[ "release" ]]
 ######################
 bDir <- paste0(rootODir, "/UCLex_", release, "/")
 ldak<-'/cluster/project8/vyp/cian/support/ldak/ldak'
+minMaf<-0 
 maxMaf<-.5
 maxMiss<-2
 hwe.pval<-0.00001 
