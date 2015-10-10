@@ -1,4 +1,4 @@
 git add -u
-git commit -m "SingleVariantTests"
+git commit -m "Plotting scripts"
 git push -u origin master
 

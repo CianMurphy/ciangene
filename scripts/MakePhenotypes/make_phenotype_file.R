@@ -25,7 +25,7 @@ use.fixPhenoGroupings <- TRUE
 
 if(use.fixPhenoGroupings)
 {
-	cohorts.to.fix <- c("Levine", "B2", "BC", "UCL", "UCLG", "Syrris", "gosgeneBGI")
+	cohorts.to.fix <- c("Levine", "B240", "BC", "UCL", "UCLG", "Syrris", "gosgeneBGI")
 	
 	nb.original.groups <- length(groups.unique)
 

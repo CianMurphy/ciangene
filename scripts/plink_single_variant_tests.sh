@@ -13,6 +13,7 @@ rootODir=${1-$rootODir}
 release=${2-$release}
 bDir=${rootODir}/UCLex_${release}/
 
+plink=/home/sejjcmu/bin/plink/plink
 Groups=${bDir}cohort.list
 nbGroups=$(wc -l  $Groups | awk '{print $1}') 
 data=$bDir"allChr_snpStats_out"
@@ -30,12 +31,12 @@ do
 	batch=$(sed -n $pheno'p' $Groups)	
 	oFile=$oDir"/run_${batch}.sh"
 	echo "
-	plink --noweb  --bfile $data --assoc --counts --allow-no-sex  --pheno $Pheno \
+	$plink --noweb  --bfile $data --assoc --counts --allow-no-sex  --pheno $Pheno \
 	--adjust --mpheno $pheno --out $oDir$batch"_counts_assoc"
-	#plink --noweb  --bfile $data --fisher --allow-no-sex  --pheno $Pheno --adjust --mpheno $pheno --out $oDir$batch"_fisher"
-	#plink --noweb  --bfile $data --logistic --allow-no-sex --pheno $Pheno --adjust --mpheno $pheno --out $oDir$batch"_logistic_tk_depth"
-   # plink --noweb  --bfile $data --fisher --allow-no-sex  --pheno $permPheno --adjust --mpheno $pheno --out $oDir$batch"_fisher_perm"	
-	##plink --noweb  --bfile $data --logistic  --hide-covar --allow-no-sex --pheno $Pheno --adjust --mpheno $pheno --covar $covar --covar-number 1-2 --out $oDir$batch"_logistic_tech_pcs_covars"
+	#$plink --noweb  --bfile $data --fisher --allow-no-sex  --pheno $Pheno --adjust --mpheno $pheno --out $oDir$batch"_fisher"
+	#$plink --noweb  --bfile $data --logistic --allow-no-sex --pheno $Pheno --adjust --mpheno $pheno --out $oDir$batch"_logistic_tk_depth"
+   # $plink --noweb  --bfile $data --fisher --allow-no-sex  --pheno $permPheno --adjust --mpheno $pheno --out $oDir$batch"_fisher_perm"	
+	##$plink --noweb  --bfile $data --logistic  --hide-covar --allow-no-sex --pheno $Pheno --adjust --mpheno $pheno --covar $covar --covar-number 1-2 --out $oDir$batch"_logistic_tech_pcs_covars"
 	" > $oFile
 	cd $oDir; $runSh "run_${batch}.sh" ; cd $cwd
 done

@@ -80,15 +80,15 @@ for(i in 1:length(files)){
 		ext.samples.sum <- data.frame(colnames(matrix.calls.snpStats), col.summary(ext.samples) ) 
 		ext.samples.names <- data.frame(rownames(ext.samples) , row.summary(ext.samples) ) 
 
-		write.table(ext.samples.sum, file = paste0(oDir, "Ext_ctrl_variant_summary") , col.names=TRUE, row.names=FALSE, quote=FALSE, sep="\t", append=FALSE) 
-		write.table(ext.samples.names, file = paste0(oDir, "Ext_ctrl_sample_summary") , col.names=TRUE, row.names=FALSE, quote=FALSE, sep="\t", append=FALSE)
-		write.SnpMatrix(t(matrix.calls.snpStats), full, col.names=FALSE, row.names=FALSE, quote=FALSE, sep="\t", append=FALSE)   ##this is where it becomes numbers
-   		write.table(annotations.snpStats, annotations.out, col.names=TRUE, row.names=TRUE, quote=FALSE, sep="\t", append=FALSE)
-		write.table(matrix.depth, file = paste0(readDepthDir, "/", readDepthoFile) , col.names=FALSE, row.names=FALSE, quote = FALSE, sep="\t" , append = FALSE)
-		write.table(data.frame('SNP'=colnames(matrix.calls.snpStats), col.summary(matrix.calls.snpStats)),paste0(oDir,"UCLex_",release,"_all_samples_variant_summary"),col.names=TRUE,row.names=FALSE,quote=FALSE,sep="\t")
+	#	write.table(ext.samples.sum, file = paste0(oDir, "Ext_ctrl_variant_summary") , col.names=TRUE, row.names=FALSE, quote=FALSE, sep="\t", append=FALSE) 
+	#	write.table(ext.samples.names, file = paste0(oDir, "Ext_ctrl_sample_summary") , col.names=TRUE, row.names=FALSE, quote=FALSE, sep="\t", append=FALSE)
+	#	write.SnpMatrix(t(matrix.calls.snpStats), full, col.names=FALSE, row.names=FALSE, quote=FALSE, sep="\t", append=FALSE)   ##this is where it becomes numbers
+   	#	write.table(annotations.snpStats, annotations.out, col.names=TRUE, row.names=TRUE, quote=FALSE, sep="\t", append=FALSE)
+	#	write.table(matrix.depth, file = paste0(readDepthDir, "/", readDepthoFile) , col.names=FALSE, row.names=FALSE, quote = FALSE, sep="\t" , append = FALSE)
+	#	write.table(data.frame('SNP'=colnames(matrix.calls.snpStats), col.summary(matrix.calls.snpStats)),paste0(oDir,"UCLex_",release,"_all_samples_variant_summary"),col.names=TRUE,row.names=FALSE,quote=FALSE,sep="\t")
 
-		write.table(map, oMap, col.names=FALSE, row.names=FALSE, quote=FALSE, sep="\t", append=FALSE) 
-		write.table(data.frame(cbind(map, "A", "B") ) , oBim, col.names=FALSE, row.names=FALSE, quote=FALSE, sep="\t", append=FALSE)
+	#	write.table(map, oMap, col.names=FALSE, row.names=FALSE, quote=FALSE, sep="\t", append=FALSE) 
+		write.table(data.frame(cbind(map,annotations.snpStats$Obs,annotations.snpStats$Ref ) ) , oBim, col.names=FALSE, row.names=FALSE, quote=FALSE, sep="\t", append=FALSE)
   	} else {
   		ext.samples <- matrix.calls.snpStats[ext.ctrls ,]
 		ext.samples.sum <- data.frame(colnames(matrix.calls.snpStats), col.summary(ext.samples) ) 
@@ -96,13 +96,13 @@ for(i in 1:length(files)){
    		write.table(ext.samples.sum, file = paste0(oDir, "Ext_ctrl_variant_summary") , col.names=F, row.names=F, quote=F, sep="\t", append=T) 
 		write.table(ext.samples.names, file = paste0(oDir, "Ext_ctrl_sample_summary") , col.names=F, row.names=F, quote=F, sep="\t", append=T) 
 
-		write.SnpMatrix(t(matrix.calls.snpStats), full, col.names=FALSE, row.names=FALSE, quote=FALSE, sep="\t", append=TRUE)  
-   		write.table(annotations.snpStats, annotations.out, col.names=FALSE, row.names=TRUE, quote=FALSE, sep="\t", append=TRUE) 
-		write.table(matrix.depth,  file = paste0(readDepthDir, "/", readDepthoFile) , col.names=FALSE, row.names=FALSE, quote = FALSE, sep="\t" , append = TRUE) 
-		write.table(data.frame('SNP'=colnames(matrix.calls.snpStats), col.summary(matrix.calls.snpStats)),paste0(oDir,"UCLex_",release,"_all_samples_variant_summary"),col.names=F,row.names=F,quote=F,sep="\t",append=T) 
+	#	write.SnpMatrix(t(matrix.calls.snpStats), full, col.names=FALSE, row.names=FALSE, quote=FALSE, sep="\t", append=TRUE)  
+   	#	write.table(annotations.snpStats, annotations.out, col.names=FALSE, row.names=TRUE, quote=FALSE, sep="\t", append=TRUE) 
+	#	write.table(matrix.depth,  file = paste0(readDepthDir, "/", readDepthoFile) , col.names=FALSE, row.names=FALSE, quote = FALSE, sep="\t" , append = TRUE) 
+	#	write.table(data.frame('SNP'=colnames(matrix.calls.snpStats), col.summary(matrix.calls.snpStats)),paste0(oDir,"UCLex_",release,"_all_samples_variant_summary"),col.names=F,row.names=F,quote=F,sep="\t",append=T) 
 
-		write.table(map, oMap, col.names=FALSE, row.names=FALSE, quote=FALSE, sep="\t", append=TRUE)  
-		write.table(data.frame(cbind(map, "A", "B") ) , oBim, col.names=FALSE, row.names=FALSE, quote=FALSE, sep="\t", append=TRUE) 
+	#	write.table(map, oMap, col.names=FALSE, row.names=FALSE, quote=FALSE, sep="\t", append=TRUE)  
+		write.table(data.frame(cbind(map, annotations.snpStats$Obs,annotations.snpStats$Ref ) ) , oBim, col.names=FALSE, row.names=FALSE, quote=FALSE, sep="\t", append=TRUE) 
 	}
 
 
