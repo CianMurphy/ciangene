@@ -5,7 +5,7 @@ getArgs <- function() {
   return (myargs)
 }
 
-release <- 'February2015'
+release <- 'September2015'
 rootODir<-'/scratch2/vyp-scratch2/cian'
 
 myArgs <- getArgs()
@@ -53,18 +53,10 @@ for(i in 1:length(files)){
 
 	# Make map file 
 	map <- data.frame(matrix(nrow=nrow(annotations.snpStats), ncol = 4) ) 
-	map[,1] <-  gsub(rownames(annotations.snpStats) ,pattern =  "_.*",  replacement = "" )
-	map[,4] <-  gsub(sub(rownames(annotations.snpStats) ,pattern =  "[0-9]{1,2}_",  replacement = "" ), pattern = "_.*", replacement = "")
-	map[,4] <-  gsub(sub(rownames(annotations.snpStats) ,pattern =  "._",  replacement = "" ), pattern = "_.*", replacement = "")
-	map[,2] <- rownames(annotations.snpStats)
+	map[,1]<-annotations.snpStats$Chr
+	map[,2]<-rownames(annotations.snpStats) 
 	map[,3] <- 0 
-	  
-	map[,1] <- gsub(map[,1], pattern = "X", replacement = "23")
-	map[,1] <- gsub(map[,1], pattern = "Y", replacement = "24")
-	map[,4] <- gsub(map[,4], pattern = "X", replacement = "23")
-	map[,4] <- gsub(map[,4], pattern = "Y", replacement = "24")
-	map[,1] <- as.numeric(map[,1]) 
-	map[,4] <- as.numeric(map[,4]) 
+	map[,4]<-annotations.snpStats$Start
 
 	matrix.calls.snpStats<-matrix.calls.snpStats[,order(map[,4])]
 	annotations.snpStats<-annotations.snpStats[order(map[,4]),]
